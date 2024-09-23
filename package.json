@@ -2,14 +2,19 @@
   "name": "moviecritic",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "nodemon mysql.js"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "moviecritic": "file:",
+    "mysql": "^2.18.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -23,6 +28,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "nodemon": "^3.1.7",
     "vite": "^5.4.1"
   }
 }
