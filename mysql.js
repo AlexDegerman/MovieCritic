@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+//Middleware
 app.use(cors());
 
 //Connect to MySQL
@@ -26,6 +27,17 @@ app.get('/jasen', (req, res) => {
     return res.json(data);
   });
 });
+//Get all rows from Elokuva
+app.get('/elokuva', (req, res) => {
+  db.query('SELECT * FROM elokuva', (err, data) => {
+    if (err) {
+      console.log('Error in query: ' + err);
+      return;
+    }
+    return res.json(data);
+  });
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port + ${PORT}`);

@@ -1,6 +1,6 @@
-const Movies = () => {
+const Movies = ({ movie }) => {
   return (
-    <div>movies</div>
+    <li>{movie.alkuperainennimi}</li>
   )
 }
 
