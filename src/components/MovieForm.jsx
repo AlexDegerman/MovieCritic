@@ -1,0 +1,11 @@
+const MovieForm = () => {
+  
+  return (
+    <div>
+      <h1>Add Movie</h1>
+
+    </div>
+  );
+};
+
+export default MovieForm

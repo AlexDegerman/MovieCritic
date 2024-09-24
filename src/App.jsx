@@ -1,6 +1,5 @@
 import './App.css'
 import Header from './components/Header'
-import Movies from './components/Movies'
 import Footer from './components/Footer'
 import mc from './services/mc'
 import { useState } from 'react'
@@ -22,15 +21,7 @@ const App = () => {
 
   return (
     <div>
-    <Header/>
-    <ul>
-      {/* Display every movie in list */}
-      {movies.map((movie, index) =>
-      <div key={index}>
-        <Movies movie={movie}/>
-        </div>
-      )}
-    </ul>
+    <Header movies={movies}/>
     <Footer/>
     </div>
   )

@@ -1,6 +1,12 @@
-const Movies = ({ movie }) => {
+const Movies = ({ movies }) => {
   return (
-    <li>{movie.alkuperainennimi}</li>
+    <ul>
+    {movies.map((movie, index) =>
+    <div key={index}>
+      <li>{movie.alkuperainennimi}</li>
+      </div>
+    )}
+  </ul>
   )
 }
 

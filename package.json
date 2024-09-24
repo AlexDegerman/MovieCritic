@@ -2,13 +2,12 @@
   "name": "moviecritic",
   "private": true,
   "version": "0.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "nodemon mysql.js"
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -17,7 +16,8 @@
     "moviecritic": "file:",
     "mysql": "^2.18.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
