@@ -7,7 +7,7 @@ import MemberForm from './MemberForm';
 import Profile from './Profile';
 import Movies from './Movies';
 
-const Header = ( {movies} ) => {
+const Header = ( {movies, image} ) => {
 
   const padding = {
     padding: 5,
@@ -28,7 +28,7 @@ const Header = ( {movies} ) => {
     <Route path="/addmovie" element={<MovieForm/>}/>
     <Route path="/addmember" element={<MemberForm/>}/>
     <Route path="/profile" element={<Profile/>}/>
-    <Route path="/" element={<Movies movies={movies}/>}/>
+    <Route path="/" element={<Movies movies={movies} image={image}/>}/>
     </Routes>
     </Router>
     </div>
