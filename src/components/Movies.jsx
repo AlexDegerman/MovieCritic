@@ -4,7 +4,7 @@ const Movies = ({ movies, image }) => {
       {movies.map((movie, index) => (
         <div key={index}>
           <li>
-            {movie.alkuperainennimi} 
+            {movie.alkuperainennimi}
             <img src={image[index]} alt={`${movie.alkuperainennimi} image`} />
           </li>
         </div>

@@ -23,7 +23,6 @@ const Header = ( {movies, image} ) => {
     <Link style={padding} to="/addmember">Add Member</Link>
     <Link style={padding} to="/profile">Profile</Link>
     </div>
-    
     <Routes>
     <Route path="/addmovie" element={<MovieForm/>}/>
     <Route path="/addmember" element={<MemberForm/>}/>
@@ -34,8 +33,6 @@ const Header = ( {movies, image} ) => {
     </div>
     
   )
-    
-  
 }
 
 export default Header
