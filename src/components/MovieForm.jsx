@@ -1,7 +1,9 @@
 import { useState } from "react";
 import MCService from "../services/MCService";
+import { useNavigate } from 'react-router-dom';
 
 const MovieForm = () => {
+  const navigate = useNavigate()
   const [movie, setMovie] = useState({
     alkuperainennimi: "",
     suomalainennimi: "",
@@ -39,10 +41,11 @@ const MovieForm = () => {
     Object.keys(movie).forEach((key) => {
       newMovie.append(key, movie[key])
     })
-
     try {
       MCService.postMovie(newMovie)
-      console.log("Succesfully added the movie!")
+      alert("Succesfully added the movie!")
+      navigate('/')
+      window.location.reload()
     } catch (error) {
       console.error("Error creating new movie: " + error)
     }
