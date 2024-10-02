@@ -1,10 +1,12 @@
+import { Link } from "react-router-dom"
+
 const Movies = ({ movies, image }) => {
   return (
     <ul>
       {movies.map((movie, index) => (
         <div key={index}>
           <li>
-            {movie.alkuperainennimi}
+            <Link to={`/movie/${index}`}>{movie.alkuperainennimi}</Link>
             <img src={image[index]} alt={`${movie.alkuperainennimi} image`} />
           </li>
         </div>
