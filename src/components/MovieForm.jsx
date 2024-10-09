@@ -47,7 +47,7 @@ const MovieForm = () => {
       navigate('/')
       window.location.reload()
     } catch (error) {
-      console.error("Error creating new movie: " + error)
+      console.error("Error adding new movie: " + error)
     }
   }
 
@@ -96,7 +96,7 @@ const MovieForm = () => {
           <textarea type="text" name="kuvaus" value={movie.kuvaus} onChange={handleChange} required/>
         </label>
         <label>
-          Elokuvan kuva JPEG:nä:
+          Elokuvan kuva JPEG muodossa:
           <input type="file" name="kuva" onChange={handleChange} accept="image/jpeg" required/>
         </label>
         <button type="submit"> Submit </button>

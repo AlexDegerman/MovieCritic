@@ -5,9 +5,28 @@ import MCService from './services/MCService.js'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { Buffer } from 'buffer'
+import { jwtDecode } from "jwt-decode";
+
 const App = () => {
   const [movies, setMovies] = useState([])
   const [image, setImage] = useState([])
+  const [member, setMember] = useState([])
+
+  //Fetch logged in member's data
+  useEffect(() => { 
+    const token = localStorage.getItem('token')
+    if (token) {
+      const decodedToken = jwtDecode(token)
+      const memberId = decodedToken.id
+      
+      MCService
+        .getProfile(memberId, token)
+        .then(response => {setMember(response.data)})
+        .catch((error) => {
+        console.error(error.message)
+      })
+    } 
+  },[])
 
   //Populate list of movies
   useEffect(() => {
@@ -37,7 +56,7 @@ const App = () => {
 
   return (
     <div>
-    <Header movies={movies} image={image}/>
+    <Header movies={movies} image={image} member={member}/>
     <Footer/>
     </div>
   )

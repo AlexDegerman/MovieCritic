@@ -10,6 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "backend": "file:"
+    "backend": "file:",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2"
   }
 }
