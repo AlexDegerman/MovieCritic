@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { Buffer } from 'buffer'
 
+// This component displays a movie's page
 const MoviePage = ({movies}) => {
   const {index} = useParams()
   //Temporary return while movie list loads

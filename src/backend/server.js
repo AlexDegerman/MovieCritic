@@ -10,16 +10,16 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-//Middleware to parse incoming JSON and URL encoded data
+// Middleware to parse incoming JSON and URL encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
-//Middleware to allow frontend to interact with backend
+// Middleware to allow frontend to interact with backend
 app.use(cors());
-//Middleware to manage movie image upload
+// Middleware to manage movie image upload
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-//Connect to MySQL
+// Connect to MySQL
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -27,9 +27,9 @@ const db = mysql.createConnection({
   database: 'moviecritic',
 });
 
-//Middleware to protect routes
-const authenticateToken = (req, res) => {
-  const authHeader = req.headers['Authorization'];
+// Middleware to protect routes
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) return res.status(401).json({ error: 'Token missing'});
@@ -43,11 +43,10 @@ const authenticateToken = (req, res) => {
   };
 };
 
-//Routes
-//Member login
+// Routes
+// Member login
 app.post('/login', (req, res) => {
   const {sahkopostiosoite, salasana} = req.body;
-  console.log(req.body)
   
   db.query('SELECT * FROM jasen WHERE sahkopostiosoite = ?', [sahkopostiosoite], async (err, rows) => {
     if (err) {
@@ -66,11 +65,13 @@ app.post('/login', (req, res) => {
 
     const memberToken = {id: member.id, sahkopostiosoite: member.sahkopostiosoite};
     const token = jwt.sign(memberToken, process.env.SECRET, {expiresIn: '1h'});
-    res.status(200).json({ token});
+    console.log('token: ' + token);
+    console.log('secret: ' + process.env.SECRET)
+    res.status(200).json({ token });
   });
 });
 
-//Add Member
+// Add Member
 app.post('/jasen', async (req, res) => {
   const { sahkopostiosoite, salasana, nimimerkki, liittymispaiva} = req.body;
   console.log(req.body)
@@ -94,7 +95,7 @@ app.post('/jasen', async (req, res) => {
   };
 });
 
-//Get specific member
+// Get specific member
 app.get('/jasen/:id', (req, res) => {
   const memberId = req.params.id;
 
@@ -105,11 +106,43 @@ app.get('/jasen/:id', (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ message: 'Member not found' });
     }
-    res.status(200).json(rows);
+    res.status(200).json(rows[0]);
   });
 });
 
-//Get all rows from Jasen
+// Update specific member's profile details
+app.put('/jasen/:id', authenticateToken, (req, res) => {
+  const memberId = req.params.id;
+  const {
+    nimimerkki,
+    sukupuoli,
+    paikkakunta,
+    harrastukset,
+    suosikkilajityypit,
+    suosikkifilmit,
+    omakuvaus
+  } = req.body;
+
+  const details = {
+    nimimerkki,
+    sukupuoli,
+    paikkakunta,
+    harrastukset,
+    suosikkilajityypit,
+    suosikkifilmit,
+    omakuvaus
+  };
+
+  db.query('UPDATE jasen SET ? WHERE id = ?', [details, memberId], (err, rows) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Error updating profile details: ' + err });
+    }
+    res.status(200).json({ message: 'Profile details updated succesfully!' });
+  });
+});
+
+// Get all rows from Jasen
 app.get('/jasen', (req, res) => {
   db.query('SELECT * FROM jasen', (err, rows) => {
     if (err) {
@@ -119,7 +152,7 @@ app.get('/jasen', (req, res) => {
   });
 });
 
-//Get all rows from Elokuva
+// Get all rows from Elokuva
 app.get('/elokuva', (req, res) => {
   db.query('SELECT * FROM elokuva', (err, rows) => {
     if (err) {
@@ -129,7 +162,7 @@ app.get('/elokuva', (req, res) => {
   });
 });
 
-//Get specific movie's image
+// Get specific movie's image
 app.get('/elokuva/:id/kuva', (req, res) => {
   const imageId  = req.params.id;
   db.query('SELECT kuva FROM elokuva WHERE id = ?', [imageId], (err, rows) => {
@@ -143,7 +176,7 @@ app.get('/elokuva/:id/kuva', (req, res) => {
   });
 });
 
-//Get specific movie
+// Get specific movie
 app.get('/elokuva/:id', (req, res) => {
   const movieId = req.params.id;
 
@@ -158,7 +191,7 @@ app.get('/elokuva/:id', (req, res) => {
   });
 });
 
-//Add a movie
+// Add a movie
 app.post('/elokuva', authenticateToken, upload.single('kuva'), (req, res) => {
   const {
     alkuperainennimi,

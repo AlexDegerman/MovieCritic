@@ -8,27 +8,48 @@ const getMovies = ()  => {
 }
 // Returns image of a specific movie
 const getImage = (id) => {
-  return axios.get(movieUrl + '/' + `${id}` + '/kuva',{responseType: 'arraybuffer'})
+  return axios.get(movieUrl + '/' + `${id}` + '/kuva', {
+    responseType: 'arraybuffer'})
 }
 
 // Adds a new movie to the database
 const postMovie = (movie) => {
-  return axios.post(movieUrl,movie, {headers: {'Content-Type': 'multipart/form-data'}})
+  return axios.post(movieUrl,movie, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
 }
 
 // Login to website
 const Login = (email, password) => {
-  return axios.post('http://localhost:3000/login', {sahkopostiosoite: email, salasana: password})
+  return axios.post('http://localhost:3000/login',
+    {sahkopostiosoite: email, salasana: password}
+  )
 }
 
-//Returns a specific member's profile's data
+// Returns a specific member's profile's data
 const getProfile = (id, token) => {
-  return axios.get(memberUrl + '/' + `${id}`, {headers: {Authorization: `Bearer ${token}`}})
+  return axios.get(memberUrl + '/' + `${id}`, {
+    headers: {
+      Authorization : `Bearer ${token}`
+    }
+  })
 }
 
-//Adds a new member to the database
+// Update a specific profile's details
+const updateProfileDetails = (id, details, token) => {
+  return axios.put(memberUrl + '/' + `${id}`, details, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    }
+  })
+}
+
+// Adds a new member to the database
 const postMember = (member) => {
   return axios.post(memberUrl, member)
 }
 
-export default {getMovies, getImage, postMovie, Login, postMember, getProfile}
+export default {getMovies, getImage, postMovie, Login, postMember, getProfile, updateProfileDetails}

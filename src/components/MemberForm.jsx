@@ -2,12 +2,14 @@ import { useState } from "react"
 import MCService from "../services/MCService"
 import { useNavigate } from 'react-router-dom';
 
+// This component displays a form to add members to the database
 const MemberForm = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [nickname, setNickname] = useState('')
   const navigate = useNavigate()
 
+  // Adds a new member to the database
   const addMember = async (event) => {
     event.preventDefault()
     const today = new Date()

@@ -2,6 +2,7 @@ import { useState } from "react"
 import MCService from "../services/MCService"
 import { useNavigate } from 'react-router-dom';
 
+// This component displays a login page
 const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -10,9 +11,10 @@ const Login = () => {
   const Login = async (event) => {
     event.preventDefault()
     try {
-      const res = await MCService.login(email, password)
+      const res = await MCService.Login(email, password)
       localStorage.setItem('token', res.data.token)
       navigate('/')
+      window.location.reload()
     } catch (error) {
       console.error('Error logging in: '+ error)
     }

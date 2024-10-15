@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 
+// This component displays a list of movies
 const Movies = ({ movies, image }) => {
   return (
     <ul>

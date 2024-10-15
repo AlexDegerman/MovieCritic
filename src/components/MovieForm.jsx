@@ -2,6 +2,7 @@ import { useState } from "react";
 import MCService from "../services/MCService";
 import { useNavigate } from 'react-router-dom';
 
+// This component displays a form to add movies to the database
 const MovieForm = () => {
   const navigate = useNavigate()
   const [movie, setMovie] = useState({
@@ -18,6 +19,7 @@ const MovieForm = () => {
     kuva: null
   })
 
+  // Handle all input field changes
   const handleChange = (event) => {
     const { name, value, type, files } = event.target
 
@@ -34,6 +36,7 @@ const MovieForm = () => {
     }
   }
 
+  //Adds a new movie to the database
   const addMovie = (event) => {
     event.preventDefault();
     
