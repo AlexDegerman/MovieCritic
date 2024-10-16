@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import MCService from "../services/MCService"
+import { useParams } from "react-router-dom"
 
 // This component displays a profile page
-const Profile = ({member}) => {
+const Profile = ({currentMember}) => {
   const [showEdit, setShowEdit] = useState(false)
   const [profileDetails, setProfileDetails] = useState({
     nimimerkki: "",
@@ -14,7 +15,19 @@ const Profile = ({member}) => {
     omakuvaus: "",
   })
   const [loading, setLoading] = useState(true)
+  const [member, setMember] = useState([])
+  const {id} = useParams()
   
+  // Get specific member's details
+  useEffect(() => {
+    MCService
+        .getProfile(id)
+        .then(response => {setMember(response.data)})
+        .catch((error) => {
+        console.error(error.message)
+      })
+  }, [id])
+
   // Populate profile details for editing existing details
   useEffect(() => {
     if (member.nimimerkki) {
@@ -74,9 +87,11 @@ const Profile = ({member}) => {
 
   return (
     <div>
-      <h1>Your Profile</h1>
-      {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed */}
-      <button onClick={() => setShowEdit(!showEdit)}> Edit Details </button>
+      <h1>{member.nimimerkki}&apos;s Profile</h1>
+      {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current member is the profile owner */}
+      {currentMember.id === member.id && (
+        <button onClick={() => setShowEdit(!showEdit)}> Edit Details </button>
+      )}
       {showEdit && (
         <form onSubmit={editProfile}>
           <label>

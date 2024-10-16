@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 const App = () => {
   const [movies, setMovies] = useState([])
   const [image, setImage] = useState([])
-  const [member, setMember] = useState([])
+  const [currentMember, setCurrentMember] = useState([])
 
   //Fetch logged in member's data
   useEffect(() => { 
@@ -21,7 +21,7 @@ const App = () => {
       
       MCService
         .getProfile(memberId, token)
-        .then(response => {setMember(response.data)})
+        .then(response => {setCurrentMember(response.data)})
         .catch((error) => {
         console.error(error.message)
       })
@@ -56,7 +56,7 @@ const App = () => {
 
   return (
     <div>
-    <Header movies={movies} image={image} member={member}/>
+    <Header movies={movies} image={image} currentMember={currentMember}/>
     <Footer/>
     </div>
   )

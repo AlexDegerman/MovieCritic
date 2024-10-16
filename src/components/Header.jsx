@@ -9,7 +9,7 @@ import Movies from './Movies';
 import MoviePage from './MoviePage';
 import Login from './Login';
 
-const Header = ( {movies, image, member} ) => {
+const Header = ( {movies, image, currentMember} ) => {
   
   const padding = {
     padding: 5,
@@ -27,13 +27,13 @@ const Header = ( {movies, image, member} ) => {
     <Link style={padding} to="/login">Login</Link>
     <Link style={padding} to="/addmovie">Add Movie</Link>
     <Link style={padding} to="/addmember">Add Member</Link>
-    <Link style={padding} to="/profile">Profile</Link>
+    <Link style={padding} to={`/profile/${currentMember.id}`}>Profile</Link>
     <button onClick={Logout}>Logout</button>
     </div>
     <Routes>
     <Route path="/addmovie" element={<MovieForm/>}/>
     <Route path="/addmember" element={<MemberForm/>}/>
-    <Route path="/profile" element={<Profile member={member}/>}/>
+    <Route path="/profile/:id" element={<Profile currentMember={currentMember}/>}/>
     <Route path="/" element={<Movies movies={movies} image={image}/>}/>
     <Route path="/movie/:index" element={<MoviePage movies={movies}/>}/>
     <Route path="/login" element={<Login/>}/>
