@@ -22,15 +22,19 @@ const MemberForm = () => {
       nimimerkki: nickname,
       liittymispaiva: joinDate
     }
+    const token = localStorage.getItem('token')
+    if (token) {
     try {
-      const res = await MCService.postMember(member)
+      await MCService.postMember(member, token)
       alert("Succesfully added member!")
       navigate('/')
     } catch (error) {
       console.error("Error adding new member: " + error)
     }
+  } else {
+    console.error('No token found')
+    }
   }
-
   return (
     <div>
       <h1>Add Member</h1>
@@ -43,5 +47,4 @@ const MemberForm = () => {
     </div>
   )
 }
-
 export default MemberForm

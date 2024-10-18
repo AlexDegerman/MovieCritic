@@ -13,10 +13,10 @@ const getImage = (id) => {
 }
 
 // Adds a new movie to the database
-const postMovie = (movie) => {
+const postMovie = (movie, token) => {
   return axios.post(movieUrl,movie, {
     headers: {
-      'Content-Type': 'multipart/form-data'
+      Authorization : `Bearer ${token}`
     }
   })
 }
@@ -48,8 +48,12 @@ const updateProfileDetails = (id, details, token) => {
 }
 
 // Adds a new member to the database
-const postMember = (member) => {
-  return axios.post(memberUrl, member)
+const postMember = (member, token) => {
+  return axios.post(memberUrl, member, {
+    headers: {
+      Authorization : `Bearer ${token}`
+    }
+  })
 }
 
 export default {getMovies, getImage, postMovie, Login, postMember, getProfile, updateProfileDetails}

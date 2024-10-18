@@ -72,7 +72,7 @@ app.post('/login', (req, res) => {
 });
 
 // Add Member
-app.post('/jasen', async (req, res) => {
+app.post('/jasen', authenticateToken, async (req, res) => {
   const { sahkopostiosoite, salasana, nimimerkki, liittymispaiva} = req.body;
   console.log(req.body)
   try {

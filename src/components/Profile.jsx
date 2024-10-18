@@ -3,7 +3,7 @@ import MCService from "../services/MCService"
 import { useParams } from "react-router-dom"
 
 // This component displays a profile page
-const Profile = ({currentMember}) => {
+const Profile = ({currentMember, setCurrentMember}) => {
   const [showEdit, setShowEdit] = useState(false)
   const [profileDetails, setProfileDetails] = useState({
     nimimerkki: "",
@@ -26,7 +26,7 @@ const Profile = ({currentMember}) => {
         .catch((error) => {
         console.error(error.message)
       })
-  }, [id])
+  }, [id, currentMember])
 
   // Populate profile details for editing existing details
   useEffect(() => {
@@ -69,9 +69,13 @@ const Profile = ({currentMember}) => {
     const token = localStorage.getItem('token')
     if (token) {
     try {
-      await MCService.updateProfileDetails(member.id, newProfileDetails, token)
+      const update = await MCService.updateProfileDetails(member.id, newProfileDetails, token)
       alert('Profile details updated successfully!')
-      window.location.reload()
+      setCurrentMember({
+        ...currentMember,
+        ...update
+      })
+      setShowEdit(false)
     } catch (error) {
         console.error('Error updating profile details ' + error)
       }
@@ -101,6 +105,10 @@ const Profile = ({currentMember}) => {
         <label>
           Sukupuoli:
           <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange}/>
+        </label>
+        <label>
+          Paikkakunta:
+          <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange}/>
         </label>
         <label>
           Harrastukset:

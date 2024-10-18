@@ -3,7 +3,7 @@ import MCService from "../services/MCService"
 import { useNavigate } from 'react-router-dom';
 
 // This component displays a login page
-const Login = () => {
+const Login = ({ setUpdateMovieList, updateMovieList }) => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,7 +14,7 @@ const Login = () => {
       const res = await MCService.Login(email, password)
       localStorage.setItem('token', res.data.token)
       navigate('/')
-      window.location.reload()
+      setUpdateMovieList(!updateMovieList)
     } catch (error) {
       console.error('Error logging in: '+ error)
     }

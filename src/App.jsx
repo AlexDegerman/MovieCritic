@@ -6,11 +6,14 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { Buffer } from 'buffer'
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const [movies, setMovies] = useState([])
   const [image, setImage] = useState([])
-  const [currentMember, setCurrentMember] = useState([])
+  const [currentMember, setCurrentMember] = useState({})
+  const [updateMovieList, setUpdateMovieList] = useState(false)
+  const navigate = useNavigate()
 
   //Fetch logged in member's data
   useEffect(() => { 
@@ -26,7 +29,24 @@ const App = () => {
         console.error(error.message)
       })
     } 
-  },[])
+  },[updateMovieList])
+  //Logout user when token expires
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      const decodedToken = jwtDecode(token)
+      const currentTime = Date.now() / 1000
+      
+      if (decodedToken.exp < currentTime) {
+        localStorage.removeItem('token')
+        alert('Session expired, logging out...')
+        setCurrentMember([])
+        navigate('/')
+      }
+    }
+    const interval = setInterval( 60 * 1000)
+    return () => clearInterval(interval)
+  },[navigate])
 
   //Populate list of movies
   useEffect(() => {
@@ -38,7 +58,7 @@ const App = () => {
       .catch((error) => {
         console.error(error.message)
       })
-  },[])
+  },[updateMovieList])
   
   // Fetch image for every movie
   useEffect(() => {
@@ -56,7 +76,7 @@ const App = () => {
 
   return (
     <div>
-    <Header movies={movies} image={image} currentMember={currentMember}/>
+    <Header movies={movies} image={image} currentMember={currentMember} setCurrentMember={setCurrentMember} updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>
     <Footer/>
     </div>
   )

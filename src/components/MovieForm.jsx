@@ -3,7 +3,7 @@ import MCService from "../services/MCService";
 import { useNavigate } from 'react-router-dom';
 
 // This component displays a form to add movies to the database
-const MovieForm = () => {
+const MovieForm = ({ setUpdateMovieList, updateMovieList }) => {
   const navigate = useNavigate()
   const [movie, setMovie] = useState({
     alkuperainennimi: "",
@@ -44,13 +44,19 @@ const MovieForm = () => {
     Object.keys(movie).forEach((key) => {
       newMovie.append(key, movie[key])
     })
+
+    const token = localStorage.getItem('token')
+    if (token) {
     try {
-      MCService.postMovie(newMovie)
+      MCService.postMovie(newMovie, token)
       alert("Succesfully added the movie!")
+      setUpdateMovieList(!updateMovieList)
       navigate('/')
-      window.location.reload()
     } catch (error) {
       console.error("Error adding new movie: " + error)
+      }
+    } else {
+      console.error('No token found')
     }
   }
 
