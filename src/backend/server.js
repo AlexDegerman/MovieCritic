@@ -64,7 +64,7 @@ app.post('/login', (req, res) => {
     }
 
     const memberToken = {id: member.id, sahkopostiosoite: member.sahkopostiosoite};
-    const token = jwt.sign(memberToken, process.env.SECRET, {expiresIn: '1h'});
+    const token = jwt.sign(memberToken, process.env.SECRET, {expiresIn: '24h'});
     console.log('token: ' + token);
     console.log('secret: ' + process.env.SECRET)
     res.status(200).json({ token });
