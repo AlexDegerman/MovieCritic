@@ -29,7 +29,7 @@ const MemberForm = () => {
       alert("Succesfully added member!")
       navigate('/')
     } catch (error) {
-      console.error("Error adding new member: " + error)
+      console.error("Error adding new member: ", error)
     }
   } else {
     console.error('No token found')

@@ -38,7 +38,7 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
     <Route path="/addmember" element={<MemberForm/>}/>
     <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember}/>}/>
     <Route path="/" element={<Movies movies={movies} image={image}/>}/>
-    <Route path="/movie/:index" element={<MoviePage movies={movies}/>}/>
+    <Route path="/movie/:index" element={<MoviePage movies={movies} image={image}/>}/>
     <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
     </Routes>
     </div>

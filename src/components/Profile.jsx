@@ -77,7 +77,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
       })
       setShowEdit(false)
     } catch (error) {
-        console.error('Error updating profile details ' + error)
+        console.error('Error updating profile details ', error)
       }
     } else {
         console.error('No token found')
@@ -92,7 +92,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
   return (
     <div>
       <h1>{member.nimimerkki}&apos;s Profile</h1>
-      {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current member is the profile owner */}
+      {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {currentMember.id === member.id && (
         <button onClick={() => setShowEdit(!showEdit)}> Edit Details </button>
       )}

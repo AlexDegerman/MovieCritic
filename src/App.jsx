@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 const App = () => {
   const [movies, setMovies] = useState([])
-  const [image, setImage] = useState([])
+  const [image, setImage] = useState({})
   const [currentMember, setCurrentMember] = useState({})
   const [updateMovieList, setUpdateMovieList] = useState(false)
   const navigate = useNavigate()
@@ -26,7 +26,7 @@ const App = () => {
         .getProfile(memberId, token)
         .then(response => {setCurrentMember(response.data)})
         .catch((error) => {
-        console.error(error.message)
+        console.error('Error fetching user data:', error)
       })
     } 
   },[updateMovieList])
@@ -56,22 +56,28 @@ const App = () => {
         setMovies(response.data)
       })
       .catch((error) => {
-        console.error(error.message)
+        console.error('Error populating movies:', error)
       })
   },[updateMovieList])
   
   // Fetch image for every movie
   useEffect(() => {
-      movies.map((movies,index) => 
-        MCService.getImage(index + 1)
-        .then((response => {
+    setImage({})
+
+      movies.forEach(movie => {
+        MCService.getImage(movie.id)
+        .then(response => {
           const b64 = Buffer.from(response.data,'binary').toString('base64')
-          const mime = response.headers['image/jpeg']
-          setImage((previmage) => previmage.concat(`data:${mime};base64,${b64}`))
-        }))
+          const mime = 'image/jpeg'
+          setImage(prevImage => ({
+            ...prevImage,
+            [movie.id]: `data:${mime};base64,${b64}`
+          }))
+        })
         .catch((error) => {
-          console.error(error.message)
-        }))
+          console.error(`Error loading image for movie ${movie.id}:`, error)
+        })
+      })
   },[movies])
 
   return (

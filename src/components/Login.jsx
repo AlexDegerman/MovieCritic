@@ -16,7 +16,7 @@ const Login = ({ setUpdateMovieList, updateMovieList }) => {
       navigate('/')
       setUpdateMovieList(!updateMovieList)
     } catch (error) {
-      console.error('Error logging in: '+ error)
+      console.error('Error logging in:', error)
     }
   }
 
