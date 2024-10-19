@@ -16,6 +16,9 @@ const Login = ({ setUpdateMovieList, updateMovieList }) => {
       navigate('/')
       setUpdateMovieList(!updateMovieList)
     } catch (error) {
+      alert('Wrong email or password!')
+      setEmail('')
+      setPassword('')
       console.error('Error logging in:', error)
     }
   }
