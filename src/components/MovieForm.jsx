@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MCService from "../services/MCService";
 import { useNavigate } from 'react-router-dom';
+import { movieGenres } from "../data/movieGenres";
 
 // This component displays a form to add movies to the database
 const MovieForm = ({ setUpdateMovieList }) => {
@@ -74,7 +75,14 @@ const MovieForm = ({ setUpdateMovieList }) => {
         </label>
         <label>
           Lajityypit:
-          <input type="text" name="lajityyppi" value={movie.lajityyppi} onChange={handleChange} required/>
+          <select type="text" name="lajityyppi" value={movie.lajityyppi} onChange={handleChange} required>
+          <option>Select Genre</option>
+          {movieGenres.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
         </label>
         <label>
           Valmistumisvuosi:
