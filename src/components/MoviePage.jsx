@@ -140,7 +140,7 @@ const MoviePage = ({ movies, image, currentMember }) => {
           <div>
             <label>Rating (0-5)</label>
             <select name="tahdet" value={review.tahdet === undefined|| '' ? '' : String(review.tahdet)} onChange={handleRatingChange} required>
-              <option value="" hidden>Select a Rating</option>
+              <option hidden>Select a Rating</option>
               <option style={{color: "#ffe400"}} value="5">★★★★★ (5)</option>
               <option style={{color: "#ffe400"}} value="4">★★★★☆ (4)</option>
               <option style={{color: "#ffe400"}} value="3">★★★☆☆ (3)</option>

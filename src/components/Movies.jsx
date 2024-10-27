@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 const Movies = ({ movies, image }) => {
   const [search, setSearch] = useState('')
   const [genre, setGenre] = useState('')
-  const [filtered, setFilter] = useState(movies)
+  const [filtered, setFilter] = useState([])
 
   useEffect(() => {
     const filteredMovies = movies.filter(movie => {
@@ -14,24 +14,27 @@ const Movies = ({ movies, image }) => {
       const matchesGenre = genre === "" || movie.lajityyppi.toLowerCase() === genre.toLowerCase()
       return matchesSearch && matchesGenre
     })
-
     setFilter(filteredMovies)
-  }, [search, genre, movies])
+  }, [search, genre, movies,])
 
   return (
-    <>
-      <Filter search={search} setSearch={setSearch} genre={genre} setGenre={setGenre}/>
+    <div>
+      <Filter search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} />
+      {filtered.length > 0 ? (
       <ul>
-        {filtered.map((movie, index) => (
-          <div key={movie.id}>
-            <li>
-              <Link to={`/movie/${index}`}>{movie.alkuperainennimi}</Link>
-              <img src={image[movie.id]} alt={`${movie.alkuperainennimi} image`} />
-            </li>
-          </div>
-        ))}
-      </ul>
-    </>
+          {filtered.map((movie, index) => (
+            <div key={movie.id}>
+              <li>
+                <Link to={`/movie/${index}`}>{movie.alkuperainennimi}</Link>
+                <img src={image[movie.id]} alt={`${movie.alkuperainennimi} image`} />
+              </li>
+            </div>
+          ))}
+        </ul>
+      ) : (
+        <p>No movies match this search</p>
+      )} 
+    </div>
   )
 }
 

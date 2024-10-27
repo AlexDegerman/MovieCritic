@@ -30,21 +30,26 @@ const App = () => {
       })
     } 
   },[updateMovieList])
+
   //Logout user when token expires
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      const decodedToken = jwtDecode(token)
-      const currentTime = Date.now() / 1000
+    const checkToken = () => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        const decodedToken = jwtDecode(token)
+        const currentTime = Date.now() / 1000
       
-      if (decodedToken.exp < currentTime) {
-        localStorage.removeItem('token')
-        alert('Session expired, logging out...')
-        setCurrentMember([])
-        navigate('/')
+        if (decodedToken.exp < currentTime) {
+          localStorage.removeItem('token')
+          alert('Session expired, logging out...')
+          setCurrentMember([])
+          navigate('/')
+        }
       }
     }
-    const interval = setInterval( 60 * 1000)
+    checkToken()
+
+    const interval = setInterval(checkToken, 60 * 1000)
     return () => clearInterval(interval)
   },[navigate])
 
