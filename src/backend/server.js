@@ -65,8 +65,6 @@ app.post('/login', (req, res) => {
 
     const memberToken = {id: member.id, sahkopostiosoite: member.sahkopostiosoite};
     const token = jwt.sign(memberToken, process.env.SECRET, {expiresIn: '24h'});
-    console.log('token: ' + token);
-    console.log('secret: ' + process.env.SECRET)
     res.status(200).json({ token });
   });
 });
@@ -74,7 +72,6 @@ app.post('/login', (req, res) => {
 // Add Member
 app.post('/jasen', authenticateToken, async (req, res) => {
   const { sahkopostiosoite, salasana, nimimerkki, liittymispaiva} = req.body;
-  console.log(req.body)
   try {
     const hashedPassword = await bcrypt.hash(salasana, 10);
     const newMember = {
@@ -83,7 +80,6 @@ app.post('/jasen', authenticateToken, async (req, res) => {
       nimimerkki,
       liittymispaiva
     };
-    console.log(newMember);
     db.query('INSERT INTO jasen SET ?', newMember, (err, result) => {
       if (err) {
         return res.status(500).json({ error: 'Error adding member: ' + err});
@@ -135,7 +131,6 @@ app.put('/jasen/:id', authenticateToken, (req, res) => {
 
   db.query('UPDATE jasen SET ? WHERE id = ?', [details, memberId], (err, rows) => {
     if (err) {
-      console.log(err);
       return res.status(500).json({ error: 'Error updating profile details: ' + err });
     }
     res.status(200).json({ message: 'Profile details updated succesfully!' });
@@ -179,7 +174,6 @@ app.get('/elokuva/:id/kuva', (req, res) => {
 // Get specific movie
 app.get('/elokuva/:id', (req, res) => {
   const movieId = req.params.id;
-
   db.query('SELECT * FROM elokuva WHERE id = ?', [movieId], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: 'Error in movie search: ' + err });
@@ -226,6 +220,63 @@ app.post('/elokuva', authenticateToken, upload.single('kuva'), (req, res) => {
       return res.status(500).json({ error: 'Error adding movie: ' + err });
     }
     res.status(201).json({ message: 'Movie added successfully' });
+  });
+});
+
+// Get all reviews from a movie
+app.get('/arvostelut/:id', (req, res) => {
+  const elokuvaid = req.params.id
+  db.query('SELECT * FROM arvostelut WHERE elokuvaid = ?',[elokuvaid], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error in query: ' + err });
+    }
+    res.status(200).json(rows);
+  })
+})
+
+//Get all reviews from a specific member
+app.get('/jasen/:id/arvostelut', (req,res) => {
+  const memberid = req.params.id
+  db.query('SELECT * FROM arvostelut WHERE jasenid = ?',[memberid], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Error in query: ' + err });
+    }
+    res.status(200).json(rows);
+  })
+})
+
+// Add a review
+app.post('/arvostelut', authenticateToken, (req, res) => {
+  const {
+    elokuvaid,
+    jasenid,
+    otsikko,
+    sisalto,
+    tahdet,
+    nimimerkki,
+    luotuaika,
+    elokuvanalkuperainennimi,
+    elokuvansuomalainennimi
+  } = req.body;
+
+  const review = {
+    elokuvaid,
+    jasenid,
+    otsikko,
+    sisalto,
+    tahdet,
+    nimimerkki,
+    luotuaika,
+    elokuvanalkuperainennimi,
+    elokuvansuomalainennimi
+  };
+
+  db.query('INSERT INTO arvostelut SET ?', review, (err, rows) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'Error adding review: ' + err });
+    }
+    res.status(201).json({ message: 'Review added successfully' });
   });
 });
 

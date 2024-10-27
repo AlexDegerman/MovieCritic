@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import MCService from "../services/MCService"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import ProfileDetail from "./ProfileDetail"
 
 // This component displays a profile page
-const Profile = ({currentMember, setCurrentMember}) => {
+const Profile = ({currentMember, setCurrentMember, movies}) => {
   const [showEdit, setShowEdit] = useState(false)
   const [profileDetails, setProfileDetails] = useState({
     nimimerkki: "",
@@ -19,16 +19,28 @@ const Profile = ({currentMember, setCurrentMember}) => {
   const [member, setMember] = useState([])
   const {id} = useParams()
   const isOwner = currentMember.id === member.id
+  const [reviews, setReviews] = useState([])
+  const [dropdown, setDropdown] = useState(false)
 
   // Get specific member's details
   useEffect(() => {
     MCService
-        .getProfile(id)
-        .then(response => {setMember(response.data)})
-        .catch((error) => {
+      .getProfile(id)
+      .then(response => {setMember(response.data)})
+      .catch((error) => {
         console.error(error.message)
       })
   }, [id, currentMember])
+
+  // Get specific member's reviews
+  useEffect(() => {
+    MCService
+      .getReviewsfromMember(id)
+      .then(response => {setReviews(response.data)})
+      .catch((error) => {
+        console.error(error.message)
+      })
+  },[id, currentMember])
 
   // Populate profile details for editing existing details
   useEffect(() => {
@@ -140,7 +152,30 @@ const Profile = ({currentMember, setCurrentMember}) => {
       <ProfileDetail label="Favorite Genres" value={member.suosikkilajityypit} isOwner={isOwner}/>
       <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
       <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
-      <ProfileDetail label="Member&apos;s Reviews" value={member.omatarvostelut} isOwner={isOwner}/>
+      <button onClick={() => setDropdown(!dropdown)}>
+        {dropdown ? 'Hide Member\'s Reviews' : 'Show Member\'s Reviews'}
+        </button>
+      {dropdown && (
+        <div>
+          {reviews.length > 0 ? (
+            <ul>
+              {reviews.map((review) => (
+                <li key={review.id}>
+                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`}> {review.elokuvanalkuperainennimi} </Link>
+                  <p>{review.otsikko}</p>
+                  <span style={{color: "#ffe400"}}>
+                    {'★'.repeat(Number(review.tahdet))}
+                    {'☆'.repeat(5 - Number(review.tahdet))}
+                  </span>
+                  <p>{review.sisalto}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No reviews found.</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

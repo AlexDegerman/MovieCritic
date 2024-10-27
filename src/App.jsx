@@ -53,10 +53,11 @@ const App = () => {
     MCService
       .getMovies()
       .then(response => {
-        setMovies(response.data)
+        const sortedMovies = response.data.sort((a,b) => b.id - a.id)
+        setMovies(sortedMovies)
       })
       .catch((error) => {
-        console.error('Error populating movies:', error)
+        console.error('Error loading movies:', error)
       })
   },[updateMovieList])
   

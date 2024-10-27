@@ -1,6 +1,7 @@
 import axios from "axios"
 const movieUrl = "http://localhost:3000/elokuva"
 const memberUrl = "http://localhost:3000/jasen"
+const reviewUrl = "http://localhost:3000/arvostelut"
 
 // Returns a list of movies
 const getMovies = ()  => {
@@ -56,4 +57,23 @@ const postMember = (member, token) => {
   })
 }
 
-export default {getMovies, getImage, postMovie, Login, postMember, getProfile, updateProfileDetails}
+// Returns all Reviews from a specific movie
+const getReviews = (id) => {
+  return axios.get(reviewUrl + '/'+ `${id}` )
+}
+
+// Adds a new review to the database
+const postReview = (review, token) => {
+  return axios.post(reviewUrl, review, {
+    headers: {
+      Authorization : `Bearer ${token}`
+    }
+  })
+}
+
+// Returns all reviews made by a specific memebr
+const getReviewsfromMember = (id) => {
+  return axios.get(memberUrl + '/'+ `${id}` + '/arvostelut' )
+}
+
+export default {getMovies, getImage, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember}

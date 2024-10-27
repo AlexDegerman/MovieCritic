@@ -12,10 +12,8 @@ const MemberForm = () => {
   // Adds a new member to the database
   const addMember = async (event) => {
     event.preventDefault()
-    const today = new Date()
-    const date = [today.getDate(), today.getMonth() + 1, today.getFullYear()]
-    const paddedDate = date.map(num => num.toString().padStart(2, "0"))
-    const joinDate = `${paddedDate[0]}.${paddedDate[1]}.${paddedDate[2]}`
+    const today = new Date();
+    const joinDate = `${today.getDate().toString().padStart(2, "0")}.${(today.getMonth() + 1).toString().padStart(2, "0")}.${today.getFullYear()}`
     const member = {
       sahkopostiosoite: email,
       salasana: password,

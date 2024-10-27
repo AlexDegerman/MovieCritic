@@ -23,7 +23,9 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
     <h1>Movie Critic</h1>
     <div>
     <Link style={padding} to="/">Movies</Link>
+    {!currentMember.id && (
     <Link style={padding} to="/login">Login</Link>
+    )}
     {currentMember.id && (
     <>
     <Link style={padding} to="/addmovie">Add Movie</Link>
@@ -36,9 +38,9 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
     <Routes>
     <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
     <Route path="/addmember" element={<MemberForm/>}/>
-    <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember}/>}/>
+    <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies}/>}/>
     <Route path="/" element={<Movies movies={movies} image={image}/>}/>
-    <Route path="/movie/:index" element={<MoviePage movies={movies} image={image}/>}/>
+    <Route path="/movie/:index" element={<MoviePage movies={movies} image={image} currentMember={currentMember}/>}/>
     <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
     </Routes>
     </div>
