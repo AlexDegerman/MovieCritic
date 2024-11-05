@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react"
-import MCService from "../services/MCService"
-import { Link, useParams } from "react-router-dom"
-import ProfileDetail from "./ProfileDetail"
+import { useEffect, useState } from 'react'
+import MCService from '../services/MCService'
+import { Link, useParams } from 'react-router-dom'
+import ProfileDetail from './ProfileDetail'
+import { useAlertMessages } from '../hooks/useAlertMessages'
+import { handleApiError } from '../utils/apiErrorHandler'
 
 // This component displays a profile page
 const Profile = ({currentMember, setCurrentMember, movies}) => {
@@ -21,6 +23,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
   const isOwner = currentMember.id === member.id
   const [reviews, setReviews] = useState([])
   const [dropdown, setDropdown] = useState(false)
+  const {showSuccess, showError } = useAlertMessages()
 
   // Get specific member's details
   useEffect(() => {
@@ -28,9 +31,9 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       .getProfile(id)
       .then(response => {setMember(response.data)})
       .catch((error) => {
-        console.error(error.message)
+        showError(handleApiError(error, "Failed to get profile details. Please try again."))
       })
-  }, [id, currentMember])
+  }, [id, currentMember, showError])
 
   // Get specific member's reviews
   useEffect(() => {
@@ -38,9 +41,9 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       .getReviewsfromMember(id)
       .then(response => {setReviews(response.data)})
       .catch((error) => {
-        console.error(error.message)
+        showError(handleApiError(error, "Failed to load member's reviews. Please try again."))
       })
-  },[id, currentMember])
+  },[id, currentMember, showError])
 
   // Populate profile details for editing existing details
   useEffect(() => {
@@ -84,17 +87,18 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
     if (token) {
     try {
       const update = await MCService.updateProfileDetails(member.id, newProfileDetails, token)
-      alert('Profile details updated successfully!')
-      setCurrentMember({
-        ...currentMember,
-        ...update
+      showSuccess("Profile details updated successfully!", () => {
+        setCurrentMember({
+          ...currentMember,
+          ...update
+        })
+        setShowEdit(false)
       })
-      setShowEdit(false)
-    } catch (error) {
-        console.error('Error updating profile details ', error)
+    } catch {
+        showError("Error updating profile details. Please try again.")
       }
     } else {
-        console.error('No token found')
+        showError("Missing login, try logging in again")
     }
   }
 
@@ -153,7 +157,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
       <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
       <button onClick={() => setDropdown(!dropdown)}>
-        {dropdown ? 'Hide Member\'s Reviews' : 'Show Member\'s Reviews'}
+        {dropdown ? "Hide Member's Reviews" : "Show Member's Reviews"}
         </button>
       {dropdown && (
         <div>

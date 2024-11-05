@@ -1,4 +1,5 @@
-export const movieGenres = [
+// This file provides a pre-defined list of movie genres
+export const MOVIE_GENRES = [
   "Action",
   "Adventure",
   "Animation",

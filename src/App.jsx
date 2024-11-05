@@ -5,17 +5,20 @@ import MCService from './services/MCService.js'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { Buffer } from 'buffer'
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
+import { useAlertMessages } from './hooks/useAlertMessages.js'
+import { handleApiError } from './utils/apiErrorHandler.js'
 
 const App = () => {
   const [movies, setMovies] = useState([])
   const [image, setImage] = useState({})
   const [currentMember, setCurrentMember] = useState({})
   const [updateMovieList, setUpdateMovieList] = useState(false)
+  const { showInfo, showError } = useAlertMessages()
   const navigate = useNavigate()
 
-  //Fetch logged in member's data
+  // Fetch logged in member's data
   useEffect(() => { 
     const token = localStorage.getItem('token')
     if (token) {
@@ -26,12 +29,12 @@ const App = () => {
         .getProfile(memberId, token)
         .then(response => {setCurrentMember(response.data)})
         .catch((error) => {
-        console.error('Error fetching user data:', error)
+          showError(handleApiError(error, "Failed to add member. Please try again."))
       })
     } 
-  },[updateMovieList])
+  },[updateMovieList, showError])
 
-  //Logout user when token expires
+  // Logout user when token expires
   useEffect(() => {
     const checkToken = () => {
       const token = localStorage.getItem('token')
@@ -41,9 +44,10 @@ const App = () => {
       
         if (decodedToken.exp < currentTime) {
           localStorage.removeItem('token')
-          alert('Session expired, logging out...')
-          setCurrentMember([])
-          navigate('/')
+          showInfo("Session expired, logging out...", () => {
+            setCurrentMember([])
+            navigate('/')
+          })
         }
       }
     }
@@ -51,9 +55,9 @@ const App = () => {
 
     const interval = setInterval(checkToken, 60 * 1000)
     return () => clearInterval(interval)
-  },[navigate])
+  },[navigate, showInfo])
 
-  //Populate list of movies
+  // Populate list of movies
   useEffect(() => {
     MCService
       .getMovies()
@@ -62,9 +66,9 @@ const App = () => {
         setMovies(sortedMovies)
       })
       .catch((error) => {
-        console.error('Error loading movies:', error)
+        showError(handleApiError(error, "Failed to load movie images. Please try again."))
       })
-  },[updateMovieList])
+  },[updateMovieList, showError])
   
   // Fetch image for every movie
   useEffect(() => {
@@ -81,15 +85,15 @@ const App = () => {
           }))
         })
         .catch((error) => {
-          console.error(`Error loading image for movie ${movie.id}:`, error)
+          showError(handleApiError(error, "Failed to load movie image. Please try again."))
         })
       })
-  },[movies])
+  },[movies, showError])
 
   return (
     <div>
-    <Header movies={movies} image={image} currentMember={currentMember} setCurrentMember={setCurrentMember} updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>
-    <Footer/>
+      <Header movies={movies} image={image} currentMember={currentMember} setCurrentMember={setCurrentMember} updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>
+      <Footer/>
     </div>
   )
 }

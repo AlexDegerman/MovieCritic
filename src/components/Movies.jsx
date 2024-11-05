@@ -1,11 +1,11 @@
-import { Link } from "react-router-dom"
-import Filter from "./Filter"
-import { useEffect, useState } from "react"
+import { Link } from 'react-router-dom'
+import Filter from './Filter'
+import { useEffect, useState } from 'react'
 
 // This component displays a list of movies
 const Movies = ({ movies, image }) => {
-  const [search, setSearch] = useState('')
-  const [genre, setGenre] = useState('')
+  const [search, setSearch] = useState("")
+  const [genre, setGenre] = useState("")
   const [filtered, setFilter] = useState([])
 
   useEffect(() => {

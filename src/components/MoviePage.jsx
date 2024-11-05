@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import MCService from "../services/MCService"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import MCService from '../services/MCService'
+import { Link } from 'react-router-dom'
+import { useAlertMessages } from '../hooks/useAlertMessages'
+import { handleApiError } from '../utils/apiErrorHandler'
 
 // This component displays a movie's page
 const MoviePage = ({ movies, image, currentMember }) => {
@@ -14,10 +16,11 @@ const MoviePage = ({ movies, image, currentMember }) => {
     elokuvanalkuperainenimi: "",
     elokuvansuomalainennimi: ""
   })
-  const [movie, setMovie] = useState({});
+  const [movie, setMovie] = useState({})
   const [reviews, setReviews] = useState([])
   const [updateReviews, setUpdateReviews] = useState(false)
   const [loading, setLoading] = useState(true)
+  const {showSuccess, showError } = useAlertMessages()
 
   // Set current movie from movies prop
   useEffect(() => {
@@ -41,13 +44,13 @@ const MoviePage = ({ movies, image, currentMember }) => {
           setLoading(false)
       })
         .catch((error) => {
-          console.error('Error loading reviews:', error)
+          showError(handleApiError(error, "Error loading reviews. Please try again."))
           setLoading(false)
       })
     } else {
       setLoading(false)
     }
-  },[updateReviews, movie])
+  },[updateReviews, movie, showError])
 
   // Set nimimerkki to current member's
   useEffect(() => {
@@ -55,9 +58,9 @@ const MoviePage = ({ movies, image, currentMember }) => {
       setReview(prev => ({
         ...prev,
         nimimerkki: currentMember.nimimerkki
-      }));
+      }))
     }
-  }, [currentMember]);
+  }, [currentMember])
 
   // Temporary returns while movie loads or movie is not found
   if (loading) {
@@ -87,7 +90,7 @@ const MoviePage = ({ movies, image, currentMember }) => {
   const addReview = async (event) => {
     event.preventDefault()
     if (!currentMember) {
-      console.error("Please log in to submit a review")
+      showError("Please log in to submit a review")
       return
     }
     const newReview = {
@@ -109,13 +112,14 @@ const MoviePage = ({ movies, image, currentMember }) => {
         tahdet: "",
         nimimerkki: currentMember.nimimerkki,
       })
-      alert("Succesfully added the review!")
+      showSuccess("Succesfully added the review!")
       setUpdateReviews(!updateReviews)
-    } catch (error) {
-      console.error("Error adding new review:", error)
+      
+    } catch {
+      showError("Missing login. Please login.")
       }
     } else {
-      console.error('No token found')
+      showError("Missing login. Please login.")
     }
   }
 
@@ -161,8 +165,8 @@ const MoviePage = ({ movies, image, currentMember }) => {
               <div>
                 <h3>{review.otsikko}</h3>
                 <span style={{color: "#ffe400"}}>
-                {'★'.repeat(Number(review.tahdet))}
-                {'☆'.repeat(5 - Number(review.tahdet))}
+                {"★".repeat(Number(review.tahdet))}
+                {"☆".repeat(5 - Number(review.tahdet))}
                 </span>
               </div>
               <p>{review.sisalto}</p>
@@ -170,7 +174,7 @@ const MoviePage = ({ movies, image, currentMember }) => {
                 <Link to={`/profile/${review.jasenid}`}>
                   {review.nimimerkki}
                 </Link>
-                {' • '}
+                {" • "}
                 {new Date(review.luotuaika).toLocaleDateString('en-GB')}
               </div>
             </div>

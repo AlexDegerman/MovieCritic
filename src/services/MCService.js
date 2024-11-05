@@ -1,8 +1,9 @@
-import axios from "axios"
+import axios from 'axios'
 const movieUrl = "http://localhost:3000/elokuva"
 const memberUrl = "http://localhost:3000/jasen"
 const reviewUrl = "http://localhost:3000/arvostelut"
 
+// This service handles backend requests
 // Returns a list of movies
 const getMovies = ()  => {
   return axios.get(movieUrl)

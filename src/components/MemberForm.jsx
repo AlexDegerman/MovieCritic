@@ -1,18 +1,20 @@
-import { useState } from "react"
-import MCService from "../services/MCService"
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import MCService from '../services/MCService'
+import { useNavigate } from 'react-router-dom'
+import { useAlertMessages } from '../hooks/useAlertMessages'
 
 // This component displays a form to add members to the database
 const MemberForm = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [nickname, setNickname] = useState('')
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [nickname, setNickname] = useState("")
+  const {showSuccess, showError } = useAlertMessages()
   const navigate = useNavigate()
 
   // Adds a new member to the database
   const addMember = async (event) => {
     event.preventDefault()
-    const today = new Date();
+    const today = new Date()
     const joinDate = `${today.getDate().toString().padStart(2, "0")}.${(today.getMonth() + 1).toString().padStart(2, "0")}.${today.getFullYear()}`
     const member = {
       sahkopostiosoite: email,
@@ -24,13 +26,14 @@ const MemberForm = () => {
     if (token) {
     try {
       await MCService.postMember(member, token)
-      alert("Succesfully added member!")
-      navigate('/')
-    } catch (error) {
-      console.error("Error adding new member: ", error)
+      showSuccess(`Member ${member.nimimerkki} was successfully added!`, () => {
+        navigate('/')
+      })
+    } catch {
+      showError("Failed to add member. Please try again.")
     }
   } else {
-    console.error('No token found')
+    showError("Missing login. Please login.")
     }
   }
   return (

@@ -1,0 +1,68 @@
+/* Provides styling for Alert component */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: white;
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 250px;
+  width: 60%;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: black;
+}
+
+.message {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: black
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button {
+  background-color: #FFC107;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500px;
+}
+
+/* Alert types */ 
+.success .title {
+  color: #28a745;
+}
+
+.error .title {
+  color: #dc3545;
+}
+
+.info .title {
+  color: #17a2b8;
+}
+
+.warning .title {
+  color: #ffc107;
+}
