@@ -4,6 +4,7 @@ import MCService from '../services/MCService'
 import { Link } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
+import '../styles/MoviePage.css'
 
 // This component displays a movie's page
 const MoviePage = ({ movies, image, currentMember }) => {
@@ -116,7 +117,7 @@ const MoviePage = ({ movies, image, currentMember }) => {
       setUpdateReviews(!updateReviews)
       
     } catch {
-      showError("Missing login. Please login.")
+      showError("Failed to add review. Please try again")
       }
     } else {
       showError("Missing login. Please login.")
@@ -124,66 +125,115 @@ const MoviePage = ({ movies, image, currentMember }) => {
   }
 
   return (
-    <>
-      <div>
-        <h1>{movie.alkuperainennimi}</h1>
-        <img src={movieImage} alt={`${movie.alkuperainennimi} image`} />
+    <div className="movie-page-container">
+      <h1 className="movie-title">{movie.alkuperainennimi}</h1>
+      <img src={movieImage} alt={`${movie.alkuperainennimi} image`} className="movie-image" />
+      <div className="movie-details">
+        <div className="movie-detail-item">
+        <label className="movie-detail-label">Suomalainen nimi</label>
+        <p className="movie-detail">{movie.alkuperainennimi}</p>
       </div>
-
-      <div>
-        <h2>Write a Review</h2>
-        <form onSubmit={addReview}>
-          <div>
-            <label>Title</label>
-            <input type="text" name="otsikko" value={review.otsikko} onChange={handleChange} required/>
-          </div>
-          <div>
-            <label>Review</label>
-            <textarea name="sisalto" value={review.sisalto} onChange={handleChange} required/>
-          </div>
-          <div>
-            <label>Rating (0-5)</label>
-            <select name="tahdet" value={review.tahdet === undefined|| '' ? '' : String(review.tahdet)} onChange={handleRatingChange} required>
-              <option hidden>Select a Rating</option>
-              <option style={{color: "#ffe400"}} value="5">★★★★★ (5)</option>
-              <option style={{color: "#ffe400"}} value="4">★★★★☆ (4)</option>
-              <option style={{color: "#ffe400"}} value="3">★★★☆☆ (3)</option>
-              <option style={{color: "#ffe400"}} value="2">★★☆☆☆ (2)</option>
-              <option style={{color: "#ffe400"}} value="1">★☆☆☆☆ (1)</option>
-              <option style={{color: "#ffe400"}} value="0">☆☆☆☆☆ (0)</option>
-            </select>
-          </div>
-          <button type="submit">Submit Review</button>
-        </form>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Lajityyppi</label>
+        <p className="movie-detail">{movie.lajityyppi}</p>
       </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Valmistumisvuosi</label>
+        <p className="movie-detail">{movie.valmistumisvuosi}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Pituus</label>
+        <p className="movie-detail">{movie.pituus}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Ohjaaja</label>
+        <p className="movie-detail">{movie.ohjaaja}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Käsikirjoittajat</label>
+        <p className="movie-detail">{movie.kasikirjoittajat}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Päänäyttelijät</label>
+        <p className="movie-detail">{movie.paanayttelijat}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Kieli ja Tekstitys</label>
+        <p className="movie-detail">{movie.kieli}</p>
+      </div>
+      <div className="movie-detail-item">
+        <label className="movie-detail-label">Kuvaus</label>
+        <p className="movie-detail">{movie.kuvaus}</p>
+      </div>
+    </div>
 
-      <div>
-        <h2>Reviews</h2>
+    <div className="review-form">
+      <p className="review-form-header">Write a Review</p>
+      <form onSubmit={addReview}>
+        <div className="review-form-input-container">
+          <label className="review-form-label">Title</label>
+          <input 
+          className="review-form-input" 
+          type="text" 
+          name="otsikko" 
+          value={review.otsikko} 
+          onChange={handleChange} 
+          required 
+        />
+        </div>
+      <div className="review-form-input-container">
+        <label className="review-form-label">Review</label>
+        <textarea 
+        className="review-form-textarea" 
+        name="sisalto" 
+        value={review.sisalto} 
+        onChange={handleChange} 
+        required 
+      />
+      </div>
+        <div className="review-form-input-container">
+          <label className="review-form-label">Rating (0-5)</label>
+          <select 
+          className="review-form-select" 
+          name="tahdet" 
+          value={review.tahdet} 
+          onChange={handleRatingChange} 
+          required
+          >
+            <option hidden>Select a Rating</option>
+            <option value="5" className="review-rating">★★★★★ (5)</option>
+            <option value="4" className="review-rating">★★★★☆ (4)</option>
+            <option value="3" className="review-rating">★★★☆☆ (3)</option>
+            <option value="2" className="review-rating">★★☆☆☆ (2)</option>
+            <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
+            <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
+          </select>
+          </div>
+        <button type="submit" className="review-form-button">Submit Review</button>
+      </form>
+    </div>
+
+      <div className="reviews-section">
+        <p className="reviews-header">Reviews</p>
         {reviews.length > 0 ? (
           reviews.map((review, i) => (
-            <div key={i}>
-              <div>
-                <h3>{review.otsikko}</h3>
-                <span style={{color: "#ffe400"}}>
+            <div className="review-item" key={i}>
+              <p className="review-item-title">{review.otsikko}</p>
+              <span className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
                 {"★".repeat(Number(review.tahdet))}
                 {"☆".repeat(5 - Number(review.tahdet))}
-                </span>
-              </div>
-              <p>{review.sisalto}</p>
-              <div>
-                <Link to={`/profile/${review.jasenid}`}>
-                  {review.nimimerkki}
-                </Link>
-                {" • "}
-                {new Date(review.luotuaika).toLocaleDateString('en-GB')}
+              </span>
+              <p className="review-content">{review.sisalto}</p>
+              <div className="review-author">
+                <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString('en-GB')}
               </div>
             </div>
           ))
         ) : (
-          <p>No reviews yet. Be the first to review this movie!</p>
+          <p className="no-reviews">No reviews yet. Be the first to review this movie!</p>
         )}
       </div>
-    </>
+    </div>
   )
 }
 

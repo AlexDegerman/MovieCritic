@@ -7,14 +7,13 @@ import MoviePage from './MoviePage'
 import Login from './Login'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
+import '../styles/Header.css'
 
 // This component displays a header with links to pages
 const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList} ) => {
   const navigate = useNavigate()
   const { showSuccess } = useAlertMessages()
-  const padding = {
-    padding: 5,
-  }
+
   const Logout = () => {
     localStorage.removeItem('token')
     showSuccess("Succesfully logged out!", () => {
@@ -24,18 +23,21 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
   }
   return (
     <div>
-      <h1>Movie Critic</h1>
-        <div>
-          <Link style={padding} to="/">Movies</Link>
+      <div className="header"> 
+        <div className="header-content">
+          <img src="/MovieCriticLogo.png" className="logo" alt=""/>
+          <h1 className="header-title">Movie Critic</h1>
+        </div>
+          <Link to="/" className="link">Movies</Link>
             {!currentMember.id && (
-          <Link style={padding} to="/login">Login</Link>
+          <Link to="/login" className="login">Login</Link>
           )}
           {currentMember.id && (
           <>
-            <Link style={padding} to="/addmovie">Add Movie</Link>
-            <Link style={padding} to="/addmember">Add Member</Link>
-            <Link style={padding} to={`/profile/${currentMember.id}`}>Profile</Link>
-            <button onClick={Logout}>Logout</button>
+            <Link to="/addmovie" className="link">Add Movie</Link>
+            <Link to="/addmember" className="link">Add Member</Link>
+            <Link to={`/profile/${currentMember.id}`} className="link">Profile</Link>
+            <button onClick={Logout} className="logout">Log Out</button>
           </>
           )}
         </div>

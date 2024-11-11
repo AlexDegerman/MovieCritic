@@ -8,12 +8,12 @@ const ProfileDetail = ({ label, value, isOwner }) => {
   // For owner, show unfilled details with a placeholder
   if (!value && isOwner) {
     return (
-      <p>{label}: Not specified</p>
+      <p >{label}: <span className="value">Not specified</span></p>
     )
   }
 
   return (
-    <p>{label}: {value}</p>
+    <p>{label}: <span className="value">{value}</span></p>
   )
 }
 

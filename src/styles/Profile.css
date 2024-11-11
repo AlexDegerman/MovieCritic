@@ -1,0 +1,152 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background-color: #1C1C1C;
+  color: #FFC107;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 110px;
+}
+
+.profile-title {
+  margin-bottom: 20px;
+}
+
+.profile-edit {
+  background-color: #dda808;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.member-details-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+  width: 100%;
+  max-width: 500px;
+  background-color: #333;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.member-details-form-input,
+.member-details-form-input-description {
+  padding: 8px;
+  background-color: #444;
+  color: white;
+  border: 1px solid #FFC107;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.member-details-form-input-description {
+  width: 150%;
+  margin-left: 25px;
+  padding-bottom: 20px;
+  resize: none;
+}
+
+.member-details-form-input:focus,
+.member-details-form-input-description:focus {
+  outline: none;
+  border-color: #FFC107;
+}
+
+.profile-button {
+  grid-column: span 2;
+  background-color: #dda808;
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.value {
+  color: white;
+}
+
+.profile-reviews {
+  background-color: #2C2C2C;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  max-width: 500px;
+  width: 100%;
+  text-align: left;
+}
+
+.profile-review-container {
+  list-style-type: none;
+  padding: 0;
+}
+
+.profile-review {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+  text-decoration: none;
+}
+
+.profile-review-link {
+  font-size: 20px;
+  color: #ffcb2e;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.profile-review-title {
+  font-size: 17px;
+}
+
+.profile-review-link:hover {
+  text-decoration: underline;
+}
+
+.profile-review-content {
+  color: white;
+  font-size: 15px;
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 15px;
+  }
+
+  .member-details-form {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .member-details-form-label {
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  .member-details-form-input,
+  .member-details-form-input-description {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .profile-button {
+    grid-column: span 1;
+  }
+  .member-details-form-input-description {
+    width: 75%;
+  }
+}

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import MCService from '../services/MCService'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
+import '../styles/MemberForm.css'
 
 // This component displays a form to add members to the database
 const MemberForm = () => {
@@ -37,13 +38,18 @@ const MemberForm = () => {
     }
   }
   return (
-    <div>
-      <h1>Add Member</h1>
-      <form onSubmit={addMember}>
-        <input type="email" placeholder="Email" value={email} onChange={(e => setEmail(e.target.value))} required/>
-        <input type="password" placeholder="Password" value={password} onChange={(e => setPassword(e.target.value))} required/>
-        <input type="nickname" placeholder="Nickname" value={nickname} onChange={(e => setNickname(e.target.value))} required/>
-        <button type="submit">Add Member</button>
+    <div className="member-form">
+      <form onSubmit={addMember} className="member-form-container">
+        <h1 className="member-form-title">Add Member</h1>
+        <label className="member-input-label">Email</label>
+        <input type="email" placeholder="Email" value={email} onChange={(e => setEmail(e.target.value))} required className="member-form-input"/>
+        <label className="member-input-label">Password</label>
+        <input type="password" placeholder="Password" value={password} onChange={(e => setPassword(e.target.value))} required className="member-form-input"/>
+        <label className="member-input-label">Nickname</label>
+        <input type="nickname" placeholder="Nickname" value={nickname} onChange={(e => setNickname(e.target.value))} required className="member-form-input"/>
+        <div className="member-form-button-container">
+        <button type="submit" className="member-form-button">Add Member</button>
+        </div>
       </form>
     </div>
   )

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import MCService from '../services/MCService'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
+import '../styles/Login.css'
 
 // This component displays a login page
 const Login = ({ setUpdateMovieList }) => {
@@ -27,12 +28,14 @@ const Login = ({ setUpdateMovieList }) => {
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={Login}>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit">Login</button>
+    <div className="login-form">
+      <form onSubmit={Login} className="login-container">
+        <h1 className="login-title">Login</h1>
+        <input type="email" className="login-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" className="login-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div className="login-button-container">
+          <button type="submit"  className="login-button">Login</button>
+        </div>
       </form>
     </div>
   )

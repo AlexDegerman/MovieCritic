@@ -1,0 +1,75 @@
+.header {
+  background-color: #FFC107;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  height: 40px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.header-title {
+  font-size: 22px;
+}
+
+.link, .logout, .login {
+  font-size: 18px;
+  margin: 10px;
+  text-decoration: none;
+  color: #000000;
+}
+.link:hover, .logout:hover, .login:hover {
+  text-decoration: underline;
+}
+
+.logout {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+@media (max-width: 540px) {
+  .header {
+      padding: 8px 10px;
+  }
+
+  .logo {
+      height: 20px;
+  }
+
+  .header-title {
+      font-size: 16px;
+  }
+
+  .link, .logout, .login {
+      font-size: 13px;
+      margin: 0 6px;
+  }
+}
+@media (max-width: 338px) {
+  .header-title {
+      font-size: 15px;
+  }
+
+  .link, .logout, .login {
+      font-size: 12px;
+  }
+}

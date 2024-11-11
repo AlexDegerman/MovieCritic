@@ -1,5 +1,5 @@
 import { MOVIE_GENRES } from '../constants/movieGenres'
-
+import '../styles/Filter.css'
 // This component displays a search bar and a genre selector
 const Filter = ( {setSearch, search, genre, setGenre}) => {
 
@@ -12,13 +12,14 @@ const Filter = ( {setSearch, search, genre, setGenre}) => {
   }
 
   return (
-    <>
-      <div>
-        Search movies by name <input value={search} onChange={handleSearch} />
+    <div className="filter">
+      <div className="search-bar">
+        <label> Search movies by name  </label>
+        <input value={search} onChange={handleSearch} className="search-input" placeholder="Search"/>
       </div>
-      <div>
-        Filter by genre
-        <select value={genre} onChange={handleGenre}>
+      <div className="genre-window">
+        <label>Filter by genre</label>
+        <select value={genre} onChange={handleGenre} className="genre-select">
           <option value="">All Genres</option>
           {MOVIE_GENRES.map((genre) => (
             <option key={genre} value={genre}>
@@ -27,7 +28,7 @@ const Filter = ( {setSearch, search, genre, setGenre}) => {
           ))}
         </select>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,4 +1,3 @@
-/* Provides styling for Alert component */
 .overlay {
   position: fixed;
   top: 0;
@@ -13,12 +12,11 @@
 }
 
 .modal {
-  background-color: white;
+  background-color: #1C1C1C;
   border-radius: 8px;
   padding: 24px;
   max-width: 250px;
   width: 60%;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .title {
@@ -31,7 +29,7 @@
 .message {
   font-size: 16px;
   margin-bottom: 24px;
-  color: black
+  color:#FFC107;
 }
 
 .button-container {
@@ -40,8 +38,8 @@
 }
 
 .button {
-  background-color: #FFC107;
-  color: white;
+  background-color: #dda808;
+  color: black;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
@@ -50,7 +48,6 @@
   font-weight: 500px;
 }
 
-/* Alert types */ 
 .success .title {
   color: #28a745;
 }

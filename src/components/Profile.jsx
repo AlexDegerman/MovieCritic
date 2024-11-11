@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import ProfileDetail from './ProfileDetail'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
+import '../styles/Profile.css'
 
 // This component displays a profile page
 const Profile = ({currentMember, setCurrentMember, movies}) => {
@@ -108,43 +109,43 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
     }
 
   return (
-    <div>
-      <h1>{member.nimimerkki}&apos;s Profile</h1>
+    <div className="profile-container">
+      <h1 className="profile-title">{member.nimimerkki}&apos;s Profile</h1>
       {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {isOwner && (
-        <button onClick={() => setShowEdit(!showEdit)}> Edit Details </button>
+        <button onClick={() => setShowEdit(!showEdit)} className="profile-button"> Edit Details </button>
       )}
       {showEdit && (
-        <form onSubmit={editProfile}>
+        <form onSubmit={editProfile} className="member-details-form">
           <label>
           Nimimerkki:
-          <input type="text" name="nimimerkki" value={profileDetails.nimimerkki} onChange={handleChange}/>
+          <input type="text" name="nimimerkki" value={profileDetails.nimimerkki} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Sukupuoli:
-          <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange}/>
+          <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Paikkakunta:
-          <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange}/>
+          <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Harrastukset:
-          <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange}/>
+          <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Suosikki lajityypit:
-          <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange}/>
+          <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Suosikki elokuvat:
-          <input type="text" name="suosikkifilmit" value={profileDetails.suosikkifilmit} onChange={handleChange}/>
+          <input type="text" name="suosikkifilmit" value={profileDetails.suosikkifilmit} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
           Omakuvaus:
-          <input type="text" name="omakuvaus" value={profileDetails.omakuvaus} onChange={handleChange}/>
+          <textarea type="text" name="omakuvaus" value={profileDetails.omakuvaus} onChange={handleChange} className="member-details-form-input-description"/>
         </label>
-        <button type="submit"> Submit </button>
+        <button type="submit" className="profile-button"> Submit </button>
         </form>
       )}
       
@@ -156,27 +157,27 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       <ProfileDetail label="Favorite Genres" value={member.suosikkilajityypit} isOwner={isOwner}/>
       <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
       <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
-      <button onClick={() => setDropdown(!dropdown)}>
+      <button onClick={() => setDropdown(!dropdown)} className="profile-button">
         {dropdown ? "Hide Member's Reviews" : "Show Member's Reviews"}
         </button>
       {dropdown && (
         <div>
           {reviews.length > 0 ? (
-            <ul>
+            <ul className="profile-review-container">
               {reviews.map((review) => (
-                <li key={review.id}>
-                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`}> {review.elokuvanalkuperainennimi} </Link>
-                  <p>{review.otsikko}</p>
-                  <span style={{color: "#ffe400"}}>
+                <li key={review.id} className="profile-review">
+                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`} className="profile-review-link"> {review.elokuvanalkuperainennimi} </Link>
+                  <p className="profile-review-title">{review.otsikko}</p>
+                  <span className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
                     {'★'.repeat(Number(review.tahdet))}
                     {'☆'.repeat(5 - Number(review.tahdet))}
                   </span>
-                  <p>{review.sisalto}</p>
+                  <p className="profile-review-content">{review.sisalto}</p>
                 </li>
               ))}
             </ul>
           ) : (
-            <p>No reviews found.</p>
+            <p className="no-reviews">No reviews found.</p>
           )}
         </div>
       )}

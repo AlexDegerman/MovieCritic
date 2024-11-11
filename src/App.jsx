@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from './hooks/useAlertMessages.js'
 import { handleApiError } from './utils/apiErrorHandler.js'
+import { Outlet } from 'react-router-dom'
 
 const App = () => {
   const [movies, setMovies] = useState([])
@@ -91,10 +92,22 @@ const App = () => {
   },[movies, showError])
 
   return (
-    <div>
-      <Header movies={movies} image={image} currentMember={currentMember} setCurrentMember={setCurrentMember} updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>
-      <Footer/>
-    </div>
+    <div className="container">
+      <Header 
+      movies={movies} 
+      image={image} 
+      currentMember={currentMember} 
+      setCurrentMember={setCurrentMember} 
+      updateMovieList={updateMovieList} 
+      setUpdateMovieList={setUpdateMovieList} 
+      />
+    
+    <main className="main-content">
+      <Outlet />
+    </main>
+
+    <Footer />
+  </div>
   )
 }
 
