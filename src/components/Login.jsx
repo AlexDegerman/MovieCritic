@@ -22,8 +22,6 @@ const Login = ({ setUpdateMovieList }) => {
       })
     } catch {
       showError("Wrong email or password!")
-      setEmail("")
-      setPassword("")
     }
   }
 

@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 800px;
+  max-width: 700px;
   margin: auto;
   background-color: #1C1C1C;
   color: #FFC107;
@@ -149,7 +149,7 @@
 }
 
 .no-reviews {
-  font-size: 19px;
+  font-size: 16px;
   color: #fff;
   margin-top: 20px;
 }
@@ -175,6 +175,50 @@
 .movie-detail {
   color: #fff;
   font-size: 14px;
+}
+
+.delete-review-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.delete-review-btn {
+  background-color: #2C2C2C;
+  color: rgb(223, 223, 223);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-movie-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.delete-movie-btn {
+  background-color: #1C1C1C;
+  color: rgb(223, 223, 223);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.show-review-form-btn {
+  background-color: #dda808;
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 @media (max-width: 600px) {
@@ -239,4 +283,16 @@
   .no-reviews {
     font-size: 16px;
   }
+}
+
+.review-form-input:-webkit-autofill {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+  box-shadow: 0 0 0px 1000px #444 inset !important;
+  width: 100% !important;
+  padding: 8px !important;
+  background-color: #444 !important;
+  border: 1px solid #FFC107 !important;
+  border-radius: 4px !important;
+  box-sizing: border-box !important;
 }

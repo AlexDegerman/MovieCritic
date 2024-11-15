@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import MCService from '../services/MCService'
-import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/MemberForm.css'
 
@@ -10,7 +9,7 @@ const MemberForm = () => {
   const [password, setPassword] = useState("")
   const [nickname, setNickname] = useState("")
   const {showSuccess, showError } = useAlertMessages()
-  const navigate = useNavigate()
+
 
   // Adds a new member to the database
   const addMember = async (event) => {
@@ -28,10 +27,15 @@ const MemberForm = () => {
     try {
       await MCService.postMember(member, token)
       showSuccess(`Member ${member.nimimerkki} was successfully added!`, () => {
-        navigate('/')
+      setNickname("")
+      setPassword("")
       })
-    } catch {
+    } catch(error) {
+      if (error.response && error.response.status === 409) {
+        showError("Nickname already exists. Please choose a different one.");
+      } else {
       showError("Failed to add member. Please try again.")
+    }
     }
   } else {
     showError("Missing login. Please login.")
@@ -39,7 +43,7 @@ const MemberForm = () => {
   }
   return (
     <div className="member-form">
-      <form onSubmit={addMember} className="member-form-container">
+      <form onSubmit={addMember} className="member-form-container" autoComplete='off'>
         <h1 className="member-form-title">Add Member</h1>
         <label className="member-input-label">Email</label>
         <input type="email" placeholder="Email" value={email} onChange={(e => setEmail(e.target.value))} required className="member-form-input"/>

@@ -10,7 +10,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Header.css'
 
 // This component displays a header with links to pages
-const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList} ) => {
+const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList, setMovies} ) => {
   const navigate = useNavigate()
   const { showSuccess } = useAlertMessages()
 
@@ -46,7 +46,7 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
         <Route path="/addmember" element={<MemberForm/>}/>
         <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies}/>}/>
         <Route path="/" element={<Movies movies={movies} image={image}/>}/>
-        <Route path="/movie/:index" element={<MoviePage movies={movies} image={image} currentMember={currentMember}/>}/>
+        <Route path="/movie/:index" element={<MoviePage movies={movies} image={image} currentMember={currentMember} setMovies={setMovies}/>}/>
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
       </Routes>
     </div>

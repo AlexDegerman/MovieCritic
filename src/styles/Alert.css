@@ -32,20 +32,26 @@
   color:#FFC107;
 }
 
-.button-container {
+.alert-btn-container {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 
-.button {
-  background-color: #dda808;
-  color: black;
+.ok-btn,.cancel-btn {
+  background-color:#1c7030;
+  color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500px;
+}
+
+.cancel-btn {
+  background-color: #7e0606;
+  margin-right: auto;
 }
 
 .success .title {
@@ -61,5 +67,6 @@
 }
 
 .warning .title {
-  color: #ffc107;
+  color: #ff0707;
+  text-shadow: 0 0 10px rgb(255, 0, 0), 0 0 15px rgb(255, 0, 0);
 }

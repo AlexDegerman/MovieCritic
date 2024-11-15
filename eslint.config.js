@@ -33,7 +33,24 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
-      'react/prop-types': 0
+      'react/prop-types': 0,
+    },
+  },
+  {
+    files: ['backend/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
+      globals: {
+        require: 'readonly',
+        module: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+    env: {
+      node: true,
+      es6: true,
     },
   },
 ]

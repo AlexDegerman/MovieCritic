@@ -100,6 +100,7 @@
   padding: 10px;
   border-bottom: 1px solid #444;
   text-decoration: none;
+  text-align: left;
 }
 
 .profile-review-link {
@@ -120,6 +121,23 @@
 .profile-review-content {
   color: white;
   font-size: 15px;
+}
+
+.account-delete-btn-container {
+  width: 105%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.account-delete-btn {
+  background-color: #1C1C1C;
+  color: rgb(223, 223, 223);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
 }
 
 @media (max-width: 600px) {

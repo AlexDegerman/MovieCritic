@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import MCService from '../services/MCService'
 import { Link } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
+import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
 
 // This component displays a movie's page
-const MoviePage = ({ movies, image, currentMember }) => {
+const MoviePage = ({ movies, image, currentMember, setMovies }) => {
+  const navigate = useNavigate()
   const {index} = useParams()
   const [review, setReview] = useState({
     otsikko: "",
@@ -21,7 +23,9 @@ const MoviePage = ({ movies, image, currentMember }) => {
   const [reviews, setReviews] = useState([])
   const [updateReviews, setUpdateReviews] = useState(false)
   const [loading, setLoading] = useState(true)
-  const {showSuccess, showError } = useAlertMessages()
+  const {showSuccess, showError, showWarning, showInfo } = useAlertMessages()
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const reviewFormRef = useRef(null)
 
   // Set current movie from movies prop
   useEffect(() => {
@@ -62,6 +66,20 @@ const MoviePage = ({ movies, image, currentMember }) => {
       }))
     }
   }, [currentMember])
+
+  // Set scroll to review form
+  useEffect(() => {
+    if (showReviewForm && reviewFormRef.current) {
+      const offset = 70
+      const elementPosition = reviewFormRef.current.getBoundingClientRect().top + window.scrollY 
+      const offsetPosition = elementPosition - offset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }, [showReviewForm])
 
   // Temporary returns while movie loads or movie is not found
   if (loading) {
@@ -113,6 +131,7 @@ const MoviePage = ({ movies, image, currentMember }) => {
         tahdet: "",
         nimimerkki: currentMember.nimimerkki,
       })
+      setShowReviewForm(false)
       showSuccess("Succesfully added the review!")
       setUpdateReviews(!updateReviews)
       
@@ -122,6 +141,50 @@ const MoviePage = ({ movies, image, currentMember }) => {
     } else {
       showError("Missing login. Please login.")
     }
+  }
+
+  const deleteReview = (id) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+    showWarning("Are you sure you want to delete your review?", 
+      {
+        onConfirm: async () => {
+          try {
+            await MCService.deleteReview(id, token)
+            showSuccess("Successfully deleted the review!")
+          } catch {
+            showError("Error deleting review.")
+          }
+        },
+        onCancel: () => {
+          setTimeout(() => {
+            showInfo("Cancelled deletion.")
+          }, 100)
+        }
+      })}
+  }
+
+  const deleteMovie = (id) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+    showWarning("Are you sure you want to delete the movie? All reviews on it will be removed aswell.", 
+      {
+        onConfirm: async () => {
+          try {
+            setMovies(prevMovies => prevMovies.filter(movie => movie.id !== id))
+            await MCService.deleteMovie(id, token)
+            showSuccess("Successfully deleted the movie!")
+            navigate('/')
+          } catch {
+            showError("Error deleting movie.")
+          }
+        },
+        onCancel: () => {
+          setTimeout(() => {
+            showInfo("Cancelled deletion.")
+          }, 100)
+        }
+      })}
   }
 
   return (
@@ -166,53 +229,59 @@ const MoviePage = ({ movies, image, currentMember }) => {
         <p className="movie-detail">{movie.kuvaus}</p>
       </div>
     </div>
-
-    <div className="review-form">
-      <p className="review-form-header">Write a Review</p>
-      <form onSubmit={addReview}>
+    <button onClick={() => setShowReviewForm(!showReviewForm)} className="show-review-form-btn" ref={reviewFormRef}> {showReviewForm ? 'Hide Review Form' : 'Add a Review'}</button>
+    {showReviewForm && (
+      <div className="review-form">
+        <p className="review-form-header">Write a Review</p>
+        <form onSubmit={addReview}>
+          <div className="review-form-input-container">
+            <label className="review-form-label">Title</label>
+            <input 
+            className="review-form-input" 
+            type="text" 
+            name="otsikko" 
+            value={review.otsikko} 
+            onChange={handleChange} 
+            required 
+          />
+          </div>
         <div className="review-form-input-container">
-          <label className="review-form-label">Title</label>
-          <input 
-          className="review-form-input" 
-          type="text" 
-          name="otsikko" 
-          value={review.otsikko} 
+          <label className="review-form-label">Review</label>
+          <textarea 
+          className="review-form-textarea" 
+          name="sisalto" 
+          value={review.sisalto} 
           onChange={handleChange} 
           required 
         />
         </div>
-      <div className="review-form-input-container">
-        <label className="review-form-label">Review</label>
-        <textarea 
-        className="review-form-textarea" 
-        name="sisalto" 
-        value={review.sisalto} 
-        onChange={handleChange} 
-        required 
-      />
+          <div className="review-form-input-container">
+            <label className="review-form-label">Rating (0-5)</label>
+            <select 
+            className="review-form-select" 
+            name="tahdet" 
+            value={review.tahdet} 
+            onChange={handleRatingChange} 
+            required
+            >
+              <option hidden>Select a Rating</option>
+              <option value="5" className="review-rating">★★★★★ (5)</option>
+              <option value="4" className="review-rating">★★★★☆ (4)</option>
+              <option value="3" className="review-rating">★★★☆☆ (3)</option>
+              <option value="2" className="review-rating">★★☆☆☆ (2)</option>
+              <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
+              <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
+            </select>
+            </div>
+          <button type="submit" className="review-form-button">Submit Review</button>
+        </form>
       </div>
-        <div className="review-form-input-container">
-          <label className="review-form-label">Rating (0-5)</label>
-          <select 
-          className="review-form-select" 
-          name="tahdet" 
-          value={review.tahdet} 
-          onChange={handleRatingChange} 
-          required
-          >
-            <option hidden>Select a Rating</option>
-            <option value="5" className="review-rating">★★★★★ (5)</option>
-            <option value="4" className="review-rating">★★★★☆ (4)</option>
-            <option value="3" className="review-rating">★★★☆☆ (3)</option>
-            <option value="2" className="review-rating">★★☆☆☆ (2)</option>
-            <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
-            <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
-          </select>
-          </div>
-        <button type="submit" className="review-form-button">Submit Review</button>
-      </form>
-    </div>
-
+    )}
+      {currentMember && (
+      <div className="delete-movie-btn-container">
+        <button onClick={() => deleteMovie(movie.id)} className="delete-movie-btn">Delete Movie</button>
+      </div>
+      )}
       <div className="reviews-section">
         <p className="reviews-header">Reviews</p>
         {reviews.length > 0 ? (
@@ -227,6 +296,11 @@ const MoviePage = ({ movies, image, currentMember }) => {
               <div className="review-author">
                 <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString('en-GB')}
               </div>
+              {review.nimimerkki === currentMember.nimimerkki && (
+              <div className="delete-review-btn-container">
+                <button onClick={() => deleteReview(review.id)} className="delete-review-btn">Delete Review</button>
+              </div>
+              )}
             </div>
           ))
         ) : (

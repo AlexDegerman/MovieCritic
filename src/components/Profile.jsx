@@ -5,9 +5,11 @@ import ProfileDetail from './ProfileDetail'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import '../styles/Profile.css'
+import { useNavigate } from 'react-router-dom'
 
 // This component displays a profile page
 const Profile = ({currentMember, setCurrentMember, movies}) => {
+  const navigate = useNavigate()
   const [showEdit, setShowEdit] = useState(false)
   const [profileDetails, setProfileDetails] = useState({
     nimimerkki: "",
@@ -24,27 +26,37 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
   const isOwner = currentMember.id === member.id
   const [reviews, setReviews] = useState([])
   const [dropdown, setDropdown] = useState(false)
-  const {showSuccess, showError } = useAlertMessages()
+  const {showSuccess, showError, showDoubleWarning, showInfo} = useAlertMessages()
+  const [profileUpdated, setProfileUpdated] = useState(false)
 
   // Get specific member's details
   useEffect(() => {
+    if (id) {
+    console.log("moi")
     MCService
       .getProfile(id)
-      .then(response => {setMember(response.data)})
+      .then(response => {setMember(response.data)}, setProfileUpdated(false))
       .catch((error) => {
-        showError(handleApiError(error, "Failed to get profile details. Please try again."))
+        const is404 = error.response && error.response.status === 404;
+        showError(handleApiError(error, "Failed to get profile details. Please try again."),
+        is404 ? () => navigate('/') : undefined)
       })
-  }, [id, currentMember, showError])
+    }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, profileUpdated])
 
   // Get specific member's reviews
   useEffect(() => {
-    MCService
-      .getReviewsfromMember(id)
-      .then(response => {setReviews(response.data)})
-      .catch((error) => {
-        showError(handleApiError(error, "Failed to load member's reviews. Please try again."))
+    if (id) {
+      MCService
+        .getReviewsfromMember(id)
+        .then(response => {setReviews(response.data)})
+        .catch((error) => {
+          showError(handleApiError(error, "Failed to load member's reviews. Please try again."))
       })
-  },[id, currentMember, showError])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[id])
 
   // Populate profile details for editing existing details
   useEffect(() => {
@@ -94,6 +106,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
           ...update
         })
         setShowEdit(false)
+        setProfileUpdated(true)
       })
     } catch {
         showError("Error updating profile details. Please try again.")
@@ -102,6 +115,39 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
         showError("Missing login, try logging in again")
     }
   }
+
+  const deleteProfile = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      showDoubleWarning(
+        "Are you sure you want to delete your account? You will not be able to login again and this cannot be undone.",
+        "This is your last chance to cancel. Deleting your account is permanent. You will lose access to this account and will not be able to recover it later.",
+        {
+          onFinalConfirm: async () => {
+            try {
+              await MCService.deleteMember(member.id, token)
+              setMember([])
+              setCurrentMember([])
+              localStorage.removeItem('token')
+              showSuccess('Successfully deleted your account.')
+              navigate('/')
+            } catch {
+              showError("Error deleting member.")
+            }
+          },
+          onCancel: () => {
+            setTimeout(() => {
+              showInfo("Cancelled deletion.")
+            }, 100)
+          }
+        }
+      )
+    } else {
+      showError("Missing login, try logging in again.");
+    }
+  }
+  
+  
 
     // Temporary return while profile data loads
     if (loading) {
@@ -113,7 +159,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       <h1 className="profile-title">{member.nimimerkki}&apos;s Profile</h1>
       {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {isOwner && (
-        <button onClick={() => setShowEdit(!showEdit)} className="profile-button"> Edit Details </button>
+        <button onClick={() => setShowEdit(!showEdit)} className="profile-button"> {showEdit ? 'Hide Details Edit' : 'Edit Details'} </button>
       )}
       {showEdit && (
         <form onSubmit={editProfile} className="member-details-form">
@@ -167,11 +213,11 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
               {reviews.map((review) => (
                 <li key={review.id} className="profile-review">
                   <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`} className="profile-review-link"> {review.elokuvanalkuperainennimi} </Link>
-                  <p className="profile-review-title">{review.otsikko}</p>
-                  <span className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
+                  <p className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
                     {'★'.repeat(Number(review.tahdet))}
                     {'☆'.repeat(5 - Number(review.tahdet))}
-                  </span>
+                  </p>
+                  <p className="profile-review-title">{review.otsikko}</p>
                   <p className="profile-review-content">{review.sisalto}</p>
                 </li>
               ))}
@@ -179,6 +225,11 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
           ) : (
             <p className="no-reviews">No reviews found.</p>
           )}
+        </div>
+      )}
+      {isOwner && (
+        <div className="account-delete-btn-container">
+          <button onClick={deleteProfile} className="account-delete-btn"> Delete account </button>
         </div>
       )}
     </div>

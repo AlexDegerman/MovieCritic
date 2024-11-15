@@ -19,7 +19,7 @@ const App = () => {
   const { showInfo, showError } = useAlertMessages()
   const navigate = useNavigate()
 
-  // Fetch logged in member's data
+  //Fetch logged in member's data
   useEffect(() => { 
     const token = localStorage.getItem('token')
     if (token) {
@@ -30,7 +30,8 @@ const App = () => {
         .getProfile(memberId, token)
         .then(response => {setCurrentMember(response.data)})
         .catch((error) => {
-          showError(handleApiError(error, "Failed to add member. Please try again."))
+          showError(handleApiError(error, "Failed to get current member's data. Please try again."))
+          
       })
     } 
   },[updateMovieList, showError])
@@ -100,6 +101,7 @@ const App = () => {
       setCurrentMember={setCurrentMember} 
       updateMovieList={updateMovieList} 
       setUpdateMovieList={setUpdateMovieList} 
+      setMovies={setMovies} 
       />
     
     <main className="main-content">

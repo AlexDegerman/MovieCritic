@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import {AlertContext} from '../context/AlertContext'
 import {Alert} from '../components/Alert'
 
@@ -10,38 +10,48 @@ export const AlertProvider = ({ children }) => {
     title: "",
     message: "",
     onClose: null,
+    onCancel: null,
+    showCancelButton: false,
   })
 
-  const showAlert = useCallback((title, message, options = {}) => {
+  const showAlert = (title, message, options = {}) => {
     setAlertInfo({
       isOpen: true,
       type: options.type || 'info',
       title,
       message,
-      onClose: options.onClose
+      onClose: options.onClose,
+      onCancel: options.onCancel,
+      showCancelButton: options.showCancelButton || false
     })
-  }, [])
+  }
 
-  const hideAlert = useCallback(() => {
-    if (alertInfo.onClose) {
-      alertInfo.onClose()
+  const hideAlert = (isCancel = false) => {
+    if (isCancel) {
+      alertInfo.onCancel?.()
     }
-      setAlertInfo({
-        isOpen: false,
-        type: 'info',
-        title: "",
-        message: "",
-        onClose: null
-      })
-    
-  }, [alertInfo])
+    else {
+      alertInfo.onClose?.()
+    }
+
+    setAlertInfo({
+      isOpen: false,
+      type: 'info',
+      title: "",
+      message: "",
+      onClose: null,
+      onCancel: null,
+      showCancelButton: false,
+    })
+  }
 
   return (
     <AlertContext.Provider value={{ showAlert, hideAlert }}>
       {children}
       <Alert
         {...alertInfo}
-        onClose={hideAlert}
+        onClose={() => hideAlert(false)}
+        onCancel={() => hideAlert(true)}
       />
     </AlertContext.Provider>
   )
