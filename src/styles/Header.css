@@ -26,10 +26,14 @@
 
 .header-title {
   font-size: 22px;
+  text-decoration: none;
+  color: #000000;
+  font-weight: bold;
+  margin-right: 15px;
 }
 
 .link, .logout, .login {
-  font-size: 18px;
+  font-size: 19px;
   margin: 10px;
   text-decoration: none;
   color: #000000;

@@ -2,9 +2,9 @@ import '../styles/Footer.css'
 
 const Footer = () => {
   return (
-    <div className="footer">footer
+    <footer className="footer">footer
       
-    </div>
+    </footer>
     
   )
 }

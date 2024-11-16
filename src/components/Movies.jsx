@@ -29,43 +29,20 @@ const Movies = ({ movies, image }) => {
               <img src={image[movie.id]} alt={`${movie.alkuperainennimi} image`} className="movies-image" />
               </Link>
               <ul className="movie-details">
-  <li>
-    <span className="movie-detail-label">Finnish name</span>
-    <span className="movie-detail-value">{movie.suomalainennimi}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Genre</span>
-    <span className="movie-detail-value">{movie.lajityyppi}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Release Year</span>
-    <span className="movie-detail-value">{movie.valmistumisvuosi}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Length</span>
-    <span className="movie-detail-value">{movie.pituus}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Director</span>
-    <span className="movie-detail-value">{movie.ohjaaja}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Writer</span>
-    <span className="movie-detail-value">{movie.kasikirjoittajat}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Main Actor</span>
-    <span className="movie-detail-value">{movie.paanayttelijat}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Language and subtitles</span>
-    <span className="movie-detail-value">{movie.kieli}</span>
-  </li>
-  <li>
-    <span className="movie-detail-label">Description</span>
-    <span className="movie-detail-value">{movie.kuvaus}</span>
-  </li>
-</ul>
+                <li>
+                  <span className="movie-detail-label">Genre</span>
+                  <span className="movie-detail-value">{movie.lajityyppi}</span>
+                </li>
+                <li>
+                  <span className="movie-detail-label">Release Year</span>
+                  <span className="movie-detail-value">{movie.valmistumisvuosi}</span>
+                </li>
+
+                <li>
+                  <span className="movie-detail-label">tagline from tmdb</span>
+                  <span className="movie-detail-value">{movie.kuvaus}</span>
+                </li>
+              </ul>
             </li>
           ))}
         </ul>
@@ -76,7 +53,6 @@ const Movies = ({ movies, image }) => {
       )}
     </div>
   )
-  
 }
 
 export default Movies

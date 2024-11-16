@@ -6,6 +6,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import '../styles/Profile.css'
 import { useNavigate } from 'react-router-dom'
+import { Calendar, Film, Info, MapPin, Palette, Tag, Trash2, User, UserCircle } from 'lucide-react'
 
 // This component displays a profile page
 const Profile = ({currentMember, setCurrentMember, movies}) => {
@@ -32,7 +33,6 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
   // Get specific member's details
   useEffect(() => {
     if (id) {
-    console.log("moi")
     MCService
       .getProfile(id)
       .then(response => {setMember(response.data)}, setProfileUpdated(false))
@@ -155,7 +155,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
     }
 
   return (
-    <div className="profile-container">
+    <section className="profile-container">
       <h1 className="profile-title">{member.nimimerkki}&apos;s Profile</h1>
       {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {isOwner && (
@@ -195,14 +195,39 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
         </form>
       )}
       
-      <ProfileDetail label="Nickname" value={member.nimimerkki} isOwner={isOwner}/>
-      <ProfileDetail label="Join Date" value={member.liittymispaiva} isOwner={isOwner}/>
-      <ProfileDetail label="Gender" value={member.sukupuoli} isOwner={isOwner}/>
-      <ProfileDetail label="City" value={member.paikkakunta} isOwner={isOwner}/>
-      <ProfileDetail label="Hobbies" value={member.harrastukset} isOwner={isOwner}/>
-      <ProfileDetail label="Favorite Genres" value={member.suosikkilajityypit} isOwner={isOwner}/>
-      <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
-      <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
+      <div className="profile-detail">
+        <UserCircle className='profile-detail-icon'/>
+        <ProfileDetail label="Nickname" value={member.nimimerkki} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <Calendar className='profile-detail-icon'/>
+        <ProfileDetail label="Join Date" value={member.liittymispaiva} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <User className='profile-detail-icon'/>
+        <ProfileDetail label="Gender" value={member.sukupuoli} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <MapPin className='profile-detail-icon'/> 
+        <ProfileDetail label="City" value={member.paikkakunta} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <Palette className='profile-detail-icon'/>
+        <ProfileDetail label="Hobbie" value={member.harrastukset} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <Tag className='profile-detail-icon'/>
+        <ProfileDetail label="Favorite Genres" value={member.suosikkilajityypit} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <Film className='profile-detail-icon'/>
+        <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
+      </div>
+      <div className="profile-detail">
+        <Info className='profile-detail-icon'/>
+        <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
+      </div>
+
       <button onClick={() => setDropdown(!dropdown)} className="profile-button">
         {dropdown ? "Hide Member's Reviews" : "Show Member's Reviews"}
         </button>
@@ -229,10 +254,11 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       )}
       {isOwner && (
         <div className="account-delete-btn-container">
+          <Trash2 size={20} color="#7e7c7c"/>
           <button onClick={deleteProfile} className="account-delete-btn"> Delete account </button>
         </div>
       )}
-    </div>
+    </section>
   )
 }
 

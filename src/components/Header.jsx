@@ -23,24 +23,24 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
   }
   return (
     <div>
-      <div className="header"> 
+      <header className="header"> 
         <div className="header-content">
           <img src="/MovieCriticLogo.png" className="logo" alt=""/>
-          <h1 className="header-title">Movie Critic</h1>
+          <Link  to="/" className="header-title"> Movie Critic </Link>
         </div>
-          <Link to="/" className="link">Movies</Link>
+          <Link to="/" className="link"> Movies</Link>
             {!currentMember.id && (
           <Link to="/login" className="login">Login</Link>
           )}
           {currentMember.id && (
-          <>
+          <div>
             <Link to="/addmovie" className="link">Add Movie</Link>
             <Link to="/addmember" className="link">Add Member</Link>
             <Link to={`/profile/${currentMember.id}`} className="link">Profile</Link>
             <button onClick={Logout} className="logout">Log Out</button>
-          </>
+          </div>
           )}
-        </div>
+        </header>
       <Routes>
         <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
         <Route path="/addmember" element={<MemberForm/>}/>

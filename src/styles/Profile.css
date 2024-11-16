@@ -81,8 +81,19 @@
   color: white;
 }
 
+.profile-detail {
+  display: flex;
+  justify-content: center;
+  gap: 8px
+}
+
+.profile-detail-icon {
+  size: 20px;
+  margin-top: 10px;
+}
+
 .profile-reviews {
-  background-color: #2C2C2C;
+  background-color: #7e7c7c;
   padding: 15px;
   border-radius: 8px;
   margin-top: 15px;

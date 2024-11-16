@@ -6,6 +6,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
+import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Subtitles, Tag, Trash2, UserCircle, Video } from 'lucide-react'
 
 // This component displays a movie's page
 const MoviePage = ({ movies, image, currentMember, setMovies }) => {
@@ -188,126 +189,168 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
   }
 
   return (
-    <div className="movie-page-container">
-      <h1 className="movie-title">{movie.alkuperainennimi}</h1>
-      <img src={movieImage} alt={`${movie.alkuperainennimi} image`} className="movie-image" />
+    <section className="movie-page-container">
+      <div className="movie-title-container">
+        <h1 className="movie-title">{movie.alkuperainennimi}</h1>
+        <img src={movieImage} alt={`${movie.alkuperainennimi} image`} className="movie-image" />
+      </div>
+  
       <div className="movie-details">
         <div className="movie-detail-item">
-        <label className="movie-detail-label">Suomalainen nimi</label>
-        <p className="movie-detail">{movie.alkuperainennimi}</p>
+          <div className="icon-label-container">
+            <Languages size="20px"/>
+            <label className="movie-detail-label"> Suomalainen nimi</label>
+          </div>
+          <p className="movie-detail">{movie.alkuperainennimi}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Tag size="20px"/>
+            <label className="movie-detail-label"> Lajityyppi</label>
+          </div>
+          <p className="movie-detail">{movie.lajityyppi}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Calendar size="20px"/>
+            <label className="movie-detail-label"> Valmistumisvuosi</label>
+          </div>
+          <p className="movie-detail">{movie.valmistumisvuosi}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Clock size="20px"/>
+            <label className="movie-detail-label"> Pituus</label>
+          </div>
+          <p className="movie-detail">{movie.pituus}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Video size="20px"/>
+            <label className="movie-detail-label"> Ohjaaja</label>
+          </div>
+          <p className="movie-detail">{movie.ohjaaja}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Pen size="20px"/>
+            <label className="movie-detail-label"> Käsikirjoittajat</label>
+          </div>
+          <p className="movie-detail">{movie.kasikirjoittajat}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <UserCircle size="20px"/>
+            <label className="movie-detail-label"> Päänäyttelijät</label>
+          </div>
+          <p className="movie-detail">{movie.paanayttelijat}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <MessageCircle size="20px"/>
+            <Subtitles size="20px"/>
+            <label className="movie-detail-label"> Kieli ja Tekstitys</label>
+          </div>
+          <p className="movie-detail">{movie.kieli}</p>
+        </div>
+
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Info size="20px"/>
+            <label className="movie-detail-label"> Kuvaus</label>
+          </div>
+          <p className="movie-detail">{movie.kuvaus}</p>
+        </div>
       </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Lajityyppi</label>
-        <p className="movie-detail">{movie.lajityyppi}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Valmistumisvuosi</label>
-        <p className="movie-detail">{movie.valmistumisvuosi}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Pituus</label>
-        <p className="movie-detail">{movie.pituus}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Ohjaaja</label>
-        <p className="movie-detail">{movie.ohjaaja}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Käsikirjoittajat</label>
-        <p className="movie-detail">{movie.kasikirjoittajat}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Päänäyttelijät</label>
-        <p className="movie-detail">{movie.paanayttelijat}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Kieli ja Tekstitys</label>
-        <p className="movie-detail">{movie.kieli}</p>
-      </div>
-      <div className="movie-detail-item">
-        <label className="movie-detail-label">Kuvaus</label>
-        <p className="movie-detail">{movie.kuvaus}</p>
-      </div>
-    </div>
-    <button onClick={() => setShowReviewForm(!showReviewForm)} className="show-review-form-btn" ref={reviewFormRef}> {showReviewForm ? 'Hide Review Form' : 'Add a Review'}</button>
-    {showReviewForm && (
+
+      <button onClick={() => setShowReviewForm(!showReviewForm)} className="show-review-form-btn" ref={reviewFormRef}> {showReviewForm ? 'Hide Review Form' : 'Add a Review'}</button>
+      {showReviewForm && (
       <div className="review-form">
         <p className="review-form-header">Write a Review</p>
         <form onSubmit={addReview}>
           <div className="review-form-input-container">
             <label className="review-form-label">Title</label>
-            <input 
-            className="review-form-input" 
-            type="text" 
-            name="otsikko" 
-            value={review.otsikko} 
+              <input 
+              className="review-form-input" 
+              type="text" 
+              name="otsikko" 
+              value={review.otsikko} 
+              onChange={handleChange} 
+              required 
+            />
+            </div>
+          <div className="review-form-input-container">
+            <label className="review-form-label">Review</label>
+            <textarea 
+            className="review-form-textarea" 
+            name="sisalto" 
+            value={review.sisalto} 
             onChange={handleChange} 
             required 
           />
           </div>
-        <div className="review-form-input-container">
-          <label className="review-form-label">Review</label>
-          <textarea 
-          className="review-form-textarea" 
-          name="sisalto" 
-          value={review.sisalto} 
-          onChange={handleChange} 
-          required 
-        />
+            <div className="review-form-input-container">
+              <label className="review-form-label">Rating (0-5)</label>
+              <select 
+                className="review-form-select" 
+                name="tahdet" 
+                value={review.tahdet} 
+                onChange={handleRatingChange} 
+                required
+                >
+                <option hidden>Select a Rating</option>
+                <option value="5" className="review-rating">★★★★★ (5)</option>
+                <option value="4" className="review-rating">★★★★☆ (4)</option>
+                <option value="3" className="review-rating">★★★☆☆ (3)</option>
+                <option value="2" className="review-rating">★★☆☆☆ (2)</option>
+                <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
+                <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
+              </select>
+              </div>
+            <button type="submit" className="review-form-button">Submit Review</button>
+          </form>
         </div>
-          <div className="review-form-input-container">
-            <label className="review-form-label">Rating (0-5)</label>
-            <select 
-            className="review-form-select" 
-            name="tahdet" 
-            value={review.tahdet} 
-            onChange={handleRatingChange} 
-            required
-            >
-              <option hidden>Select a Rating</option>
-              <option value="5" className="review-rating">★★★★★ (5)</option>
-              <option value="4" className="review-rating">★★★★☆ (4)</option>
-              <option value="3" className="review-rating">★★★☆☆ (3)</option>
-              <option value="2" className="review-rating">★★☆☆☆ (2)</option>
-              <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
-              <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
-            </select>
-            </div>
-          <button type="submit" className="review-form-button">Submit Review</button>
-        </form>
-      </div>
-    )}
-      {currentMember && (
-      <div className="delete-movie-btn-container">
-        <button onClick={() => deleteMovie(movie.id)} className="delete-movie-btn">Delete Movie</button>
-      </div>
       )}
-      <div className="reviews-section">
-        <p className="reviews-header">Reviews</p>
-        {reviews.length > 0 ? (
-          reviews.map((review, i) => (
-            <div className="review-item" key={i}>
-              <p className="review-item-title">{review.otsikko}</p>
-              <span className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
-                {"★".repeat(Number(review.tahdet))}
-                {"☆".repeat(5 - Number(review.tahdet))}
-              </span>
-              <p className="review-content">{review.sisalto}</p>
-              <div className="review-author">
-                <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString('en-GB')}
+        {currentMember && (
+        <div className="delete-movie-btn-container">
+          <Trash2 size={20} color="#7e7c7c"/>
+          <button onClick={() => deleteMovie(movie.id)} className="delete-movie-btn">Delete Movie</button>
+        </div>
+        )}
+        <div className="reviews-section">
+          <p className="reviews-header">Reviews</p>
+          {reviews.length > 0 ? (
+            reviews.map((review, i) => (
+              <div className="review-item" key={i}>
+                <p className="review-item-title">{review.otsikko}</p>
+                <span className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
+                  {"★".repeat(Number(review.tahdet))}
+                  {"☆".repeat(5 - Number(review.tahdet))}
+                </span>
+                <p className="review-content">{review.sisalto}</p>
+                <div className="review-author">
+                  <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString('en-GB')}
+                </div>
+                {review.nimimerkki === currentMember.nimimerkki && (
+                <div className="delete-review-btn-container">
+                  <Trash2 size={20} color="#7e7c7c"/>
+                  <button onClick={() => deleteReview(review.id)} className="delete-review-btn">Delete Review</button>
+                </div>
+                )}
               </div>
-              {review.nimimerkki === currentMember.nimimerkki && (
-              <div className="delete-review-btn-container">
-                <button onClick={() => deleteReview(review.id)} className="delete-review-btn">Delete Review</button>
-              </div>
-              )}
-            </div>
-          ))
-        ) : (
+            ))
+          ) : (
           <p className="no-reviews">No reviews yet. Be the first to review this movie!</p>
         )}
       </div>
-    </div>
+    </section>
   )
 }
 

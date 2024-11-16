@@ -15,17 +15,21 @@
 }
 
 .movie-title {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-size: 32px;
   font-weight: bold;
 }
 
 .movie-image {
-  width: 50%;
+  width: 100%;
+  max-width: 600px; 
   height: auto;
-  max-height: 150px;
   object-fit: cover;
-  border-radius: 5px;
+}
+
+.icon-label-container {
+  display: flex;
+  justify-content: center;
 }
 
 .review-form {
@@ -161,10 +165,6 @@
   margin-top: 20px;
 }
 
-.movie-detail-item {
-  display: flex;
-  flex-direction: column;
-}
 
 .movie-detail-label {
   font-weight: bold;
