@@ -10,12 +10,17 @@ import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from './hooks/useAlertMessages.js'
 import { handleApiError } from './utils/apiErrorHandler.js'
 import { Outlet } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 const App = () => {
   const [movies, setMovies] = useState([])
   const [image, setImage] = useState({})
   const [currentMember, setCurrentMember] = useState({})
   const [updateMovieList, setUpdateMovieList] = useState(false)
+  const [movieRatings, setMovieRatings] = useState({})
+  const [page, setPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
+  const location = useLocation()
   const { showInfo, showError } = useAlertMessages()
   const navigate = useNavigate()
 
@@ -59,38 +64,85 @@ const App = () => {
     return () => clearInterval(interval)
   },[navigate, showInfo])
 
-  // Populate list of movies
+  // Populate list of movies and check for duplicates
   useEffect(() => {
-    MCService
-      .getMovies()
-      .then(response => {
-        const sortedMovies = response.data.sort((a,b) => b.id - a.id)
-        setMovies(sortedMovies)
-      })
-      .catch((error) => {
-        showError(handleApiError(error, "Failed to load movie images. Please try again."))
-      })
-  },[updateMovieList, showError])
-  
-  // Fetch image for every movie
-  useEffect(() => {
-    setImage({})
-
-      movies.forEach(movie => {
-        MCService.getImage(movie.id)
+    const loadMovies = () => {
+      setIsLoading(true)
+      MCService.getMovies(page)
         .then(response => {
-          const b64 = Buffer.from(response.data,'binary').toString('base64')
-          const mime = 'image/jpeg'
-          setImage(prevImage => ({
-            ...prevImage,
-            [movie.id]: `data:${mime};base64,${b64}`
-          }))
+          const sortedMovies = response.data.sort((a, b) => b.id - a.id)
+          setMovies(prevMovies => {
+            const newMovies = sortedMovies.filter(
+              movie => !prevMovies.some(existingMovie => existingMovie.id === movie.id)
+            )
+            return [...prevMovies, ...newMovies]
+          })
         })
-        .catch((error) => {
-          showError(handleApiError(error, "Failed to load movie image. Please try again."))
+        .catch(error => {
+          showError(handleApiError(error, "Failed to load movies. Please try again."))
         })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+
+    loadMovies()
+  },[updateMovieList, showError, page])
+
+  useEffect(() => {
+    console.log(movies)
+  },[movies])
+
+
+  // Add scroll event listener to detect when the user reaches the bottom of the page
+  useEffect(() => {
+    if (location.pathname === '/') {
+      window.addEventListener('scroll', handleScroll)
+      return () => {
+        window.removeEventListener('scroll', handleScroll)
+      }
+    }  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading])
+
+  // Load intial ratings when movies load
+  useEffect(() => {
+    setMovieRatings({})
+    movies.forEach(movie => {
+      MCService.getReviews(movie.id)
+      .then(response => {
+        const reviews = response.data
+        const rating = reviews.length === 0 ? "Unrated" : (reviews.reduce((sum, review) => sum + review.tahdet, 0) / reviews.length)
+
+        setMovieRatings(prevRatings => ({
+          ...prevRatings,
+          [movie.id]: rating
+        }))
       })
-  },[movies, showError])
+      .catch(error => {
+        showError(handleApiError(error, "Failed to load movie rating. Please try again."))
+        setMovieRatings(prevRatings => ({
+          ...prevRatings,
+          [movie.id]: "Unrated"
+        }))
+      })
+    })
+  }, [movies, showError])
+
+  // Load more movies when user scrolls to bottom of movie list
+  const handleScroll = () => {
+    if (location.pathname === '/' && window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && !isLoading) {
+      setPage(prevPage => prevPage + 1)
+    }
+  }
+  
+  // Updates movie ratings
+  const updateMovieRating = (movieId, rating) => {
+    setMovieRatings(prev => ({
+      ...prev,
+      [movieId]: rating
+    }))
+  }
 
   return (
     <div className="container">
@@ -102,6 +154,9 @@ const App = () => {
       updateMovieList={updateMovieList} 
       setUpdateMovieList={setUpdateMovieList} 
       setMovies={setMovies} 
+      movieRatings={movieRatings}
+      updateMovieRating={updateMovieRating}
+      isLoading={isLoading}
       />
     
     <main className="main-content">

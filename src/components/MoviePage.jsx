@@ -6,10 +6,10 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
-import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Subtitles, Tag, Trash2, UserCircle, Video } from 'lucide-react'
+import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Subtitles, Tag, Trash2, UserCircle, Video } from 'lucide-react'
 
 // This component displays a movie's page
-const MoviePage = ({ movies, image, currentMember, setMovies }) => {
+const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating }) => {
   const navigate = useNavigate()
   const {index} = useParams()
   const [review, setReview] = useState({
@@ -17,8 +17,8 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
     sisalto: "",
     tahdet: "",
     nimimerkki: currentMember.nimimerkki,
-    elokuvanalkuperainenimi: "",
-    elokuvansuomalainennimi: ""
+    elokuvanOtsikko: "",
+
   })
   const [movie, setMovie] = useState({})
   const [reviews, setReviews] = useState([])
@@ -82,6 +82,20 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
     }
   }, [showReviewForm])
 
+  const calculateAverage = (reviews) => {
+    if (reviews.length === 0) return "Unrated"
+    const total = reviews.reduce((sum, review) => sum + review.tahdet, 0)
+    return (total / reviews.length).toFixed(1)
+  }
+
+  useEffect(() => {
+    if (movie?.id) {
+      const average = calculateAverage(reviews)
+      updateMovieRating(movie.id, average, reviews.length > 0)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reviews])
+
   // Temporary returns while movie loads or movie is not found
   if (loading) {
     return <div>Loading movie details...</div>
@@ -118,8 +132,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
       elokuvaid: movie.id,
       jasenid: currentMember.id,
       luotuaika: new Date().toISOString(),
-      elokuvanalkuperainennimi: movie.alkuperainennimi,
-      elokuvansuomalainennimi: movie.suomalainennimi
+      elokuvanOtsikko: movie.otsikko,
     }
     const token = localStorage.getItem('token')
     if (token) {
@@ -152,7 +165,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
         onConfirm: async () => {
           try {
             await MCService.deleteReview(id, token)
-            showSuccess("Successfully deleted the review!")
+            showSuccess("Successfully deleted your review!")
           } catch {
             showError("Error deleting review.")
           }
@@ -191,25 +204,39 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
   return (
     <section className="movie-page-container">
       <div className="movie-title-container">
-        <h1 className="movie-title">{movie.alkuperainennimi}</h1>
-        <img src={movieImage} alt={`${movie.alkuperainennimi} image`} className="movie-image" />
+        <h1 className="movie-title">{movie.otsikko}</h1>
+        <img src={movie.kuvan_polku} alt={`${movie.otsikko} image`} className="movie-image" />
       </div>
-  
+
       <div className="movie-details">
+        <div className="movie-detail-item">
+          <div className="icon-label-container">
+            <Star size="20px"/>
+            <label className="movie-detail-label"> Average Rating</label>
+          </div>
+          <p className="movie-detail">
+            {calculateAverage(reviews)}
+            {reviews.length > 0 && ` / 5 `}
+            <span className="review-count">
+            {reviews.length > 0 && `(${reviews.length} ${reviews.length === 1 ? 'review' : 'reviews'})`}
+            </span>
+          </p>
+        </div>
+
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Languages size="20px"/>
             <label className="movie-detail-label"> Suomalainen nimi</label>
           </div>
-          <p className="movie-detail">{movie.alkuperainennimi}</p>
+          <p className="movie-detail">{movie.otsikko}</p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Tag size="20px"/>
-            <label className="movie-detail-label"> Lajityyppi</label>
+            <label className="movie-detail-label"> Lajityypit </label>
           </div>
-          <p className="movie-detail">{movie.lajityyppi}</p>
+          <p className="movie-detail">{movie.lajityypit}</p>
         </div>
 
         <div className="movie-detail-item">
@@ -225,7 +252,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
             <Clock size="20px"/>
             <label className="movie-detail-label"> Pituus</label>
           </div>
-          <p className="movie-detail">{movie.pituus}</p>
+          <p className="movie-detail">{movie.pituus} min</p>
         </div>
 
         <div className="movie-detail-item">
@@ -256,9 +283,9 @@ const MoviePage = ({ movies, image, currentMember, setMovies }) => {
           <div className="icon-label-container">
             <MessageCircle size="20px"/>
             <Subtitles size="20px"/>
-            <label className="movie-detail-label"> Kieli ja Tekstitys</label>
+            <label className="movie-detail-label"> Kieli</label>
           </div>
-          <p className="movie-detail">{movie.kieli}</p>
+          <p className="movie-detail">{movie.alkuperainen_kieli}</p>
         </div>
 
         <div className="movie-detail-item">

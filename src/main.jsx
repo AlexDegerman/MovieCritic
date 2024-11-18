@@ -14,4 +14,3 @@ createRoot(document.getElementById('root')).render(
     </AlertProvider>
   </StrictMode>
 )
-//when complete, remove strictmode

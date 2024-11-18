@@ -237,7 +237,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
             <ul className="profile-review-container">
               {reviews.map((review) => (
                 <li key={review.id} className="profile-review">
-                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`} className="profile-review-link"> {review.elokuvanalkuperainennimi} </Link>
+                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`} className="profile-review-link"> {review.elokuvanOtsikko} </Link>
                   <p className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
                     {'★'.repeat(Number(review.tahdet))}
                     {'☆'.repeat(5 - Number(review.tahdet))}

@@ -182,13 +182,17 @@ app.delete('/api/jasen/:id', authenticateToken, isProfileOwner, async (req, res)
 
 // Get all rows from Elokuva
 app.get('/api/elokuva', async (req, res) => {
+  const { page = 1, limit = 50 } = req.query
+  const offset = (page - 1) * limit
+
   try {
-    const [rows] = await pool.execute('SELECT * FROM elokuva')
+    const [rows] = await pool.execute('SELECT * FROM elokuva LIMIT ? OFFSET ?', [parseInt(limit), offset])
     res.status(200).json(rows)
   } catch (error) {
     res.status(500).json({ error: 'Error in query: ' + error.message })
   }
 })
+
 
 // Get specific movie's image
 app.get('/api/elokuva/:id/kuva', async (req, res) => {
@@ -263,11 +267,12 @@ app.get('/api/jasen/:id/arvostelut', async (req, res) => {
 
 // Add a review
 app.post('/api/arvostelut', authenticateToken, async (req, res) => {
-  const { elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanalkuperainennimi, elokuvansuomalainennimi } = req.body
+  const { elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko } = req.body
+  console.log(req.body)
   try {
     await pool.execute(
-      'INSERT INTO arvostelut (elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanalkuperainennimi, elokuvansuomalainennimi) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanalkuperainennimi, elokuvansuomalainennimi]
+      'INSERT INTO arvostelut (elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko]
     )
     res.status(201).json({ message: 'Review added successfully' })
   } catch (error) {

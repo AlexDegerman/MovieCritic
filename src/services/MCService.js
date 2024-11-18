@@ -6,10 +6,11 @@ const loginUrl = "http://localhost:5173/api/login"
 
 // This service handles backend requests
 // Returns a list of movies
-const getMovies = ()  => {
-  return axios.get(movieUrl)
+const getMovies = (page) => {
+  return axios.get(movieUrl, { params: { page, limit: 50 } })
 }
-// Returns image of a specific movie
+
+// Returns image of a specific movie / unused, reuse for profile pic maybe
 const getImage = (id) => {
   return axios.get(movieUrl + '/' + `${id}` + '/kuva', {
     responseType: 'arraybuffer'})

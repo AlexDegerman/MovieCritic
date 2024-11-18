@@ -1,4 +1,6 @@
 import { MOVIE_GENRES } from '../constants/movieGenres'
+import { MOVIE_GENRES_FIN } from '../constants/movieGenresFin'
+
 import '../styles/Filter.css'
 // This component displays a search bar and a genre selector
 const Filter = ( {setSearch, search, genre, setGenre}) => {
@@ -21,7 +23,7 @@ const Filter = ( {setSearch, search, genre, setGenre}) => {
         <label>Filter by genre</label>
         <select value={genre} onChange={handleGenre} className="genre-select">
           <option value="">All Genres</option>
-          {MOVIE_GENRES.map((genre) => (
+          {MOVIE_GENRES_FIN.map((genre) => (
             <option key={genre} value={genre}>
               {genre}
             </option>

@@ -10,7 +10,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Header.css'
 
 // This component displays a header with links to pages
-const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList, setMovies} ) => {
+const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList, setMovies, movieRatings, updateMovieRating, isLoading} ) => {
   const navigate = useNavigate()
   const { showSuccess } = useAlertMessages()
 
@@ -21,6 +21,7 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
       navigate('/')
     })
   }
+
   return (
     <div>
       <header className="header"> 
@@ -45,8 +46,8 @@ const Header = ( {movies, image, currentMember, setCurrentMember, setUpdateMovie
         <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
         <Route path="/addmember" element={<MemberForm/>}/>
         <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies}/>}/>
-        <Route path="/" element={<Movies movies={movies} image={image}/>}/>
-        <Route path="/movie/:index" element={<MoviePage movies={movies} image={image} currentMember={currentMember} setMovies={setMovies}/>}/>
+        <Route path="/" element={<Movies movies={movies} image={image} movieRatings={movieRatings} isLoading={isLoading}/>}/>
+        <Route path="/movie/:index" element={<MoviePage movies={movies} image={image} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating}/>}/>
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList}/>}/>
       </Routes>
     </div>
