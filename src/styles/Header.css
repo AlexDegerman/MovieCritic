@@ -42,13 +42,20 @@
   text-decoration: underline;
 }
 
-.logout {
-  background-color: transparent;
+
+.login, .logout {
+  height: 40px;
+  background-color: #333333;
+  color: white;
+  padding: 10px;
   border: none;
   cursor: pointer;
   font-size: 16px;
   margin: 0 10px;
-}
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 5px;
+  }
 
 @media (max-width: 540px) {
   .header {

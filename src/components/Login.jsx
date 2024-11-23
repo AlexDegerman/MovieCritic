@@ -3,6 +3,7 @@ import MCService from '../services/MCService'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Login.css'
+import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a login page
 const Login = ({ setUpdateMovieList }) => {
@@ -10,18 +11,19 @@ const Login = ({ setUpdateMovieList }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const {showSuccess, showError } = useAlertMessages()
+  const {getText} = useLanguageUtils(false)
 
   const Login = async (event) => {
     event.preventDefault()
     try {
       const res = await MCService.Login(email, password)
       localStorage.setItem('token', res.data.token)
-      showSuccess("Succesfully logged in!", () => {
+      showSuccess(getText("Kirjautuminen onnistui!","Succesfully logged in!"), () => {
         navigate('/')
         setUpdateMovieList(prev => !prev)
       })
     } catch {
-      showError("Wrong email or password!")
+      showError(getText("Väärä sähköpostiosoite tai salasana!","Wrong email or password!"))
     }
   }
 

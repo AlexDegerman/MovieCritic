@@ -39,7 +39,7 @@
   color: #FFC107;
 }
 
-.movie-input,.movie-select {
+.movie-input,.movie-select,.movie-input-area {
   padding: 10px;
   height: 40px;
   background-color: #333;
@@ -47,11 +47,18 @@
   border: 1px solid #FFC107;
   border-radius: 4px;
   box-sizing: border-box;
+  resize: none;
+  width: 100%;
+}
+.movie-input-area {
+  height: 100px;
 }
 
 .movie-select {
-  background-color: #333;
-
+  height: 65px;
+  scrollbar-color: #007bff #333;
+  scrollbar-width: thin;
+  overflow-y: scroll;
 }
 
 .movie-button-container {
@@ -74,11 +81,13 @@
 .movie-input:focus,
 .movie-input:active,
 .movie-select:focus,
-.movie-select:active {
+.movie-select:active,
+.movie-input-area:focus,
+.movie-input-area:active {
     outline: none;
     border-color: #FFC107;
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 500px) {
   .movie-form {
     padding-top: 100px;
   }

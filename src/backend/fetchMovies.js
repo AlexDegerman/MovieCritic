@@ -194,128 +194,46 @@ const insertMovie = async (connection, { englishMovie, finnishMovie }) => {
     }
 }
 
-const discoverMovies = async (englishClient, finnishClient, page = 1) => {
-    try {
-        const [englishData, finnishData] = await Promise.all([
-            englishClient.get('/discover/movie', {
-                params: {
-                    page,
-                    sort_by: 'popularity.desc',
-                    'vote_count.gte': 1000,
-                    with_original_language: 'en'
-                }
-            }),
-            finnishClient.get('/discover/movie', {
-                params: {
-                    page,
-                    sort_by: 'popularity.desc',
-                    'vote_count.gte': 1000,
-                    with_original_language: 'en'
-                }
-            })
-        ])
-        
-        const finnishTitlesMap = new Map(
-            finnishData.data.results.map(movie => [movie.id, movie])
-        )
+const getProcessedMovieIds = async (connection) => {
+    const [rows] = await connection.execute('SELECT tmdb_id FROM movie')
+    return new Set(rows.map(row => row.tmdb_id))
+}
 
-        const results = englishData.data.results.map(englishMovie => ({
-            ...englishMovie,
-            finnishData: finnishTitlesMap.get(englishMovie.id)
-        }))
+const findNextIdRange = async (connection, batchSize) => {
+    const [result] = await connection.execute(
+        'SELECT MIN(tmdb_id) as min_id, MAX(tmdb_id) as max_id FROM movie'
+    )
+    
+    if (!result[0].min_id) {
+        return { start: 100, end: 100 + batchSize }
+    }
 
-        return {
-            ...englishData.data,
-            results
-        }
-    } catch (error) {
-        if (error.response?.status === 429) {
-            console.log(`Rate limit hit on page ${page}, waiting and retrying...`)
-            throw error
-        }
-        throw new Error(`Failed to discover movies on page ${page}: ${error.message}`)
+    const [rows] = await connection.execute(`
+        SELECT tmdb_id 
+        FROM movie 
+        WHERE tmdb_id >= ? 
+        ORDER BY tmdb_id
+    `, [result[0].min_id])
+
+    const processedIds = new Set(rows.map(row => row.tmdb_id))
+    let currentId = result[0].min_id
+    
+    while (processedIds.has(currentId)) {
+        currentId++
+    }
+
+    return {
+        start: currentId,
+        end: currentId + batchSize
     }
 }
 
 const chunkArray = (array, chunkSize) => {
-  const chunks = []
-  for (let i = 0; i < array.length; i += chunkSize) {
-      chunks.push(array.slice(i, i + chunkSize))
-  }
-  return chunks
-}
-
-
-const main = async () => {
-    const options = {
-        maxMovies: 8000,
-        batchSize: 5
+    const chunks = []
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize))
     }
-    
-    const { maxMovies, batchSize } = options
-    const englishClient = createApiClient('en-US')
-    const finnishClient = createApiClient('fi-FI')
-    let connection = null
-    let processedCount = 0
-    let failedCount = 0
-
-    try {
-        validateEnvironment()
-        connection = await createDbConnection()
-
-        const totalPages = Math.min(Math.ceil(maxMovies / 20), 500)
-        console.log(`Will fetch up to ${maxMovies} movies across ${totalPages} pages`)
-
-        for (let currentPage = 1; currentPage <= totalPages; currentPage++) {
-            try {
-                console.log(`\nFetching page ${currentPage} of ${totalPages}...`)
-                const discoveredMovies = await discoverMovies(englishClient, finnishClient, currentPage)
-                const movieBatches = chunkArray(discoveredMovies.results, batchSize)
-
-                for (const batch of movieBatches) {
-                    if (processedCount >= maxMovies) break
-
-                    const promises = batch.map(async (movie) => {
-                        try {
-                            console.log(`Starting to process: ${movie.title} (ID: ${movie.id})`)
-                            const movieDetails = await fetchMovieDetails(movie.id)
-                            const processedData = processMovieData(movieDetails)
-                            await insertMovie(connection, processedData)
-                            processedCount++
-                            console.log(`✓ Completed: ${movie.title} / ${movie.finnishData.title}`)
-                            return true
-                        } catch (error) {
-                            failedCount++
-                            console.error(`✗ Failed to process ${movie.title}:`, error.message)
-                            return false
-                        }
-                    })
-
-                    await Promise.all(promises)
-                    await new Promise(resolve => setTimeout(resolve, 1000))
-                }
-
-                console.log(`\nProgress: ${processedCount} processed, ${failedCount} failed`)
-                
-                if (processedCount >= maxMovies) break
-            } catch (error) {
-                console.error(`Failed to process page ${currentPage}:`, error.message)
-                continue
-            }
-        }
-
-        console.log(`\nFinal Results:`)
-        console.log(`Successfully processed: ${processedCount} movies`)
-        console.log(`Failed to process: ${failedCount} movies`)
-
-    } catch (error) {
-        console.error('Application error:', error.message)
-    } finally {
-        if (connection) {
-            await connection.end()
-            console.log('Database connection closed')
-        }
-    }
+    return chunks
 }
 
 const validateEnvironment = () => {
@@ -334,6 +252,107 @@ const createDbConnection = async () => {
         return connection
     } catch (error) {
         throw new Error(`Database connection failed: ${error.message}`)
+    }
+}
+
+const main = async () => {
+    const options = {
+        maxMovies: 12000,
+        batchSize: 50,
+        idStep: 50
+    }
+    
+    const { maxMovies, batchSize, idStep } = options
+    let connection = null
+    let processedCount = 0
+    let failedCount = 0
+    let skippedCount = 0
+    let emptyCount = 0
+
+    try {
+        validateEnvironment()
+        connection = await createDbConnection()
+
+        const processedIds = await getProcessedMovieIds(connection)
+        processedCount = processedIds.size
+        console.log(`Found ${processedCount} existing movies in database`)
+
+        let { start: currentId, end: endId } = await findNextIdRange(connection, batchSize)
+        
+        while (processedCount < maxMovies) {
+            console.log(`\nProcessing ID range: ${currentId} - ${endId}`)
+            
+            const idsToProcess = Array.from(
+                { length: endId - currentId + 1 }, 
+                (_, i) => currentId + i
+            ).filter(id => !processedIds.has(id))
+
+            console.log(`Found ${idsToProcess.length} new movies to process in this range`)
+            
+            if (idsToProcess.length === 0) {
+                console.log('All IDs in this range already processed, moving to next range')
+                currentId = endId + 1
+                endId = currentId + idStep - 1
+                continue
+            }
+
+            const processMovieIfNotExists = async (movieId) => {
+                if (processedIds.has(movieId)) {
+                    skippedCount++
+                    return null
+                }
+
+                try {
+                    const movieDetails = await fetchMovieDetails(movieId)
+                    const processedData = processMovieData(movieDetails)
+                    await insertMovie(connection, processedData)
+                    processedIds.add(movieId)
+                    processedCount++
+                    console.log(`✓ Completed: ${processedData.englishMovie.title} (ID: ${movieId})`)
+                    return processedData
+                } catch (error) {
+                    if (error.message.includes('404')) {
+                        emptyCount++
+                        console.log(`- ID ${movieId} not found (404)`)
+                    } else {
+                        failedCount++
+                        console.error(`✗ Failed to process movie ${movieId}:`, error.message)
+                    }
+                    return null
+                }
+            }
+
+            const chunks = chunkArray(idsToProcess, 5)
+
+            for (const chunk of chunks) {
+                await Promise.all(
+                    chunk.map(processMovieIfNotExists)
+                )
+
+                await new Promise(resolve => setTimeout(resolve, 2000))
+            }
+
+            console.log(`\nProgress: ${processedCount} processed, ${skippedCount} skipped, ${failedCount} failed, ${emptyCount} not found`)
+            
+            if (processedCount >= maxMovies) break
+
+            currentId = endId + 1
+            endId = currentId + idStep - 1
+        }
+
+        console.log(`\nFinal Results:`)
+        console.log(`Successfully processed: ${processedCount} movies`)
+        console.log(`Skipped existing: ${skippedCount} movies`)
+        console.log(`Failed to process: ${failedCount} movies`)
+        console.log(`IDs not found: ${emptyCount}`)
+
+    } catch (error) {
+        console.error('Application error:', error.message)
+    } finally {
+        if (connection) {
+            await connection.end()
+            console.log('Database connection closed')
+        }
     }
 }
 

@@ -7,9 +7,10 @@ import { handleApiError } from '../utils/apiErrorHandler'
 import '../styles/Profile.css'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Film, Info, MapPin, Palette, Tag, Trash2, User, UserCircle } from 'lucide-react'
+import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a profile page
-const Profile = ({currentMember, setCurrentMember, movies}) => {
+const Profile = ({currentMember, setCurrentMember}) => {
   const navigate = useNavigate()
   const [showEdit, setShowEdit] = useState(false)
   const [profileDetails, setProfileDetails] = useState({
@@ -29,6 +30,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
   const [dropdown, setDropdown] = useState(false)
   const {showSuccess, showError, showDoubleWarning, showInfo} = useAlertMessages()
   const [profileUpdated, setProfileUpdated] = useState(false)
+  const {getText} = useLanguageUtils()
 
   // Get specific member's details
   useEffect(() => {
@@ -37,8 +39,8 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       .getProfile(id)
       .then(response => {setMember(response.data)}, setProfileUpdated(false))
       .catch((error) => {
-        const is404 = error.response && error.response.status === 404;
-        showError(handleApiError(error, "Failed to get profile details. Please try again."),
+        const is404 = error.response && error.response.status === 404
+        showError(handleApiError(error, getText("Profiilitietojen hakeminen epäonnistui. Yritä uudelleen.", "Failed to get profile details. Please try again.") ),
         is404 ? () => navigate('/') : undefined)
       })
     }
@@ -52,7 +54,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
         .getReviewsfromMember(id)
         .then(response => {setReviews(response.data)})
         .catch((error) => {
-          showError(handleApiError(error, "Failed to load member's reviews. Please try again."))
+          showError(handleApiError(error, getText("Jäsenen arvostelujen lataaminen epäonnistui. Yritä uudelleen.", "Failed to load member's reviews. Please try again.") ))
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +102,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
     if (token) {
     try {
       const update = await MCService.updateProfileDetails(member.id, newProfileDetails, token)
-      showSuccess("Profile details updated successfully!", () => {
+      showSuccess(getText("Profiilitiedot päivitettiin onnistuneesti!", "Profile details updated successfully!"), () => {
         setCurrentMember({
           ...currentMember,
           ...update
@@ -109,19 +111,22 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
         setProfileUpdated(true)
       })
     } catch {
-        showError("Error updating profile details. Please try again.")
+        showError(getText("Virhe profiilitietojen päivittämisessä. Yritä uudelleen.", "Error updating profile details. Please try again."))
       }
     } else {
-        showError("Missing login, try logging in again")
+        showError(getText("Puuttuva kirjautuminen, yritä kirjautua uudelleen.", "Missing login, try logging in again."))
     }
   }
 
   const deleteProfile = () => {
     const token = localStorage.getItem('token')
     if (token) {
-      showDoubleWarning(
-        "Are you sure you want to delete your account? You will not be able to login again and this cannot be undone.",
-        "This is your last chance to cancel. Deleting your account is permanent. You will lose access to this account and will not be able to recover it later.",
+      showDoubleWarning(getText(
+        "Oletko varma, että haluat poistaa tilisi? Et voi kirjautua uudelleen, eikä tätä voi peruuttaa.",
+        "Are you sure you want to delete your account? You will not be able to login again and this cannot be undone."), 
+        getText(
+        "Tämä on viimeinen mahdollisuutesi peruuttaa. Tilin poistaminen on pysyvää. Menetät pääsyn tiliisi etkä voi palauttaa sitä myöhemmin.", 
+        "This is your last chance to cancel. Deleting your account is permanent. You will lose access to this account and will not be able to recover it later."),
         {
           onFinalConfirm: async () => {
             try {
@@ -129,25 +134,23 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
               setMember([])
               setCurrentMember([])
               localStorage.removeItem('token')
-              showSuccess('Successfully deleted your account.')
+              showSuccess(getText("Tilisi on poistettu onnistuneesti.", "Successfully deleted your account."))
               navigate('/')
             } catch {
-              showError("Error deleting member.")
+              showError(getText("Virhe jäsenen poistamisessa.", "Error deleting member."))
             }
           },
           onCancel: () => {
             setTimeout(() => {
-              showInfo("Cancelled deletion.")
+              showInfo(getText("Poisto peruttu.", "Cancelled deletion."))
             }, 100)
           }
         }
       )
     } else {
-      showError("Missing login, try logging in again.");
+      showError(getText("Puuttuva kirjautuminen, yritä kirjautua uudelleen.", "Missing login, try logging in again."))
     }
   }
-  
-  
 
     // Temporary return while profile data loads
     if (loading) {
@@ -156,88 +159,86 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
 
   return (
     <section className="profile-container">
-      <h1 className="profile-title">{member.nimimerkki}&apos;s Profile</h1>
+      <h1 className="profile-title">{member.nimimerkki}{getText(`'s Profiili`, `'s Profile`)}</h1>
       {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {isOwner && (
-        <button onClick={() => setShowEdit(!showEdit)} className="profile-button"> {showEdit ? 'Hide Details Edit' : 'Edit Details'} </button>
-      )}
+        <button onClick={() => setShowEdit(!showEdit)} className="profile-button">{getText(showEdit ? 'Piilota lisätiedot' : 'Muokkaa tietoja', showEdit ? 'Hide Details' : 'Edit Details')}</button>)}
       {showEdit && (
         <form onSubmit={editProfile} className="member-details-form">
           <label>
-          Nimimerkki:
+          {getText('Nimimerkki', 'Nickname')}
           <input type="text" name="nimimerkki" value={profileDetails.nimimerkki} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Sukupuoli:
+        {getText('Sukupuoli', 'Gender')}
           <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Paikkakunta:
+        {getText('Paikkakunta', 'Resident City')}
           <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Harrastukset:
+        {getText('Harrastukset', 'Hobbies')}
           <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Suosikki lajityypit:
+        {getText('Suosikki lajityypi:', 'Favorite Genres')}
           <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Suosikki elokuvat:
+        {getText('Suosikki elokuvat', 'Favorite Movies')}
           <input type="text" name="suosikkifilmit" value={profileDetails.suosikkifilmit} onChange={handleChange} className="member-details-form-input"/>
         </label>
         <label>
-          Omakuvaus:
+        {getText('Oma kuvaus', 'Self Description')}
           <textarea type="text" name="omakuvaus" value={profileDetails.omakuvaus} onChange={handleChange} className="member-details-form-input-description"/>
         </label>
-        <button type="submit" className="profile-button"> Submit </button>
+        <button type="submit" className="profile-button"> {getText('Tallenna muutokset', 'Submit')} </button>
         </form>
       )}
       
       <div className="profile-detail">
         <UserCircle className='profile-detail-icon'/>
-        <ProfileDetail label="Nickname" value={member.nimimerkki} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Nimimerkki', 'Nickname')} value={member.nimimerkki} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Calendar className='profile-detail-icon'/>
-        <ProfileDetail label="Join Date" value={member.liittymispaiva} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Liittymispäivä', 'Join Date')} value={member.liittymispaiva} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <User className='profile-detail-icon'/>
-        <ProfileDetail label="Gender" value={member.sukupuoli} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Sukupuoli', 'Gender')} value={member.sukupuoli} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <MapPin className='profile-detail-icon'/> 
-        <ProfileDetail label="City" value={member.paikkakunta} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Paikkakunta', 'Resident City')}value={member.paikkakunta} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Palette className='profile-detail-icon'/>
-        <ProfileDetail label="Hobbie" value={member.harrastukset} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Harrastukset', 'Hobbies')} value={member.harrastukset} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Tag className='profile-detail-icon'/>
-        <ProfileDetail label="Favorite Genres" value={member.suosikkilajityypit} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Suosikki lajityypi:', 'Favorite Genres')} value={member.suosikkilajityypit} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Film className='profile-detail-icon'/>
-        <ProfileDetail label="Favorite Movies" value={member.suosikkifilmit} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Suosikki elokuvat', 'Favorite Movies')}value={member.suosikkifilmit} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Info className='profile-detail-icon'/>
-        <ProfileDetail label="Self Description" value={member.omakuvaus} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Oma kuvaus', 'Self Description')} value={member.omakuvaus} isOwner={isOwner}/>
       </div>
 
-      <button onClick={() => setDropdown(!dropdown)} className="profile-button">
-        {dropdown ? "Hide Member's Reviews" : "Show Member's Reviews"}
-        </button>
+      <button onClick={() => setDropdown(!dropdown)} className="profile-button">{getText( dropdown ? 'Piilota jäsenen arvostelut' : 'Näytä jäsenen arvostelut', dropdown ? "Hide Member's Reviews" : "Show Member's Reviews")}</button>
+
       {dropdown && (
         <div>
           {reviews.length > 0 ? (
             <ul className="profile-review-container">
               {reviews.map((review) => (
                 <li key={review.id} className="profile-review">
-                  <Link to={`/movie/${movies.findIndex(movie => movie.id === review.elokuvaid)}`} className="profile-review-link"> {review.elokuvanOtsikko} </Link>
+                  <Link to={`/movie/${review.elokuvaid}`} className="profile-review-link">{getText(`${review.elokuvanOtsikko}`,`${review.elokuvanTitle}`)}</Link>
                   <p className={`review-rating ${review.tahdet === 5 && 'perfect-rating'}`}>
                     {'★'.repeat(Number(review.tahdet))}
                     {'☆'.repeat(5 - Number(review.tahdet))}
@@ -255,7 +256,7 @@ const Profile = ({currentMember, setCurrentMember, movies}) => {
       {isOwner && (
         <div className="account-delete-btn-container">
           <Trash2 size={20} color="#7e7c7c"/>
-          <button onClick={deleteProfile} className="account-delete-btn"> Delete account </button>
+          <button onClick={deleteProfile} className="account-delete-btn"> {getText('Poista tili', 'Delete Account')} </button>
         </div>
       )}
     </section>

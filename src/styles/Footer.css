@@ -2,13 +2,45 @@
   background-color: #FFC107;
   color: #000000;
   text-align: center;
-  padding: 10px;
   width: 100%;
   box-sizing: border-box;
-  position: relative;
+  position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 20px;
   z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer p, .footer ul {
+  margin: 0;
+  padding: 0;
+}
+
+.footer ul {
+  display: flex;
+  list-style: none;
+  gap: 20px;
+}
+
+.footer ul li {
+  margin: 0;
+}
+
+.footer ul li a, .footer p a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.footer ul li a:hover, .footer p a:hover {
+  text-decoration: underline;
 }

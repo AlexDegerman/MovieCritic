@@ -1,28 +1,36 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import MCService from './services/MCService.js'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import { Buffer } from 'buffer'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from './hooks/useAlertMessages.js'
 import { handleApiError } from './utils/apiErrorHandler.js'
 import { Outlet } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
+import { useLanguageUtils } from './hooks/useLanguageUtils.js'
+import { useDebounce } from './hooks/useDebounce.js'
 
 const App = () => {
   const [movies, setMovies] = useState([])
-  const [image, setImage] = useState({})
   const [currentMember, setCurrentMember] = useState({})
   const [updateMovieList, setUpdateMovieList] = useState(false)
   const [movieRatings, setMovieRatings] = useState({})
   const [page, setPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [search, setSearch] = useState("")
+  const [genre, setGenre] = useState("")
+  const [seed, setSeed] = useState(Date.now())
   const location = useLocation()
   const { showInfo, showError } = useAlertMessages()
   const navigate = useNavigate()
+  const {getText} = useLanguageUtils()
+  const debouncedSearch = useDebounce(search, 500)
+  const debouncedGenre = useDebounce(genre, 500)
 
   //Fetch logged in member's data
   useEffect(() => { 
@@ -33,14 +41,17 @@ const App = () => {
       
       MCService
         .getProfile(memberId, token)
-        .then(response => {setCurrentMember(response.data)})
+        .then(response => {
+          setCurrentMember(response.data)
+        })
         .catch((error) => {
-          showError(handleApiError(error, "Failed to get current member's data. Please try again."))
-          
-      })
-    } 
-  },[updateMovieList, showError])
-
+          showError(
+            handleApiError(error, getText("Nykyisen jäsenen tietojen hakeminen epäonnistui. Yritä uudelleen.", "Failed to get current member's data. Please try again."))
+          )
+        })
+    }
+  }, [updateMovieList, showError])
+  
   // Logout user when token expires
   useEffect(() => {
     const checkToken = () => {
@@ -51,7 +62,7 @@ const App = () => {
       
         if (decodedToken.exp < currentTime) {
           localStorage.removeItem('token')
-          showInfo("Session expired, logging out...", () => {
+          showInfo(getText("Istunto on päättynyt, kirjaudutaan ulos...", "Session expired, logging out..."), () => {
             setCurrentMember([])
             navigate('/')
           })
@@ -64,35 +75,51 @@ const App = () => {
     return () => clearInterval(interval)
   },[navigate, showInfo])
 
-  // Populate list of movies and check for duplicates
+  // Populate movie list and remove duplicates
   useEffect(() => {
+    const newSeed = Date.now()
+    setSeed(newSeed)
+    
     const loadMovies = () => {
-      setIsLoading(true)
-      MCService.getMovies(page)
+      if (page === 1) {
+        setIsInitialLoading(true)
+      } else {
+        setIsLoadingMore(true)
+      }
+
+      MCService.getMovies(page, search, genre, seed)
         .then(response => {
-          const sortedMovies = response.data.sort((a, b) => b.id - a.id)
           setMovies(prevMovies => {
-            const newMovies = sortedMovies.filter(
-              movie => !prevMovies.some(existingMovie => existingMovie.id === movie.id)
+            if (page === 1) {
+              return response.data.movies
+            }
+            const newMovies = response.data.movies.filter(movie =>
+              !prevMovies.some(existingMovie =>
+                existingMovie.tmdb_id === movie.tmdb_id
+              )
             )
             return [...prevMovies, ...newMovies]
           })
+          if (!seed) setSeed(response.data.seed)
         })
         .catch(error => {
-          showError(handleApiError(error, "Failed to load movies. Please try again."))
+          showError(handleApiError(error, getText("Elokuvia ei saatu ladattua. Yritä uudelleen.", "Failed to load movies. Please try again.")))
         })
         .finally(() => {
-          setIsLoading(false)
+          setIsInitialLoading(false)
+          setIsLoadingMore(false)
         })
     }
-
+    
     loadMovies()
-  },[updateMovieList, showError, page])
+  }, [updateMovieList, showError, page, debouncedSearch, debouncedGenre, location.pathname])
 
+  // Reset page when search or genre changes
   useEffect(() => {
-    console.log(movies)
-  },[movies])
-
+    if (page !== 1) {
+      setPage(1)
+    }
+  }, [debouncedSearch, debouncedGenre])
 
   // Add scroll event listener to detect when the user reaches the bottom of the page
   useEffect(() => {
@@ -101,29 +128,28 @@ const App = () => {
       return () => {
         window.removeEventListener('scroll', handleScroll)
       }
-    }  
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+    }
+  }, [location.pathname, isLoadingMore]) // 
 
   // Load intial ratings when movies load
   useEffect(() => {
     setMovieRatings({})
     movies.forEach(movie => {
-      MCService.getReviews(movie.id)
+      MCService.getReviews(movie.fi_id)
       .then(response => {
         const reviews = response.data
         const rating = reviews.length === 0 ? "Unrated" : (reviews.reduce((sum, review) => sum + review.tahdet, 0) / reviews.length)
 
         setMovieRatings(prevRatings => ({
           ...prevRatings,
-          [movie.id]: rating
+          [movie.fi_id]: rating
         }))
       })
       .catch(error => {
-        showError(handleApiError(error, "Failed to load movie rating. Please try again."))
+        showError(handleApiError(error, getText("Elokuvien arvosteluita ei saatu ladattua. Yritä uudelleen.", "Failed to load movie rating. Please try again.")))
         setMovieRatings(prevRatings => ({
           ...prevRatings,
-          [movie.id]: "Unrated"
+          [movie.fi_id]: "Unrated"
         }))
       })
     })
@@ -131,11 +157,19 @@ const App = () => {
 
   // Load more movies when user scrolls to bottom of movie list
   const handleScroll = () => {
-    if (location.pathname === '/' && window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight && !isLoading) {
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const windowHeight = window.innerHeight
+    const scrollHeight = document.documentElement.scrollHeight
+  
+    if (
+      location.pathname === '/' && 
+      windowHeight + scrollTop >= scrollHeight && 
+      !isLoadingMore
+    ) {
       setPage(prevPage => prevPage + 1)
     }
   }
-  
+
   // Updates movie ratings
   const updateMovieRating = (movieId, rating) => {
     setMovieRatings(prev => ({
@@ -148,7 +182,6 @@ const App = () => {
     <div className="container">
       <Header 
       movies={movies} 
-      image={image} 
       currentMember={currentMember} 
       setCurrentMember={setCurrentMember} 
       updateMovieList={updateMovieList} 
@@ -156,7 +189,12 @@ const App = () => {
       setMovies={setMovies} 
       movieRatings={movieRatings}
       updateMovieRating={updateMovieRating}
-      isLoading={isLoading}
+      isInitialLoading={isInitialLoading}
+      isLoadingMore={isLoadingMore}
+      search={search}
+      setSearch={setSearch}
+      genre={genre}
+      setGenre={setGenre}
       />
     
     <main className="main-content">

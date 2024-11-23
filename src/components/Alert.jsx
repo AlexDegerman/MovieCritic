@@ -1,15 +1,9 @@
+import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/Alert.css'
 
 // This component displays a popup with a message that user closes with OK button
-export const Alert = ({
-  isOpen,
-  type,
-  title,
-  message,
-  onClose,
-  onCancel,
-  showCancelButton
-}) => {
+export const Alert = ({ isOpen, type, title, message, onClose, onCancel, showCancelButton}) => {
+  const {getText} = useLanguageUtils()
 
   if (!isOpen) return null
 
@@ -20,10 +14,10 @@ export const Alert = ({
         <div className='message'>{message}</div>
         <div className='alert-btn-container'>
         {showCancelButton && (
-            <button onClick={onCancel} className="cancel-btn"> Cancel </button>
+            <button onClick={onCancel} className="cancel-btn">{getText("Peruuta","Cancel")}</button>
           )}
           <button onClick={onClose} className='ok-btn'>
-            {type === 'warning' ? 'Confirm' : 'OK'}
+            {type === 'warning' ? getText("Vahvista", "Confirm") : "OK"}
           </button>
         </div>
       </div>

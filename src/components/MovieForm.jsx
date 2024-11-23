@@ -2,17 +2,21 @@ import { useState } from 'react'
 import MCService from '../services/MCService'
 import { useNavigate } from 'react-router-dom'
 import { MOVIE_GENRES } from '../constants/movieGenres'
+import { MOVIE_GENRES_FIN } from '../constants/movieGenresFin.js'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/MovieForm.css'
+import { useLanguageUtils } from '../hooks/useLanguageUtils.js'
 
 // This component displays a form to add movies to the database
 const MovieForm = ({ setUpdateMovieList }) => {
   const navigate = useNavigate()
-  const {showSuccess, showError } = useAlertMessages()
+  const {showSuccess, showError, showInfo} = useAlertMessages()
+  const {language, getText} = useLanguageUtils()
+  const genres = language === 'fi' ? MOVIE_GENRES_FIN : MOVIE_GENRES
+
   const [movie, setMovie] = useState({
-    alkuperainennimi: "",
-    suomalainennimi: "",
-    lajityyppi: "",
+    otsikko: "",
+    lajityypit: [],
     valmistumisvuosi: "",
     pituus: "",
     ohjaaja: "",
@@ -20,22 +24,61 @@ const MovieForm = ({ setUpdateMovieList }) => {
     paanayttelijat: "",
     kieli: "",
     kuvaus: "",
-    kuva: null
+    kuva: "",
+    title: "",
+    genres: [],
+    release_date: "",
+    runtime: "",
+    director: "",
+    writers: "",
+    main_actors: "",
+    original_language: "",
+    overview: "",
+    poster_path: "",
+    selectedLanguage: language
   })
 
-  // Handle all input field changes
   const handleChange = (event) => {
-    const { name, value, type, files } = event.target
-
-    if (type === "file") {
+    const { name, value } = event.target
+    
+    if (name === "lajityypit" || name === "genres") {
+      const selectedOptions = Array.from(event.target.selectedOptions, option => option.value)
       setMovie((prevMovie) => ({
         ...prevMovie,
-        [name]: files[0]
+        lajityypit: selectedOptions,
+        genres: selectedOptions,
       }))
+    } else if (name === "kuva" || name === "poster_path") {
+      const isValidImageLink = value.match(/\.(jpeg|jpg|png)$/i) && value.match(/^https?:\/\/.+$/)
+      if (isValidImageLink) {
+        setMovie((prevMovie) => ({
+          ...prevMovie,
+          kuva: value,
+          poster_path: value
+        }))
+      } else {
+        showInfo(getText("Anna kelvollinen kuvalinkki, jonka pääte on .jpeg, .jpg tai .png.", "Please provide a valid image URL ending in .jpeg, .jpg, or .png."))
+      }
     } else {
+      const fieldMappings = {
+        otsikko: 'title',
+        valmistumisvuosi: 'release_date',
+        pituus: 'runtime',
+        ohjaaja: 'director',
+        kasikirjoittajat: 'writers',
+        paanayttelijat: 'main_actors',
+        kieli: 'original_language',
+        kuvaus: 'overview'
+      }
+
+      const reverseFieldMappings = Object.fromEntries(
+        Object.entries(fieldMappings).map(([key, value]) => [value, key])
+      )
+
       setMovie((prevMovie) => ({
-      ...prevMovie,
-      [name]: value
+        ...prevMovie,
+        [name]: value,
+        [fieldMappings[name] || reverseFieldMappings[name] || name]: value
       }))
     }
   }
@@ -44,84 +87,185 @@ const MovieForm = ({ setUpdateMovieList }) => {
   const addMovie = async (event) => {
     event.preventDefault()
     
-    const newMovie = new FormData()
-    Object.keys(movie).forEach((key) => {
-      newMovie.append(key, movie[key])
-    })
-
+    const movieData = {
+      selectedLanguage: movie.selectedLanguage,
+      ...(movie.selectedLanguage === 'fi' ? {
+        otsikko: movie.otsikko,
+        lajityypit: movie.lajityypit.join(', '),
+        valmistumisvuosi: movie.valmistumisvuosi,
+        pituus: movie.pituus,
+        ohjaaja: movie.ohjaaja,
+        kasikirjoittajat: movie.kasikirjoittajat,
+        paanayttelijat: movie.paanayttelijat,
+        kieli: movie.kieli,
+        kuvaus: movie.kuvaus,
+        kuva: movie.kuva,
+      } : {
+        title: movie.title,
+        genres: movie.genres.join(', '),
+        release_date: movie.release_date,
+        runtime: movie.runtime,
+        director: movie.director,
+        writers: movie.writers,
+        main_actors: movie.main_actors,
+        original_language: movie.original_language,
+        overview: movie.overview,
+        poster_path: movie.poster_path,
+      })
+    }
     const token = localStorage.getItem('token')
     if (token) {
-    try {
-      await MCService.postMovie(newMovie, token)
-      showSuccess("Succesfully added the movie!", () => {
-        setUpdateMovieList(prev => !prev)
-        navigate('/')
-      })
-    } catch {
-        showError("Failed to add movie. Please try again.")
+      try {
+        await MCService.postMovie(movieData, token)
+        showSuccess(getText("Elokuva lisätty onnistuneesti!", "Successfully added the movie!"), () => {
+          setUpdateMovieList(prev => !prev)
+          navigate('/')
+        })
+      } catch(error) {
+        console.error(error)
+        showError(getText("Elokuvan lisääminen epäonnistui. Yritä uudelleen.", "Failed to add movie. Please try again."))
       }
     } else {
-      showError("Missing login")
+      showError(getText("Puuttuva kirjautuminen.", "Missing login"))
     }
   }
 
   return (
     <div className="movie-form">
       <form onSubmit={addMovie} className="movie-form-container">
-        <h1 className="movie-title">Add Movie</h1>
+        <h1 className="movie-title">{getText('Lisää Elokuva', 'Add Movie')}</h1>
+        
         <label className="movie-input-label">
-          Alkuperäinen nimi:
-          <input type="text" name="alkuperainennimi" value={movie.alkuperainennimi} onChange={handleChange} required className="movie-input"/>
+          {getText('Elokuvan Otsikko', `Movie's Title`)}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'otsikko' : 'title'} 
+            value={language === 'fi' ? movie.otsikko : movie.title} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Suomalainen nimi:
-          <input type="text" name="suomalainennimi" value={movie.suomalainennimi} onChange={handleChange} required className="movie-input"/>
-        </label>
-        <label className="movie-input-label">
-          Lajityypit:
-          <select type="text" name="lajityyppi" value={movie.lajityyppi} onChange={handleChange} required className="movie-select">
-            <option>Select Genre</option>
-            {MOVIE_GENRES.map((genre) => (
+          {getText('Lajityypit', 'Genres')}
+          <select 
+            type="text" 
+            name={language === 'fi' ? 'lajityypit' : 'genres'} 
+            value={language === 'fi' ? movie.lajityypit : movie.genres} 
+            onChange={handleChange} 
+            multiple 
+            required 
+            className="movie-select"
+          >
+            {genres.map((genre) => (
               <option key={genre} value={genre}>
                 {genre}
               </option>
             ))}
           </select>
         </label>
+
         <label className="movie-input-label">
-          Valmistumisvuosi:
-          <input type="text" name="valmistumisvuosi" value={movie.valmistumisvuosi} onChange={handleChange} required className="movie-input"/>
+          {getText('Julkaisuvuosi', 'Release Year')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'valmistumisvuosi' : 'release_date'} 
+            value={language === 'fi' ? movie.valmistumisvuosi : movie.release_date} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Pituus minuutteina:
-          <input type="text" name="pituus" value={movie.pituus} onChange={handleChange} required className="movie-input"/>
+          {getText('Pituus minuutteina', 'Runtime in minutes')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'pituus' : 'runtime'} 
+            value={language === 'fi' ? movie.pituus : movie.runtime} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Ohjaaja:
-          <input type="text" name="ohjaaja" value={movie.ohjaaja} onChange={handleChange} required className="movie-input"/>
+          {getText('Ohjaaja', 'Director')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'ohjaaja' : 'director'} 
+            value={language === 'fi' ? movie.ohjaaja : movie.director} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Käsikirjoittajat:
-          <input type="text" name="kasikirjoittajat" value={movie.kasikirjoittajat} onChange={handleChange} required className="movie-input"/>
+          {getText('Käsikirjoittajat', 'Screenwriters')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'kasikirjoittajat' : 'writers'} 
+            value={language === 'fi' ? movie.kasikirjoittajat : movie.writers} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Päänäyttelijät:
-          <input type="text" name="paanayttelijat" value={movie.paanayttelijat} onChange={handleChange} required className="movie-input"/>
+          {getText('Päänäyttelijät', 'Main Actors')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'paanayttelijat' : 'main_actors'} 
+            value={language === 'fi' ? movie.paanayttelijat : movie.main_actors} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Kieli puhuttuna ja tekstitettynä:
-          <input type="text" name="kieli" value={movie.kieli} onChange={handleChange} required className="movie-input"/>
+          {getText('Kieli puhuttuna', 'Language spoken')}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'kieli' : 'original_language'} 
+            value={language === 'fi' ? movie.kieli : movie.original_language} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <label className="movie-input-label">
-          Elokuvan kuvaus:
-          <textarea type="text" name="kuvaus" value={movie.kuvaus} onChange={handleChange} required className="movie-input"/>
+          {getText('Elokuvan kuvaus', `Movie's description`)}
+          <textarea 
+            type="text" 
+            name={language === 'fi' ? 'kuvaus' : 'overview'} 
+            value={language === 'fi' ? movie.kuvaus : movie.overview} 
+            onChange={handleChange} 
+            required 
+            className="movie-input-area"
+          />
         </label>
+
         <label className="movie-input-label">
-          Elokuvan kuva JPEG muodossa:
-          <input type="file" name="kuva" onChange={handleChange} accept="image/jpeg" required className="movie-input"/>
+          {getText('Elokuvan kuva linkkinä', `Movie's poster as link`)}
+          <input 
+            type="text" 
+            name={language === 'fi' ? 'kuva' : 'poster_path'} 
+            value={language === 'fi' ? movie.kuva : movie.poster_path} 
+            onChange={handleChange} 
+            required 
+            className="movie-input"
+          />
         </label>
+
         <div className="movie-button-container">
-          <button type="submit" className="movie-button"> Submit </button>
+          <button type="submit" className="movie-button">
+            {getText('Lähetä', 'Submit')}
+          </button>
         </div>
       </form>
     </div>

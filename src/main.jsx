@@ -4,13 +4,19 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AlertProvider } from './providers/AlertProvider.jsx'
+import { LanguageProvider } from './providers/LanguageProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AlertProvider>
-      <Router>
-        <App/>
-      </Router>
-    </AlertProvider>
+    {/* Language context for localization */}
+    <LanguageProvider>
+      {/* Alert system for user notifications */}
+      <AlertProvider>
+      {/* Routing system */}
+        <Router>
+          <App/>
+        </Router>
+      </AlertProvider>
+    </LanguageProvider>
   </StrictMode>
 )

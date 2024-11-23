@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import MCService from '../services/MCService'
@@ -6,10 +7,11 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
-import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Subtitles, Tag, Trash2, UserCircle, Video } from 'lucide-react'
+import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, Trash2, UserCircle, Video } from 'lucide-react'
+import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a movie's page
-const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating }) => {
+const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
   const navigate = useNavigate()
   const {index} = useParams()
   const [review, setReview] = useState({
@@ -27,21 +29,34 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   const {showSuccess, showError, showWarning, showInfo } = useAlertMessages()
   const [showReviewForm, setShowReviewForm] = useState(false)
   const reviewFormRef = useRef(null)
+  const {language, getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
 
-  // Set current movie from movies prop
   useEffect(() => {
-    if (movies && movies.length > 0) {
-      const currentMovie = movies[index]
-        setMovie(currentMovie)
+    window.scrollTo(0, 0)
+  }, [])
+
+  // Fetch current movie
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        if (index !== undefined) {
+          const response = await MCService.getMovie(index) 
+          setMovie(response.data)
+        }
+      } catch (error) {
+        console.error(getText("Virhe elokuvan hakemisessa: ", "Error fetching movie: "), error)
+      }
     }
-  }, [movies, index])
+
+    fetchMovie()
+  }, [index])
 
   // Populate review list
   useEffect(() => {
-    if (movie && movie.id) {
+    if (movie && movie.fi_id) {
       setLoading(true)
       MCService
-        .getReviews(movie.id)
+        .getReviews(movie.fi_id)
         .then(response => {
         const sortedReviews = response.data.sort((a,b) =>
           new Date(b.luotuaika) - new Date(a.luotuaika)
@@ -50,7 +65,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
           setLoading(false)
       })
         .catch((error) => {
-          showError(handleApiError(error, "Error loading reviews. Please try again."))
+          showError(handleApiError(error, getText("Virhe arvostelujen lataamisessa. Yritä uudelleen.", "Error loading reviews. Please try again.")))
           setLoading(false)
       })
     } else {
@@ -83,17 +98,17 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   }, [showReviewForm])
 
   const calculateAverage = (reviews) => {
-    if (reviews.length === 0) return "Unrated"
+    if (reviews.length === 0) return getText("Ei arvosteltu", "Unrated")
     const total = reviews.reduce((sum, review) => sum + review.tahdet, 0)
     return (total / reviews.length).toFixed(1)
   }
 
+  // Recalculates and updates the movie rating when reviews change
   useEffect(() => {
-    if (movie?.id) {
+    if (movie?.fi_id) {
       const average = calculateAverage(reviews)
-      updateMovieRating(movie.id, average, reviews.length > 0)
+      updateMovieRating(movie.fi_id, average, reviews.length > 0)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reviews])
 
   // Temporary returns while movie loads or movie is not found
@@ -103,8 +118,6 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   if (!movie || Object.keys(movie).length === 0) {
     return <div>Movie not found</div>
   }
-
-  const movieImage = image[movie.id]
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -124,21 +137,26 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   const addReview = async (event) => {
     event.preventDefault()
     if (!currentMember) {
-      showError("Please log in to submit a review")
+      showError(getText("Kirjaudu sisään voidaksesi jättää arvostelun.", "Please log in to submit a review"))
       return
     }
     const newReview = {
       ...review,
-      elokuvaid: movie.id,
+      elokuvaid: movie.fi_id,
       jasenid: currentMember.id,
       luotuaika: new Date().toISOString(),
       elokuvanOtsikko: movie.otsikko,
+      elokuvanTitle: movie.title,
+      tmdb_id: movie.tmdb_id
     }
     const token = localStorage.getItem('token')
     if (token) {
     try {
       const savedReview = await MCService.postReview(newReview, token)
-      setReviews(prev => [savedReview, ...prev])
+      setReviews(prev => [{
+        ...savedReview,
+        luotuaika: savedReview.luotuaika || newReview.luotuaika
+      }, ...prev])
       setReview({
         otsikko: "",
         sisalto: "",
@@ -146,33 +164,33 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
         nimimerkki: currentMember.nimimerkki,
       })
       setShowReviewForm(false)
-      showSuccess("Succesfully added the review!")
+      showSuccess(getText("Arvostelu lisätty onnistuneesti!", "Succesfully added the review!"))
       setUpdateReviews(!updateReviews)
       
     } catch {
-      showError("Failed to add review. Please try again")
+      showError(getText("Arvostelun lisääminen epäonnistui. Yritä uudelleen.", "Failed to add review. Please try again"))
       }
     } else {
-      showError("Missing login. Please login.")
+      showError(getText("Puuttuva kirjautuminen. Kirjaudu sisään.", "Missing login. Please login."))
     }
   }
 
   const deleteReview = (id) => {
     const token = localStorage.getItem('token')
     if (token) {
-    showWarning("Are you sure you want to delete your review?", 
+    showWarning(getText("Oletko varma, että haluat poistaa arvostelusi?", "Are you sure you want to delete your review?"), 
       {
         onConfirm: async () => {
           try {
             await MCService.deleteReview(id, token)
-            showSuccess("Successfully deleted your review!")
+            showSuccess(getText("Arvostelusi on poistettu onnistuneesti!", "Successfully deleted your review!"))
           } catch {
-            showError("Error deleting review.")
+            showError(getText("Virhe arvostelun poistamisessa.", "Error deleting review."))
           }
         },
         onCancel: () => {
           setTimeout(() => {
-            showInfo("Cancelled deletion.")
+            showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
           }, 100)
         }
       })}
@@ -181,21 +199,22 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   const deleteMovie = (id) => {
     const token = localStorage.getItem('token')
     if (token) {
-    showWarning("Are you sure you want to delete the movie? All reviews on it will be removed aswell.", 
+    showWarning(getText("Oletko varma, että haluat poistaa elokuvan? Kaikki siihen liittyvät arvostelut poistetaan myös.",
+      "Are you sure you want to delete the movie? All reviews on it will be removed aswell."),
       {
         onConfirm: async () => {
           try {
             setMovies(prevMovies => prevMovies.filter(movie => movie.id !== id))
             await MCService.deleteMovie(id, token)
-            showSuccess("Successfully deleted the movie!")
+            showSuccess(getText("Elokuva on poistettu onnistuneesti!", "Successfully deleted the movie!"))
             navigate('/')
           } catch {
-            showError("Error deleting movie.")
+            showError(getText("Virhe elokuvan poistamisessa.", "Error deleting movie."))
           }
         },
         onCancel: () => {
           setTimeout(() => {
-            showInfo("Cancelled deletion.")
+            showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
           }, 100)
         }
       })}
@@ -204,21 +223,29 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
   return (
     <section className="movie-page-container">
       <div className="movie-title-container">
-        <h1 className="movie-title">{movie.otsikko}</h1>
-        <img src={movie.kuvan_polku} alt={`${movie.otsikko} image`} className="movie-image" />
+        <h1 className="movie-title">
+          {getMovieField(movie, 'otsikko', 'title')}
+        </h1>
+        <img 
+          src={getMovieField(movie, 'kuvan_polku', 'poster_path')} 
+          alt={`${getMovieField(movie, 'otsikko', 'title')} image`} 
+          className="movie-image" 
+        />
       </div>
 
       <div className="movie-details">
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Star size="20px"/>
-            <label className="movie-detail-label"> Average Rating</label>
+            <label className="movie-detail-label">
+              {getText('Arvostelun keskiarvo', 'Average Rating')}
+            </label>
           </div>
           <p className="movie-detail">
             {calculateAverage(reviews)}
-            {reviews.length > 0 && ` / 5 `}
+            {reviews.length > 0 && `/ 5 `}
             <span className="review-count">
-            {reviews.length > 0 && `(${reviews.length} ${reviews.length === 1 ? 'review' : 'reviews'})`}
+              {reviews.length > 0 && `(${formatters.reviews(reviews.length)})`}
             </span>
           </p>
         </div>
@@ -226,84 +253,122 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Languages size="20px"/>
-            <label className="movie-detail-label"> Suomalainen nimi</label>
+            <label className="movie-detail-label">
+              {getText('Englanninkielinen nimi', 'Finnish Name')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.otsikko}</p>
+          <p className="movie-detail">
+            {getOppositeField(movie, movie, 'otsikko', 'title')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Tag size="20px"/>
-            <label className="movie-detail-label"> Lajityypit </label>
+            <label className="movie-detail-label">
+              {getText('Lajityypit', 'Genres')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.lajityypit}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'lajityypit', 'genres')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Calendar size="20px"/>
-            <label className="movie-detail-label"> Valmistumisvuosi</label>
+            <label className="movie-detail-label">
+              {getText('Julkaisuvuosi', 'Release Year')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.valmistumisvuosi}</p>
+          <p className="movie-detail">
+            {movie.valmistumisvuosi}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Clock size="20px"/>
-            <label className="movie-detail-label"> Pituus</label>
+            <label className="movie-detail-label">
+              {getText('Pituus', 'Duration')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.pituus} min</p>
+          <p className="movie-detail">
+            {formatters.duration(movie.pituus)}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Video size="20px"/>
-            <label className="movie-detail-label"> Ohjaaja</label>
+            <label className="movie-detail-label">
+              {getText('Ohjaaja', 'Director')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.ohjaaja}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'ohjaaja', 'director')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Pen size="20px"/>
-            <label className="movie-detail-label"> Käsikirjoittajat</label>
+            <label className="movie-detail-label">
+              {getText('Käsikirjoittajat', 'Screenwriters')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.kasikirjoittajat}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'kasikirjoittajat', 'screenwriters')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <UserCircle size="20px"/>
-            <label className="movie-detail-label"> Päänäyttelijät</label>
+            <label className="movie-detail-label">
+              {getText('Päänäyttelijät', 'Main Actors')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.paanayttelijat}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'paanayttelijat', 'main_actors')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <MessageCircle size="20px"/>
-            <Subtitles size="20px"/>
-            <label className="movie-detail-label"> Kieli</label>
+            <label className="movie-detail-label">
+              {getText('Kieli', 'Language')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.alkuperainen_kieli}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'alkuperainen_kieli', 'original_language')}
+          </p>
         </div>
 
         <div className="movie-detail-item">
           <div className="icon-label-container">
             <Info size="20px"/>
-            <label className="movie-detail-label"> Kuvaus</label>
+            <label className="movie-detail-label">
+              {getText('Kuvaus', 'Overview')}
+            </label>
           </div>
-          <p className="movie-detail">{movie.kuvaus}</p>
+          <p className="movie-detail">
+            {getMovieField(movie, 'kuvaus', 'overview')}
+          </p>
         </div>
       </div>
 
-      <button onClick={() => setShowReviewForm(!showReviewForm)} className="show-review-form-btn" ref={reviewFormRef}> {showReviewForm ? 'Hide Review Form' : 'Add a Review'}</button>
+      <button onClick={() => setShowReviewForm(!showReviewForm)} className="show-review-form-btn" ref={reviewFormRef}>{showReviewForm 
+        ? getText('Piilota arvostelulomake', 'Hide Review Form') 
+        : getText('Lisää arvostelu', 'Add a Review')}
+      </button>
       {showReviewForm && (
       <div className="review-form">
-        <p className="review-form-header">Write a Review</p>
+        <p className="review-form-header">{getText('Kirjoita arvostelu', 'Write a Review')}</p>
         <form onSubmit={addReview}>
           <div className="review-form-input-container">
-            <label className="review-form-label">Title</label>
+            <label className="review-form-label">{getText('Otsikko', 'Title')}</label>
               <input 
               className="review-form-input" 
               type="text" 
@@ -314,7 +379,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
             />
             </div>
           <div className="review-form-input-container">
-            <label className="review-form-label">Review</label>
+            <label className="review-form-label">{getText('Arvostelun sisältö', 'Review content')}</label>
             <textarea 
             className="review-form-textarea" 
             name="sisalto" 
@@ -324,7 +389,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
           />
           </div>
             <div className="review-form-input-container">
-              <label className="review-form-label">Rating (0-5)</label>
+              <label className="review-form-label">{getText('Arvostelu (0-5)', 'Rating (0-5)')}</label>
               <select 
                 className="review-form-select" 
                 name="tahdet" 
@@ -332,7 +397,7 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
                 onChange={handleRatingChange} 
                 required
                 >
-                <option hidden>Select a Rating</option>
+                <option hidden>{getText('Valitse Arvostelu', 'Select a Rating')}</option>
                 <option value="5" className="review-rating">★★★★★ (5)</option>
                 <option value="4" className="review-rating">★★★★☆ (4)</option>
                 <option value="3" className="review-rating">★★★☆☆ (3)</option>
@@ -341,18 +406,18 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
                 <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
               </select>
               </div>
-            <button type="submit" className="review-form-button">Submit Review</button>
+            <button type="submit" className="review-form-button">{getText('Lähetä arvostelu', 'Submit Review')}</button>
           </form>
         </div>
       )}
         {currentMember && (
         <div className="delete-movie-btn-container">
           <Trash2 size={20} color="#7e7c7c"/>
-          <button onClick={() => deleteMovie(movie.id)} className="delete-movie-btn">Delete Movie</button>
+          <button onClick={() => deleteMovie(index)} className="delete-movie-btn">{getText('Poista Elokuva', 'Delete Movie')}</button>
         </div>
         )}
         <div className="reviews-section">
-          <p className="reviews-header">Reviews</p>
+          <p className="reviews-header">{getText('Arvostelut', 'Reviews')}</p>
           {reviews.length > 0 ? (
             reviews.map((review, i) => (
               <div className="review-item" key={i}>
@@ -363,18 +428,18 @@ const MoviePage = ({ movies, image, currentMember, setMovies, updateMovieRating 
                 </span>
                 <p className="review-content">{review.sisalto}</p>
                 <div className="review-author">
-                  <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString('en-GB')}
+                  <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString(language === 'fi' ? 'fi-FI' : 'en-US')}
                 </div>
                 {review.nimimerkki === currentMember.nimimerkki && (
                 <div className="delete-review-btn-container">
                   <Trash2 size={20} color="#7e7c7c"/>
-                  <button onClick={() => deleteReview(review.id)} className="delete-review-btn">Delete Review</button>
+                  <button onClick={() => deleteReview(review.id)} className="delete-review-btn">{getText('Poista Arvostelu', 'Delete Review')}</button>
                 </div>
                 )}
               </div>
             ))
           ) : (
-          <p className="no-reviews">No reviews yet. Be the first to review this movie!</p>
+          <p className="no-reviews">{getText('Tätä elokuvaa ei ole vielä arvosteltu. Ole ensimmäinen, joka kirjoittaa arvostelun!', 'No reviews yet. Be the first to review this movie!')}</p>
         )}
       </div>
     </section>

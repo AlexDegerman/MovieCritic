@@ -6,14 +6,21 @@ const loginUrl = "http://localhost:5173/api/login"
 
 // This service handles backend requests
 // Returns a list of movies
-const getMovies = (page) => {
-  return axios.get(movieUrl, { params: { page, limit: 50 } })
+const getMovies = (page, search = '', genre = '', seed) => {
+  return axios.get('/api/elokuva', {
+    params: {
+      page,
+      limit: 51,
+      search,
+      genre,
+      seed
+    }
+  })
 }
 
-// Returns image of a specific movie / unused, reuse for profile pic maybe
-const getImage = (id) => {
-  return axios.get(movieUrl + '/' + `${id}` + '/kuva', {
-    responseType: 'arraybuffer'})
+//Returns a specific movie
+const getMovie = (id) => {
+  return axios.get(`${movieUrl}/${id}`)
 }
 
 // Adds a new movie to the database
@@ -105,4 +112,4 @@ const getReviewsfromMember = (id) => {
   return axios.get(memberUrl + '/'+ `${id}` + '/arvostelut' )
 }
 
-export default {getMovies, getImage, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie}
+export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie}

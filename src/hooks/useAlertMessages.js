@@ -1,16 +1,19 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react'
 import { useAlert } from '..//context/AlertContext'
+import { useLanguageUtils } from './useLanguageUtils'
 
 // Custom hook providing pre-defined alert patterns
 export const useAlertMessages = () => {
   const { showAlert } = useAlert()
+  const {getText} = useLanguageUtils()
 
   const showSuccess = useCallback((message, onClose) => {
-    showAlert('Success', message, { type: 'success', onClose })
+    showAlert(getText('Onnistui', 'Success'), message, { type: 'success', onClose })
   }, [showAlert])
 
   const showError = useCallback((message, onClose) => {
-    showAlert('Error', message, { type: 'error', onClose })
+    showAlert(getText('Virhe', 'Error'), message, { type: 'error', onClose })
   }, [showAlert])
 
   const showInfo = useCallback((message, onClose) => {
@@ -18,7 +21,7 @@ export const useAlertMessages = () => {
   }, [showAlert])
 
   const showWarning = useCallback((message, { onConfirm, onCancel } = {}) => {
-    showAlert('Warning', message,{
+    showAlert(getText('Varoitus', 'Warning'), message,{
       type: 'warning',
       onClose: onConfirm,
       onCancel,
@@ -29,7 +32,7 @@ export const useAlertMessages = () => {
   const showDoubleWarning = useCallback((firstMessage, secondMessage, { onFinalConfirm, onCancel } = {}) => {
     const handleFirstConfirm = () => {
       setTimeout(() => {
-        showAlert('Final Warning', secondMessage, {
+        showAlert(getText('Viimeinen Varoitus', 'Final Warning'), secondMessage, {
           type: 'warning',
           showCancelButton: true,
           onClose: () => {
@@ -52,7 +55,7 @@ export const useAlertMessages = () => {
       }
     }
 
-    showAlert('Warning', firstMessage, {
+    showAlert(getText('Varoitus', 'Warning'), firstMessage, {
       type: 'warning',
       showCancelButton: true,
       onClose: handleFirstConfirm,

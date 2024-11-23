@@ -1,26 +1,22 @@
-// This file provides a pre-defined list of movie genres
+// This file provides a pre-defined list of movie genres in english
 export const MOVIE_GENRES = [
   "Action",
   "Adventure",
   "Animation",
-  "Anime",
   "Comedy",
   "Crime",
   "Documentary",
   "Drama",
   "Family",
   "Fantasy",
+  "History",
   "Horror",
   "Music",
-  "Musical",
-  "Lifestyle",
   "Mystery",
   "Romance",
-  "Sci-Fi",
-  "Seasonal",
-  "Short",
-  "Sport",
+  "Science Fiction",
   "Thriller",
+  "TV Movie",
   "War",
   "Western"
 ]
