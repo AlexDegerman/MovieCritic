@@ -48,9 +48,6 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
                     src={getMovieField(movie, 'kuvan_polku', 'poster_path')}
                     alt={`${getMovieField(movie, 'otsikko', 'title')} image`}
                     className="movies-image"
-                    loading="lazy"
-                    // eslint-disable-next-line react/no-unknown-property
-                    fetchpriority="low"
                   />
                 </Link>
                 <ul className="movie-details">

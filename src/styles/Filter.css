@@ -27,6 +27,8 @@
 }
 .filter > * {
   pointer-events: auto;
+  flex: 1 1 clamp(150px, 25%, 300px);
+  max-width: 300px;
 }
 
 .search-input,
@@ -49,35 +51,3 @@
     outline: none;
     border-color: #FFC107;
 }
-
-@media (max-width: 1724px) { 
-  .genre-window,
-  .search-bar{
-    width: 25%;
-  }
-}
-@media (max-width: 1024px) { 
-  .genre-window,
-  .search-bar{
-    width: 30%;
-  }
-}
-
-@media (max-width: 925px) { 
-  .genre-window,
-  .search-bar{
-    width: 41%;
-  }
-}
-
-@media (max-width: 477px) { 
-  .search-bar{
-    width: 53%;
-    font-size: 13px;
-  }
-  .genre-window{
-    font-size: 13px;
-  }
-}
-
-

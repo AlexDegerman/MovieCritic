@@ -264,7 +264,7 @@ const MovieForm = ({ setUpdateMovieList }) => {
 
         <div className="movie-button-container">
           <button type="submit" className="movie-button">
-            {getText('Lähetä', 'Submit')}
+            {getText('Lisää Elokuva', 'Add Movie')}
           </button>
         </div>
       </form>

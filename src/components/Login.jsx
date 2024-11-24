@@ -30,11 +30,11 @@ const Login = ({ setUpdateMovieList }) => {
   return (
     <div className="login-form">
       <form onSubmit={Login} className="login-container">
-        <h1 className="login-title">Login</h1>
+        <h1 className="login-title">{(getText("Kirjaudu Sisään","Login"))}</h1>
         <input type="email" className="login-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         <input type="password" className="login-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <div className="login-button-container">
-          <button type="submit"  className="login-button">Login</button>
+          <button type="submit"  className="login-button">{(getText("Kirjaudu Sisään","Login"))}</button>
         </div>
       </form>
     </div>
