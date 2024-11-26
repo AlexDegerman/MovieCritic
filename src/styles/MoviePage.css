@@ -12,6 +12,7 @@
   margin-top: 90px;
   padding: 20px;
   padding-bottom: 0px;
+  position: relative; 
 }
 
 .movie-title {
@@ -54,6 +55,18 @@
   white-space: pre-line;
 }
 
+.back-button-container {
+  position: absolute;
+  left: 20px; 
+  top: 20px; 
+}
+
+.back-button {
+  background: none;
+  color: #FFC107;
+  border: none;
+  cursor: pointer;
+}
 
 .icon-label-container {
   display: flex;

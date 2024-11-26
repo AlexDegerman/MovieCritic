@@ -5,6 +5,7 @@ import Profile from './Profile'
 import Movies from './Movies'
 import MoviePage from './MoviePage'
 import Login from './Login'
+import About from './About'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Header.css'
@@ -94,6 +95,7 @@ const Header = ({ movies, currentMember, setCurrentMember, setUpdateMovieList, u
         <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} isLoading={isLoading} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} />} />
         <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
+        <Route path="/about" element={<About/>}/>
       </Routes>
     </div>
   )

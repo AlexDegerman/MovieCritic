@@ -7,7 +7,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
-import { Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, Trash2, UserCircle, Video } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, Trash2, UserCircle, Video } from 'lucide-react'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a movie's page
@@ -222,6 +222,11 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
 
   return (
     <section className="movie-page-container">
+      <div className="back-button-container">
+        <button className="back-button"onClick={() => navigate(-1)}>
+            <ArrowLeft/>
+        </button>
+      </div>
       <div className="movie-title-container">
         <h1 className="movie-title">
           {getMovieField(movie, 'otsikko', 'title')}

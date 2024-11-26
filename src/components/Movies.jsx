@@ -6,7 +6,7 @@ import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a list of movies
 const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading}) => {
-  const {getText, getMovieField } = useLanguageUtils()
+  const {language, getText, getMovieField } = useLanguageUtils()
   const location = useLocation()
 
 // Scroll to top when route changes
@@ -19,8 +19,11 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
   const getMovieDescription = (movie) => {
     const tagline = getMovieField(movie, 'iskulause', 'tagline')
     if (tagline) return tagline
-
-    const description = getMovieField(movie, 'kuvaus', 'overview')
+  
+    const fiDescription = movie.kuvaus
+    const enDescription = movie.overview
+    const description = language === 'fi' ? (fiDescription || enDescription) : (enDescription || fiDescription)
+    
     return description ? `${description.slice(0, 50)}...` : ''
   }
 

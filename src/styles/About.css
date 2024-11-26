@@ -1,0 +1,33 @@
+.about-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 700px;
+  margin: auto;
+  background-color: #1C1C1C;
+  color: #FFC107;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 90px;
+  padding: 20px;
+  position: relative; 
+}
+.about-page-container p {
+  color: white;
+}
+.about-title {
+  margin-bottom: 15px;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.attribution-link {
+  color: lightblue;
+}
+
+.about-content-container {
+  display: flex;
+  flex-direction: column;
+  text-align: left; 
+}
