@@ -76,6 +76,7 @@ const postMember = (member, token) => {
   })
 }
 
+//Deletes member
 const deleteMember = (id, token) => {
   return axios.delete(memberUrl + '/' + `${id}`, {
     headers: {
@@ -83,6 +84,17 @@ const deleteMember = (id, token) => {
     }
   })
 }
+
+//Change password
+const changePassword = (id, passwordData, token) => {
+  return axios.put(memberUrl + '/' + id + '/' + 'change-password', passwordData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+}
+
 
 // Returns all Reviews from a specific movie
 const getReviews = (id) => {
@@ -112,4 +124,4 @@ const getReviewsfromMember = (id) => {
   return axios.get(memberUrl + '/'+ `${id}` + '/arvostelut' )
 }
 
-export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie}
+export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword}

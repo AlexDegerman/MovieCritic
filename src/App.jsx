@@ -19,6 +19,7 @@ import Movies from './components/Movies.jsx'
 import MoviePage from './components/MoviePage.jsx'
 import Login from './components/Login.jsx'
 import About from './components/About.jsx'
+import PasswordChange from './components/PasswordChange.jsx'
 
 const App = () => {
   const [movies, setMovies] = useState([])
@@ -197,6 +198,7 @@ const App = () => {
         <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/about" element={<About/>}/>
+        <Route path="/change-password" element={<PasswordChange currentMember={currentMember}/>}/>
       </Routes>
     </main>
 

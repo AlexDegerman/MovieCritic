@@ -46,7 +46,6 @@
   border: 1px solid #FFC107;
   border-radius: 4px;
   box-sizing: border-box;
-  margin-right: 100px;
 }
 
 .member-form-button-container {
@@ -83,6 +82,20 @@
   height: 40px !important;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-visibility {
+  position: absolute;
+  right: 0px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #FFC107;
+}
 
 @media (max-width: 600px) {
   .member-form-container {
@@ -97,5 +110,8 @@
 
   .member-input-label {
     text-align: left;
+  }
+  .password-toggle-visibility {
+    right: 10px;
   }
 }

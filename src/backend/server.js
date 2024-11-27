@@ -33,13 +33,14 @@ const pool = mysql.createPool({
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
+  
   if (!token) return res.status(401).json({ error: 'Token missing'})
   
   try {
     const decoded = jwt.verify(token, process.env.SECRET)
     req.user = decoded
     next()
-  } catch (error) {
+  } catch {
     return res.status(403).json({ error: 'Invalid token'})
   }
 }
@@ -181,35 +182,32 @@ app.delete('/api/jasen/:id', authenticateToken, isProfileOwner, async (req, res)
 })
 
 //Change password
-// Change Member Password
-app.put('/api/jasen/:id/change-password', authenticateToken, async (req, res) => {
-  const memberId = req.params.id;
-  const { currentPassword, newPassword } = req.body;
-  console.log(req.body, req.params.id)
+app.put('/api/jasen/:id/change-password', authenticateToken, isProfileOwner, async (req, res) => {
+  const memberId = req.params.id
+  const { currentPassword, newPassword } = req.body
 
   try {
-    const [rows] = await pool.execute('SELECT salasana FROM jasen WHERE id = ?', [memberId]);
+    const [rows] = await pool.execute('SELECT salasana FROM jasen WHERE id = ?', [memberId])
     
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: 'User not found' })
     }
 
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, rows[0].salasana);
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, rows[0].salasana)
     
     if (!isCurrentPasswordValid) {
-      return res.status(400).json({ error: 'Current password is incorrect' });
+      return res.status(400).json({ error: 'Current password is incorrect' })
     }
 
-    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10)
 
-    await pool.execute('UPDATE jasen SET salasana = ? WHERE id = ?', [hashedNewPassword, memberId]);
+    await pool.execute('UPDATE jasen SET salasana = ? WHERE id = ?', [hashedNewPassword, memberId])
 
-    res.status(200).json({ message: 'Password changed successfully' });
+    res.status(200).json({ message: 'Password changed successfully' })
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'Error changing password: ' + error.message });
+    res.status(500).json({ error: 'Error changing password: ' + error.message })
   }
-});
+})
 
 // Get all rows from Elokuva and/or Movies with search support
 app.get('/api/elokuva', async (req, res) => {

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Login.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import { Eye, EyeOff } from 'lucide-react'
 
 // This component displays a login page
 const Login = ({ setUpdateMovieList }) => {
@@ -12,6 +13,7 @@ const Login = ({ setUpdateMovieList }) => {
   const [password, setPassword] = useState('')
   const {showSuccess, showError } = useAlertMessages()
   const {getText} = useLanguageUtils(false)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
 
   const Login = async (event) => {
     event.preventDefault()
@@ -32,7 +34,16 @@ const Login = ({ setUpdateMovieList }) => {
       <form onSubmit={Login} className="login-container">
         <h1 className="login-title">{(getText("Kirjaudu Sisään","Login"))}</h1>
         <input type="email" className="login-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" className="login-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <div className="password-input-wrapper">
+        <input type={showCurrentPassword ? 'text' : 'password'}  className="login-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button
+            type="button"
+            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+            className="password-toggle-visibility"
+          >
+          {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+        </div>
         <div className="login-button-container">
           <button type="submit"  className="login-button">{(getText("Kirjaudu Sisään","Login"))}</button>
         </div>

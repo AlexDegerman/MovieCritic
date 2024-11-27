@@ -6,7 +6,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import '../styles/Profile.css'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Film, Info, MapPin, Palette, Tag, Trash2, User, UserCircle } from 'lucide-react'
+import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, Trash2, User, UserCircle } from 'lucide-react'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a profile page
@@ -254,9 +254,17 @@ const Profile = ({currentMember, setCurrentMember}) => {
         </div>
       )}
       {isOwner && (
-        <div className="account-delete-btn-container">
-          <Trash2 size={20} color="#7e7c7c"/>
-          <button onClick={deleteProfile} className="account-delete-btn"> {getText('Poista tili', 'Delete Account')} </button>
+        <div className="profile-owner-buttons">
+          <div className="owner-actions">
+            <Link to={"/change-password"} className="password-change-link">
+            <Lock size={20} color="#7e7c7c"/>
+              {getText("Vaihda salasana", "Change Password")}
+            </Link>
+            <button onClick={deleteProfile} className="account-delete-btn">
+            <Trash2 size={20} color="#7e7c7c"/>
+              {getText('Poista tili', 'Delete Account')}
+            </button>
+          </div>
         </div>
       )}
     </section>

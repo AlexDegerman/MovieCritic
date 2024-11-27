@@ -73,7 +73,7 @@ const Header = ({ currentMember, setCurrentMember, }) => {
               <NavLink to={`/profile/${currentMember.id}`} className="mobile-link" onClick={() => setIsMenuOpen(false)}>
                 {getText('Profiili', 'Profile')}
               </NavLink>
-              <button onClick={() => { Logout(); setIsMenuOpen(false); }} className="mobile-logout">
+              <button onClick={() => { Logout(); setIsMenuOpen(false)}} className="mobile-logout">
                 {getText('Kirjaudu ulos', 'Log Out')}
               </button>
             </>
