@@ -33,7 +33,7 @@ const MemberForm = () => {
       })
     } catch(error) {
       if (error.response && error.response.status === 409) {
-        showError(getText("Nimimerkki on jo käytössä. Valitse toinen.", "Nickname already exists. Please choose a different one."))
+        showError(getText("Nimimerkki tai sähköpostiosoite on jo käytössä. Valitse toinen.", "Nickname or email already exists. Please choose a different one."))
       } else {
       showError(getText("Jäsenen lisääminen epäonnistui. Yritä uudelleen.", "Failed to add member. Please try again."))
     }

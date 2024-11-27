@@ -180,6 +180,37 @@ app.delete('/api/jasen/:id', authenticateToken, isProfileOwner, async (req, res)
   }
 })
 
+//Change password
+// Change Member Password
+app.put('/api/jasen/:id/change-password', authenticateToken, async (req, res) => {
+  const memberId = req.params.id;
+  const { currentPassword, newPassword } = req.body;
+  console.log(req.body, req.params.id)
+
+  try {
+    const [rows] = await pool.execute('SELECT salasana FROM jasen WHERE id = ?', [memberId]);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, rows[0].salasana);
+    
+    if (!isCurrentPasswordValid) {
+      return res.status(400).json({ error: 'Current password is incorrect' });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.execute('UPDATE jasen SET salasana = ? WHERE id = ?', [hashedNewPassword, memberId]);
+
+    res.status(200).json({ message: 'Password changed successfully' });
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Error changing password: ' + error.message });
+  }
+});
+
 // Get all rows from Elokuva and/or Movies with search support
 app.get('/api/elokuva', async (req, res) => {
   const {
@@ -420,17 +451,6 @@ app.post('/api/elokuva', authenticateToken, async (req, res) => {
   }
 })
 
-// Get all reviews from a movie
-app.get('/api/arvostelut/:id', async (req, res) => {
-  const elokuvaid = req.params.id
-  try {
-    const [rows] = await pool.execute('SELECT * FROM arvostelut WHERE elokuvaid = ?', [elokuvaid])
-    res.status(200).json(rows)
-  } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
-  }
-})
-
 //Delete specific movie
 app.delete('/api/elokuva/:id', authenticateToken, async (req, res) => {
   try {
@@ -438,6 +458,27 @@ app.delete('/api/elokuva/:id', authenticateToken, async (req, res) => {
     res.status(200).json({ message: 'Movie deleted successfully!' })
   } catch (error) {
     res.status(500).json({ error: 'Error deleting movie: ' + error.message })
+  }
+})
+
+// Get all reviews from a movie
+app.get('/api/arvostelut/:id', async (req, res) => {
+  const elokuvaid = req.params.id
+  try {
+    const [rows] = await pool.execute(`
+      SELECT 
+        arvostelut.*,
+        CASE 
+          WHEN jasen.id IS NULL THEN 'Deleted User'
+          ELSE arvostelut.nimimerkki 
+        END AS displayed_nimimerkki
+      FROM arvostelut
+      LEFT JOIN jasen ON arvostelut.jasenid = jasen.id
+      WHERE arvostelut.elokuvaid = ?
+    `, [elokuvaid])
+    res.status(200).json(rows)
+  } catch (error) {
+    res.status(500).json({ error: 'Error in query: ' + error.message })
   }
 })
 

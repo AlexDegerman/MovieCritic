@@ -14,7 +14,7 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
     requestAnimationFrame(() => {
       window.scrollTo(0, 0)
     })
-  }, [location.key])
+  }, [location.key,movies])
 
   const getMovieDescription = (movie) => {
     const tagline = getMovieField(movie, 'iskulause', 'tagline')

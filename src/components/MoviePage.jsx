@@ -433,7 +433,11 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
                 </span>
                 <p className="review-content">{review.sisalto}</p>
                 <div className="review-author">
-                  <Link to={`/profile/${review.jasenid}`} className="review-author-link">{review.nimimerkki}</Link> • {new Date(review.luotuaika).toLocaleDateString(language === 'fi' ? 'fi-FI' : 'en-US')}
+                  <Link to={`/profile/${review.jasenid}`}  className={`review-author-link ${review.displayed_nimimerkki === 'Deleted User' ? 'deleted-user-link' : ''}`}>
+                  {review.displayed_nimimerkki}
+                  </Link> 
+                  • 
+                  {new Date(review.luotuaika).toLocaleDateString(language === 'fi' ? 'fi-FI' : 'en-US')}
                 </div>
                 {review.nimimerkki === currentMember.nimimerkki && (
                 <div className="delete-review-btn-container">

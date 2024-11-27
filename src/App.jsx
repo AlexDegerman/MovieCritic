@@ -6,13 +6,19 @@ import MCService from './services/MCService.js'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import { useNavigate } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import { useAlertMessages } from './hooks/useAlertMessages.js'
 import { handleApiError } from './utils/apiErrorHandler.js'
-import { Outlet } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import { useLanguageUtils } from './hooks/useLanguageUtils.js'
 import { useDebounce } from './hooks/useDebounce.js'
+import MovieForm from './components/MovieForm.jsx'
+import MemberForm from './components/MemberForm.jsx'
+import Profile from './components/Profile.jsx'
+import Movies from './components/Movies.jsx'
+import MoviePage from './components/MoviePage.jsx'
+import Login from './components/Login.jsx'
+import About from './components/About.jsx'
 
 const App = () => {
   const [movies, setMovies] = useState([])
@@ -178,31 +184,27 @@ const App = () => {
     }))
   }
 
-  return (
+  return ( 
     <div className="container">
-      <Header 
-      movies={movies} 
-      currentMember={currentMember} 
-      setCurrentMember={setCurrentMember} 
-      updateMovieList={updateMovieList} 
-      setUpdateMovieList={setUpdateMovieList} 
-      setMovies={setMovies} 
-      movieRatings={movieRatings}
-      updateMovieRating={updateMovieRating}
-      isInitialLoading={isInitialLoading}
-      isLoadingMore={isLoadingMore}
-      search={search}
-      setSearch={setSearch}
-      genre={genre}
-      setGenre={setGenre}
-      />
+      <Header currentMember={currentMember} setCurrentMember={setCurrentMember}/>
     
     <main className="main-content">
-      <Outlet />
+    <Routes>
+        <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
+        <Route path="/addmember" element={<MemberForm />} />
+        <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies} />} />
+        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} />} />
+        <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
+        <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
+        <Route path="/about" element={<About/>}/>
+      </Routes>
     </main>
 
     <Footer />
   </div>
+ 
+
+ 
   )
 }
 

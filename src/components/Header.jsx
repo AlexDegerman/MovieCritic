@@ -1,11 +1,4 @@
-import { Routes, Route, NavLink, Link } from 'react-router-dom'
-import MovieForm from './MovieForm'
-import MemberForm from './MemberForm'
-import Profile from './Profile'
-import Movies from './Movies'
-import MoviePage from './MoviePage'
-import Login from './Login'
-import About from './About'
+import { NavLink, Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Header.css'
@@ -15,7 +8,7 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 
 // This component displays a header with links to pages
-const Header = ({ movies, currentMember, setCurrentMember, setUpdateMovieList, updateMovieList, setMovies, movieRatings, updateMovieRating, isLoading, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading }) => {
+const Header = ({ currentMember, setCurrentMember, }) => {
   const navigate = useNavigate()
   const { showSuccess } = useAlertMessages()
   const { getText } = useLanguageUtils()
@@ -88,15 +81,7 @@ const Header = ({ movies, currentMember, setCurrentMember, setUpdateMovieList, u
         </nav>
       </header>
 
-      <Routes>
-        <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
-        <Route path="/addmember" element={<MemberForm />} />
-        <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies} />} />
-        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} isLoading={isLoading} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} />} />
-        <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
-        <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
-        <Route path="/about" element={<About/>}/>
-      </Routes>
+
     </div>
   )
 }

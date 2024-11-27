@@ -4,13 +4,12 @@
   align-items: center;
   justify-content: center;
   max-width: 600px;
-  margin: auto;
   padding: 20px;
   background-color: #1C1C1C;
   color: #FFC107;
   border-radius: 8px;
   text-align: center;
-  margin-top: 110px;
+  width: 100%;
 }
 
 .profile-title {
@@ -135,6 +134,7 @@
 }
 
 .account-delete-btn-container {
+  margin-top: 10px;
   width: 105%;
   display: flex;
   justify-content: flex-end;

@@ -244,6 +244,11 @@
   font-size: 14px;
   font-weight: bold;
 }
+.deleted-user-link {
+  color: #888;
+  pointer-events: none;
+  cursor: default;
+}
 
 @media (max-width: 650px) {
 
