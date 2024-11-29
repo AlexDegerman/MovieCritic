@@ -30,8 +30,9 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const reviewFormRef = useRef(null)
   const {language, getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
-  const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
-  const alreadyLiked = likedReviews.includes(review.id)
+  const [likedReviews, setLikedReviews] = useState(() => 
+    JSON.parse(localStorage.getItem('likedReviews')) || []
+  )
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -60,9 +61,9 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
       MCService
         .getReviews(movie.fi_id)
         .then(response => {
-        const sortedReviews = response.data.sort((a,b) =>
-          new Date(b.luotuaika) - new Date(a.luotuaika)
-        )
+          const sortedReviews = response.data.sort((a, b) =>
+            b.tykkaykset - a.tykkaykset
+          )
           setReviews(sortedReviews)
           setLoading(false)
       })
@@ -223,7 +224,7 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
   }
 
   const handleLike = async (id) => {
-    const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
+
     if (likedReviews.includes(id)) {
       showInfo(getText("Olet jo tykännyt tästä arvostelusta","You have already liked this review."))
       return
@@ -237,7 +238,8 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
             : review
         )
       )
-      likedReviews.push(id)
+      const updatedLikedReviews = [...likedReviews, id]
+      setLikedReviews(updatedLikedReviews)
       localStorage.setItem('likedReviews', JSON.stringify(likedReviews))
     }  catch {
       showError(getText("Virhe arvostelun tykkäyksen lisäämisessä","Error liking the review"))
@@ -463,7 +465,7 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
                   • 
                   {new Date(review.luotuaika).toLocaleDateString(language === 'fi' ? 'fi-FI' : 'en-US')}
                 </div>
-                <button className={`like-button ${alreadyLiked ? 'liked' : ''}`} onClick={() => handleLike(review.id)} >
+                <button  className={`like-button ${likedReviews.includes(review.id) ? 'liked' : ''}`} onClick={() => handleLike(review.id)} >
                   <ThumbsUp size={20} /> {review.tykkaykset}
                 </button>
                 {review.nimimerkki === currentMember.nimimerkki && (
