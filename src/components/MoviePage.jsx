@@ -7,7 +7,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useNavigate } from 'react-router-dom'
 import '../styles/MoviePage.css'
-import { ArrowLeft, Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, Trash2, UserCircle, Video } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, ThumbsUp, Trash2, UserCircle, Video } from 'lucide-react'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a movie's page
@@ -30,6 +30,8 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const reviewFormRef = useRef(null)
   const {language, getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
+  const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
+  const alreadyLiked = likedReviews.includes(review.id)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -218,6 +220,28 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
           }, 100)
         }
       })}
+  }
+
+  const handleLike = async (id) => {
+    const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
+    if (likedReviews.includes(id)) {
+      showInfo(getText("Olet jo tykännyt tästä arvostelusta","You have already liked this review."))
+      return
+    }
+    try {
+      await MCService.incrementLikeOnReview(id)
+      setReviews((prevReviews) =>
+        prevReviews.map((review) =>
+          review.id === id
+            ? { ...review, tykkaykset: review.tykkaykset + 1 }
+            : review
+        )
+      )
+      likedReviews.push(id)
+      localStorage.setItem('likedReviews', JSON.stringify(likedReviews))
+    }  catch {
+      showError(getText("Virhe arvostelun tykkäyksen lisäämisessä","Error liking the review"))
+    }
   }
 
   return (
@@ -439,6 +463,9 @@ const MoviePage = ({ currentMember, setMovies, updateMovieRating }) => {
                   • 
                   {new Date(review.luotuaika).toLocaleDateString(language === 'fi' ? 'fi-FI' : 'en-US')}
                 </div>
+                <button className={`like-button ${alreadyLiked ? 'liked' : ''}`} onClick={() => handleLike(review.id)} >
+                  <ThumbsUp size={20} /> {review.tykkaykset}
+                </button>
                 {review.nimimerkki === currentMember.nimimerkki && (
                 <div className="delete-review-btn-container">
                   <Trash2 size={20} color="#7e7c7c"/>

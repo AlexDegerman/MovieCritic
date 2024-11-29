@@ -95,7 +95,6 @@ const changePassword = (id, passwordData, token) => {
   })
 }
 
-
 // Returns all Reviews from a specific movie
 const getReviews = (id) => {
   return axios.get(reviewUrl + '/'+ `${id}` )
@@ -124,4 +123,8 @@ const getReviewsfromMember = (id) => {
   return axios.get(memberUrl + '/'+ `${id}` + '/arvostelut' )
 }
 
-export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword}
+const incrementLikeOnReview = (id) => {
+  return axios.post(reviewUrl + '/'+ `${id}` + '/like' )
+}
+
+export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword, incrementLikeOnReview}

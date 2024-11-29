@@ -250,6 +250,23 @@
   cursor: default;
 }
 
+.like-button {
+  margin-top: 5px;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  color: #ffc107;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 4px;
+}
+
+.like-button.liked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 650px) {
 
   .movie-detail-item {

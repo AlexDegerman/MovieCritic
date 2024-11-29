@@ -1,5 +1,5 @@
 .main-content {
-  padding: 150px 20px 0px 20px;
+  padding: 80px 20px 0px 20px;
   display: flex;
   flex-direction: column;
   align-items: center; 
@@ -125,10 +125,6 @@
 }
 
 @media (max-width: 842px) {
-  .main-content {
-    padding: 150px 20px 20px; 
-  }
-
   .movie-list {
     grid-template-columns: repeat(1, 1fr);
   }

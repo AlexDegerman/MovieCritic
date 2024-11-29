@@ -449,7 +449,7 @@ app.post('/api/elokuva', authenticateToken, async (req, res) => {
   }
 })
 
-//Delete specific movie
+// Delete specific movie
 app.delete('/api/elokuva/:id', authenticateToken, async (req, res) => {
   try {
     await pool.execute('DELETE FROM elokuva WHERE id = ?', [req.params.id])
@@ -480,7 +480,7 @@ app.get('/api/arvostelut/:id', async (req, res) => {
   }
 })
 
-//Get all reviews from a specific member
+// Get all reviews from a specific member
 app.get('/api/jasen/:id/arvostelut', async (req, res) => {
   const memberid = req.params.id
   try {
@@ -506,13 +506,33 @@ app.post('/api/arvostelut', authenticateToken, async (req, res) => {
   }
 })
 
-//Delete own review
+// Delete own review
 app.delete('/api/arvostelut/:id', authenticateToken, isReviewOwner, async (req, res) => {
   try {
     await pool.execute('DELETE FROM arvostelut WHERE id = ?', [req.params.id])
     res.status(200).json({ message: 'Review deleted successfully!' })
   } catch (error) {
     res.status(500).json({ error: 'Error deleting review: ' + error.message })
+  }
+})
+
+// Increment the like count for a review
+app.post('/api/arvostelut/:id/like', async (req, res) => {
+  const reviewId = req.params.id
+
+  try {
+    const [result] = await pool.execute(
+      'UPDATE arvostelut SET tykkaykset = tykkaykset + 1 WHERE id = ?',
+      [reviewId]
+    )
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Review not found' })
+    }
+
+    res.status(200).json({ message: 'Like added successfully' })
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating like count: ' + error.message })
   }
 })
 
