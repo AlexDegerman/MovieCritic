@@ -134,7 +134,7 @@ const MovieForm = ({ setUpdateMovieList }) => {
     <div className="movie-form">
       <form onSubmit={addMovie} className="movie-form-container">
         <h1 className="movie-title">{getText('Lisää Elokuva', 'Add Movie')}</h1>
-        
+        {/* Movie Form Inputs */}
         <label className="movie-input-label">
           {getText('Elokuvan Otsikko', `Movie's Title`)}
           <input 

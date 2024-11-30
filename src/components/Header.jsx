@@ -30,7 +30,7 @@ const Header = ({ currentMember, setCurrentMember, }) => {
             <img src="/MovieCriticLogo.png" className="logo" alt="Movie Critic Logo" />
             <Link to="/" className="header-title">Movie Critic</Link>
           </div>
-
+          {/* Navigation */}
           <nav className="desktop-nav">
             <NavLink to="/" className="link">{getText('Elokuvat', 'Movies')}</NavLink>
             {!currentMember.id ? (
@@ -44,16 +44,16 @@ const Header = ({ currentMember, setCurrentMember, }) => {
               </>
             )}
           </nav>
-
+            {/* Language Selector */}
           <div className="language-selector">
             <LanguageSelector />
           </div>
-
+            {/*Mobile Burger Button*/}
           <button className="burger-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu />
           </button>
         </div>
-
+            {/* Mobile Menu's Navigation */}
         <nav className={`mobile-nav ${isMenuOpen ? 'open' : ''}`}>
           <NavLink to="/" className="mobile-link" onClick={() => setIsMenuOpen(false)}>
             {getText('Elokuvat', 'Movies')}
@@ -80,8 +80,6 @@ const Header = ({ currentMember, setCurrentMember, }) => {
           )}
         </nav>
       </header>
-
-
     </div>
   )
 }

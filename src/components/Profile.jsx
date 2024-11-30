@@ -6,7 +6,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import '../styles/Profile.css'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, Trash2, User, UserCircle } from 'lucide-react'
+import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, ThumbsUp, Trash2, User, UserCircle } from 'lucide-react'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a profile page
@@ -52,7 +52,11 @@ const Profile = ({currentMember, setCurrentMember}) => {
     if (id) {
       MCService
         .getReviewsfromMember(id)
-        .then(response => {setReviews(response.data)})
+        .then(response => {
+          const sortedReviews = response.data.sort((a,b) =>
+            new Date(b.luotuaika) - new Date(a.luotuaika)
+          )
+          setReviews(sortedReviews)})
         .catch((error) => {
           showError(handleApiError(error, getText("Jäsenen arvostelujen lataaminen epäonnistui. Yritä uudelleen.", "Failed to load member's reviews. Please try again.") ))
       })
@@ -165,38 +169,39 @@ const Profile = ({currentMember, setCurrentMember}) => {
         <button onClick={() => setShowEdit(!showEdit)} className="profile-button">{getText(showEdit ? 'Piilota lisätiedot' : 'Muokkaa tietoja', showEdit ? 'Hide Details' : 'Edit Details')}</button>)}
       {showEdit && (
         <form onSubmit={editProfile} className="member-details-form">
+          {/* Proile Detail Form */}
           <label>
           {getText('Nimimerkki', 'Nickname')}
           <input type="text" name="nimimerkki" value={profileDetails.nimimerkki} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Sukupuoli', 'Gender')}
-          <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Paikkakunta', 'Resident City')}
-          <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Harrastukset', 'Hobbies')}
-          <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Suosikki lajityypi:', 'Favorite Genres')}
-          <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Suosikki elokuvat', 'Favorite Movies')}
-          <input type="text" name="suosikkifilmit" value={profileDetails.suosikkifilmit} onChange={handleChange} className="member-details-form-input"/>
-        </label>
-        <label>
-        {getText('Oma kuvaus', 'Self Description')}
-          <textarea type="text" name="omakuvaus" value={profileDetails.omakuvaus} onChange={handleChange} className="member-details-form-input-description"/>
-        </label>
-        <button type="submit" className="profile-button"> {getText('Tallenna muutokset', 'Submit')} </button>
+          </label>
+          <label>
+          {getText('Sukupuoli', 'Gender')}
+            <input type="text" name="sukupuoli" value={profileDetails.sukupuoli} onChange={handleChange} className="member-details-form-input"/>
+          </label>
+          <label>
+          {getText('Paikkakunta', 'Resident City')}
+            <input type="text" name="paikkakunta" value={profileDetails.paikkakunta} onChange={handleChange} className="member-details-form-input"/>
+          </label>
+          <label>
+          {getText('Harrastukset', 'Hobbies')}
+            <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange} className="member-details-form-input"/>
+          </label>
+          <label>
+          {getText('Suosikki lajityypi:', 'Favorite Genres')}
+            <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange} className="member-details-form-input"/>
+          </label>
+          <label>
+          {getText('Suosikki elokuvat', 'Favorite Movies')}
+            <input type="text" name="suosikkifilmit" value={profileDetails.suosikkifilmit} onChange={handleChange} className="member-details-form-input"/>
+          </label>
+          <label>
+          {getText('Oma kuvaus', 'Self Description')}
+            <textarea type="text" name="omakuvaus" value={profileDetails.omakuvaus} onChange={handleChange} className="member-details-form-input-description"/>
+          </label>
+          <button type="submit" className="profile-button"> {getText('Tallenna muutokset', 'Submit')} </button>
         </form>
       )}
-      
+      {/* Profile Details */}
       <div className="profile-detail">
         <UserCircle className='profile-detail-icon'/>
         <ProfileDetail label={getText('Nimimerkki', 'Nickname')} value={member.nimimerkki} isOwner={isOwner}/>
@@ -231,7 +236,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
       </div>
 
       <button onClick={() => setDropdown(!dropdown)} className="profile-button">{getText( dropdown ? 'Piilota jäsenen arvostelut' : 'Näytä jäsenen arvostelut', dropdown ? "Hide Member's Reviews" : "Show Member's Reviews")}</button>
-
+      {/* Dropdown Button for member's reviews */}
       {dropdown && (
         <div>
           {reviews.length > 0 ? (
@@ -245,6 +250,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
                   </p>
                   <p className="profile-review-title">{review.otsikko}</p>
                   <p className="profile-review-content">{review.sisalto}</p>
+                  <ThumbsUp size={20} /> {review.tykkaykset}
                 </li>
               ))}
             </ul>
@@ -253,6 +259,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
           )}
         </div>
       )}
+      {/* Buttons for Profile Owner */}
       {isOwner && (
         <div className="profile-owner-buttons">
           <div className="owner-actions">

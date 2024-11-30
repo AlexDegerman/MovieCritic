@@ -18,10 +18,12 @@ const Filter = ( {setSearch, search, genre, setGenre}) => {
 
   return (
     <div className="filter">
+      {/* Search Bar */}
       <div className="search-bar">
         <label>{getText('Etsi elokuvia niiden nimellä', 'Search movies by title')}</label>
         <input value={search} onChange={handleSearch} className="search-input" placeholder={getText('Etsi', 'Search')} />
       </div>
+      {/* Genre Selector */}
       <div className="genre-window">
         <label>{getText('Suodata lajityypin mukaan', 'Filter movies by genre')}</label>
         <select value={genre}onChange={(e) => {handleGenre(e); window.scrollTo(0, 0)}} className="genre-select">

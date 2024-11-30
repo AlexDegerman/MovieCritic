@@ -1,7 +1,6 @@
 const express = require('express')
 const mysql = require('mysql2/promise')
 const cors = require('cors')
-const multer = require('multer')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
@@ -9,25 +8,22 @@ require('dotenv').config()
 
 const app = express()
 const PORT = process.env.PORT || 3000
-
 // Middleware to parse incoming JSON and URL encoded data
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 // Middleware to allow frontend to interact with backend
 app.use(cors())
-// Middleware to manage movie image upload
-const storage = multer.memoryStorage()
-const upload = multer({ storage: storage })
 
 // Connect to MySQL
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
 })
+console.log(process.env.DB_HOST,process.env.DB_USER,process.env.DB_PASSWORD,process.env.DB_NAME )
 
 // Middleware to protect routes
 const authenticateToken = (req, res, next) => {

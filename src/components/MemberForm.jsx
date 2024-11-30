@@ -75,7 +75,7 @@ const MemberForm = () => {
         <label className="member-input-label">{getText('Nimimerkki', 'Nickname')}</label>
         <input type="nickname" placeholder={getText('Nimimerkki', 'Nickname')} value={nickname} onChange={(e => setNickname(e.target.value))} required className="member-form-input"/>
         <div className="member-form-button-container">
-        <button type="submit" className="member-form-button">{getText('Lisää Jäsen', 'Add Member')}</button>
+          <button type="submit" className="member-form-button">{getText('Lisää Jäsen', 'Add Member')}</button>
         </div>
       </form>
     </div>

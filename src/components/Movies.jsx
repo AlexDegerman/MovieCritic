@@ -29,7 +29,9 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
 
   return (
     <div className="main-content">
+      {/* Filter bar */}
       <Filter search={search} setSearch={setSearch} genre={genre} setGenre={setGenre}/>
+      {/* Conditional renders */}
       {isInitialLoading ? (
         <div className="loading-movies-container">
           <div>
@@ -42,6 +44,7 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
         </div>
       ) : (
         <>
+          {/* Movie Cards */}
           <ul className="movie-list">
             {movies.map((movie) => (
               <li key={movie.fi_id || movie.id} className="movie-card">
@@ -94,7 +97,7 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
               </li>
             ))}
           </ul>
-          
+          {/* Loading More Box */}
           {isLoadingMore && (
             <div className="loading-more-container active">
               <p className="loading-more">
