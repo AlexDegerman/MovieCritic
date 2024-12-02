@@ -1,7 +1,6 @@
 import { handleApiError } from './apiErrorHandler'
 import { describe, test, expect, beforeEach } from 'vitest'
 
-// Test apiErrorHandler.js with npm test
 describe('handleApiError', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -60,5 +59,48 @@ describe('handleApiError', () => {
       request: {}
     }
     expect(handleApiError(error)).toBe('You are offline. Please check your internet connection.')
+  })
+
+  test('returns appropriate message for various status codes', () => {
+    const testCases = [
+      { status: 403, expected: "Permission denied" },
+      { status: 405, expected: "Method not allowed" },
+      { status: 406, expected: "Not acceptable" },
+      { status: 408, expected: "Request timeout" },
+      { status: 409, expected: "Conflict with existing data" },
+      { status: 415, expected: "Unsupported media type" },
+      { status: 429, expected: "Too many requests from this IP, please try again later" },
+      { status: 500, expected: "Server error" },
+      { status: 502, expected: "Service temporarily unavailable" },
+      { status: 503, expected: "Service unavailable" },
+      { status: 504, expected: "Request timeout" }
+    ]
+
+    testCases.forEach(({ status, expected }) => {
+      const error = { response: { status } }
+      expect(handleApiError(error)).toBe(expected)
+    })
+  })
+
+  test('returns default message for unknown status codes', () => {
+    const error = {
+      response: {
+        status: 999
+      }
+    }
+    expect(handleApiError(error)).toBe('An error occurred')
+  })
+
+  test('returns network error when no response and online', () => {
+    const error = {
+      request: {}
+    }
+    expect(handleApiError(error)).toBe('Network error. Please check your connection.')
+  })
+
+  test('returns provided default message for unknown errors', () => {
+    const error = {}
+    const customDefaultMessage = 'Something went wrong'
+    expect(handleApiError(error, customDefaultMessage)).toBe(customDefaultMessage)
   })
 })

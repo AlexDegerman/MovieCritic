@@ -20,6 +20,15 @@ const About = () => {
               "Our platform is built to connect movie enthusiasts and provide in-depth resources to discover, review, and discuss films.")}</p>
         </section>
         <section>
+          <h2>{getText("Demotilan rajoitukset","Demo Mode Limitations")}</h2>
+          <p>{getText("Huomioithan, että tämä sivusto toimii demotilassa, ja se sisältää rajoituksia verrattuna täysversioon.",
+            "Please note that this site is operating in demo mode and contains certain limitations compared to the full version.")}</p>
+          <p>{getText("Jotkin toiminnot, kuten jäsenten lisääminen, oman profiilin tietojen päivittäminen, oman tilin poistaminen, salasanan vaihtaminen, elokuvan lisääminen, elokuvan poistaminen, arvostelun lisääminen ja arvostelun poistaminen, on poistettu käytöstä.",
+            "Some features, such as adding members, updating profile details, deleting your account, changing your password, adding a movie, deleting a movie, adding a review, and deleting a review, are disabled.")}</p>
+          <p>{getText("Voit kuitenkin tutustua elokuvakokoelmaan, selailla yksityiskohtaisia elokuvasivuja ja lukea yhteisön arvosteluja.",
+            "You can still browse the movie collection, explore detailed movie pages, and read community reviews.")}</p>
+        </section>
+        <section>
           <h2>{getText("Mitä tarjoamme","What We Offer")}</h2>
           <h3>{getText("Laaja elokuvatietokanta:","Massive Movie Database:")}</h3>
           <p>{getText("Selaa laajaa kirjastoa, joka sisältää yli 10 000 elokuvaa! Klassikoista uusimpiin hitteihin olemme koonneet valikoiman, joka sopii kaikkiin makuihin.",

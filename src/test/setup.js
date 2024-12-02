@@ -1,33 +1,17 @@
-import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+const createLocalStorageMock = () => {
+  let store = {}
 
-
-class LocalStorageMock {
-  constructor() {
-    this.store = {}
-  }
-
-  clear() {
-    this.store = {}
-  }
-
-  getItem(key) {
-    return this.store[key] || null
-  }
-
-  setItem(key, value) {
-    this.store[key] = String(value)
-  }
-
-  removeItem(key) {
-    delete this.store[key]
+  return {
+    clear: () => { store = {} },
+    getItem: (key) => store[key] || null,
+    setItem: (key, value) => { store[key] = String(value) },
+    removeItem: (key) => { delete store[key] }
   }
 }
 
-global.localStorage = new LocalStorageMock()
+global.localStorage = createLocalStorageMock()
 
-console.error = vi.fn()
-
+// Mock navigator.onLine
 Object.defineProperty(navigator, 'onLine', {
   configurable: true,
   value: true,
