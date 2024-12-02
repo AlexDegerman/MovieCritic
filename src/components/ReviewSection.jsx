@@ -7,6 +7,7 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/ReviewSection.css'
+import { useAuth } from '../context/AuthContext'
 
 const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
   const [reviews, setReviews] = useState([])
@@ -25,6 +26,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
   const { language, getText} = useLanguageUtils()
   const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
+  const { isDemoUser } = useAuth()
 
   // Populate review list
   useEffect(() => {
@@ -104,6 +106,10 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
 
   const addReview = async (event) => {
     event.preventDefault()
+    if (isDemoUser) {
+      showInfo(getText("Arvostelujen lisääminen on poissa käytöstä demotilassa.", "Adding reviews is disabled in demo mode."))
+      return
+    }
     if (!currentMember) {
       showError(getText("Kirjaudu sisään voidaksesi jättää arvostelun.", "Please log in to submit a review"))
       return
@@ -144,6 +150,10 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
   }
 
   const deleteReview = (id) => {
+    if (isDemoUser) {
+      showInfo(getText("Arvostelujen poistaminen on poissa käytöstä demotilassa.", "Deleting reviews is disabled in demo mode."))
+      return
+    }
     const token = localStorage.getItem('token')
     if (token) {
       showWarning(

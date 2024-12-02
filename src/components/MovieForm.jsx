@@ -6,6 +6,7 @@ import { MOVIE_GENRES_FIN } from '../constants/movieGenresFin.js'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/MovieForm.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils.js'
+import { useAuth } from '../context/AuthContext'
 
 // This component displays a form to add movies to the database
 const MovieForm = ({ setUpdateMovieList }) => {
@@ -13,7 +14,7 @@ const MovieForm = ({ setUpdateMovieList }) => {
   const {showSuccess, showError, showInfo} = useAlertMessages()
   const {language, getText} = useLanguageUtils()
   const genres = language === 'fi' ? MOVIE_GENRES_FIN : MOVIE_GENRES
-
+  const { isDemoUser } = useAuth() 
   const [movie, setMovie] = useState({
     otsikko: "",
     lajityypit: [],
@@ -86,7 +87,10 @@ const MovieForm = ({ setUpdateMovieList }) => {
   //Adds a new movie to the database
   const addMovie = async (event) => {
     event.preventDefault()
-    
+    if (isDemoUser) {
+      showInfo(getText("Elokuvien lisääminen on poissa käytöstä demotilassa.", "Adding movies is disabled in demo mode."))
+      return
+    }
     const movieData = {
       selectedLanguage: movie.selectedLanguage,
       ...(movie.selectedLanguage === 'fi' ? {
@@ -121,8 +125,7 @@ const MovieForm = ({ setUpdateMovieList }) => {
           setUpdateMovieList(prev => !prev)
           navigate('/')
         })
-      } catch(error) {
-        console.error(error)
+      } catch {
         showError(getText("Elokuvan lisääminen epäonnistui. Yritä uudelleen.", "Failed to add movie. Please try again."))
       }
     } else {

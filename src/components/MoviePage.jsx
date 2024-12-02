@@ -7,6 +7,7 @@ import ReviewSection from './ReviewSection'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/MoviePage.css'
+import { useAuth } from '../context/AuthContext'
 
 const MoviePage = ({ currentMember, setMovies }) => {
   const navigate = useNavigate()
@@ -19,6 +20,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
   })
   const [loading, setLoading] = useState(true)
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
+  const { isDemoUser } = useAuth() 
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -33,8 +35,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
           setMovie(response.data)
           setLoading(false)
         }
-      } catch (error) {
-        console.error(getText("Virhe elokuvan hakemisessa: ", "Error fetching movie: "), error)
+      } catch {
         showError(getText("Elokuvan lataaminen epäonnistui", "Failed to load movie"))
         setLoading(false)
       }
@@ -52,6 +53,10 @@ const MoviePage = ({ currentMember, setMovies }) => {
   }
 
   const deleteMovie = (id) => {
+    if (isDemoUser) {
+      showInfo(getText("Elokuvien poistaminen on poissa käytöstä demotilassa.", "Deleting movies is disabled in demo mode."))
+      return
+    }
     const token = localStorage.getItem('token')
     if (token) {
       showWarning(

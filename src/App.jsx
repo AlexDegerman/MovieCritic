@@ -20,6 +20,7 @@ import MoviePage from './components/MoviePage.jsx'
 import Login from './components/Login.jsx'
 import About from './components/About.jsx'
 import PasswordChange from './components/PasswordChange.jsx'
+import { useAuth } from './context/AuthContext.js'
 
 const App = () => {
   const [movies, setMovies] = useState([])
@@ -32,14 +33,52 @@ const App = () => {
   const [search, setSearch] = useState("")
   const [genre, setGenre] = useState("")
   const [seed, setSeed] = useState(Date.now())
+  const [triggerDemoLogin, setTriggerDemoLogin] = useState(false)
   const location = useLocation()
   const { showInfo, showError } = useAlertMessages()
   const navigate = useNavigate()
   const {getText} = useLanguageUtils()
   const debouncedSearch = useDebounce(search, 500)
   const debouncedGenre = useDebounce(genre, 500)
+  const DEMO_SECRET = import.meta.env.VITE_DEMO_SECRET
+  const { isDemoUser, setIsDemoUser } = useAuth() 
 
-  //Fetch logged in member's data
+  // Autologin as demo user to view full features of website without having to login
+  useEffect(() => {
+    const autoDemoLogin = async () => {
+      if (DEMO_SECRET) {
+        showInfo(getText("Kirjaudutaan sisään demo-käyttäjänä", "Logging in as Demo User"))
+        try {
+          const demoToken = await MCService.getDemoToken(DEMO_SECRET)
+          
+          const response = await MCService.demoLogin(demoToken)
+
+          if (response.data.token) {
+            localStorage.setItem('token', response.data.token)
+            const decodedToken = jwtDecode(response.data.token)
+            const memberId = decodedToken.id
+            const profileResponse = await MCService.getProfile(memberId, response.token)
+            setCurrentMember(profileResponse.data)
+            setIsDemoUser(decodedToken.isDemoUser === true)
+
+            if (location.pathname !== '/') {
+              navigate('/')
+            }
+          }
+        } catch (error) {
+          showError(
+            handleApiError(error, getText("Automaattinen kirjautuminen epäonnistui.", "Automatic login failed."))
+          )
+        }
+      }
+    }
+    const token = localStorage.getItem('token')
+    if (!token && location.pathname !== '/login') {
+      autoDemoLogin()
+    }
+  }, [location.pathname, triggerDemoLogin, setIsDemoUser])
+
+  // Fetch logged in member's data
   useEffect(() => { 
     const token = localStorage.getItem('token')
     if (token) {
@@ -59,6 +98,7 @@ const App = () => {
     }
   }, [updateMovieList, showError])
   
+
   // Logout user when token expires
   useEffect(() => {
     const checkToken = () => {
@@ -84,6 +124,7 @@ const App = () => {
 
   // Populate movie list and remove duplicates
   useEffect(() => {
+    if (location.pathname === '/') {
     const newSeed = Date.now()
     setSeed(newSeed)
     
@@ -119,7 +160,8 @@ const App = () => {
     }
     
     loadMovies()
-  }, [updateMovieList, showError, page, debouncedSearch, debouncedGenre, location.pathname])
+    }
+  }, [updateMovieList, page, debouncedSearch, debouncedGenre, location.pathname])
 
   // Reset page when search or genre changes
   useEffect(() => {
@@ -187,9 +229,12 @@ const App = () => {
 
   return ( 
     <div className="container">
-      <Header currentMember={currentMember} setCurrentMember={setCurrentMember}/>
-    
+      <Header currentMember={currentMember} setCurrentMember={setCurrentMember} setTriggerDemoLogin={setTriggerDemoLogin}/>
+
     <main className="main-content">
+    {isDemoUser && (
+        <div className="demo-mode-banner" onClick={() => navigate('/login')}>{getText("DEMO TILA","DEMO MODE")}</div>
+      )}
     <Routes>
         <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/addmember" element={<MemberForm />} />
@@ -204,9 +249,6 @@ const App = () => {
 
     <Footer />
   </div>
- 
-
- 
   )
 }
 

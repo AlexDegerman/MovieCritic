@@ -8,6 +8,7 @@ import '../styles/Profile.css'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, ThumbsUp, Trash2, User, UserCircle } from 'lucide-react'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import { useAuth } from '../context/AuthContext'
 
 // This component displays a profile page
 const Profile = ({currentMember, setCurrentMember}) => {
@@ -31,6 +32,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
   const {showSuccess, showError, showDoubleWarning, showInfo} = useAlertMessages()
   const [profileUpdated, setProfileUpdated] = useState(false)
   const {getText} = useLanguageUtils()
+  const { isDemoUser } = useAuth() 
 
   // Get specific member's details
   useEffect(() => {
@@ -92,6 +94,11 @@ const Profile = ({currentMember, setCurrentMember}) => {
   const editProfile = async (event) => {  
     event.preventDefault()
 
+    if (isDemoUser) {
+      showInfo(getText("Tietoja muokkaavat toiminnot ovat poissa käytöstä demotilassa", "Features that modify data are disabled in demo mode."))
+      return
+    }
+
     const newProfileDetails = {
     nimimerkki: profileDetails.nimimerkki,
     sukupuoli: profileDetails.sukupuoli,
@@ -123,6 +130,10 @@ const Profile = ({currentMember, setCurrentMember}) => {
   }
 
   const deleteProfile = () => {
+    if (isDemoUser) {
+      showInfo(getText("Herkkätoiminnot ovat poissa käytöstä demotilassa.", "Sensitive features are disabled in demo mode"))
+      return
+    }
     const token = localStorage.getItem('token')
     if (token) {
       showDoubleWarning(getText(
@@ -163,7 +174,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
 
   return (
     <section className="profile-container">
-      <h1 className="profile-title">{member.nimimerkki}{getText(`'s Profiili`, `'s Profile`)}</h1>
+      <h1 className="profile-title">{member.nimimerkki}{getText("in Profiili", `'s Profile`)}</h1>
       {/* The profile detail editing form is hidden until the 'Edit Details' button is pressed and the button is only shown if the current user is the profile owner */}
       {isOwner && (
         <button onClick={() => setShowEdit(!showEdit)} className="profile-button">{getText(showEdit ? 'Piilota lisätiedot' : 'Muokkaa tietoja', showEdit ? 'Hide Details' : 'Edit Details')}</button>)}

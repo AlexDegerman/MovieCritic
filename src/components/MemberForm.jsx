@@ -4,19 +4,25 @@ import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/MemberForm.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 // This component displays a form to add members to the database
 const MemberForm = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [nickname, setNickname] = useState("")
-  const {showSuccess, showError } = useAlertMessages()
+  const {showSuccess, showError, showInfo } = useAlertMessages()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const {getText} = useLanguageUtils()
+  const { isDemoUser } = useAuth() 
 
   // Adds a new member to the database
   const addMember = async (event) => {
     event.preventDefault()
+    if (isDemoUser) {
+      showInfo(getText("Jäsenien lisääminen on poissa käytöstä demotilassa.", "Adding members is disabled in demo mode."))
+      return
+    }
     if (password.length < 4) {
       showError('Password should be at least 4 characters long')
       return

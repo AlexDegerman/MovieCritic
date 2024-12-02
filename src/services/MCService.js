@@ -123,8 +123,20 @@ const getReviewsfromMember = (id) => {
   return axios.get(memberUrl + '/'+ `${id}` + '/arvostelut' )
 }
 
+// Adds + 1 to like row on a review
 const incrementLikeOnReview = (id) => {
   return axios.post(reviewUrl + '/'+ `${id}` + '/like' )
 }
 
-export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword, incrementLikeOnReview}
+// Returns a demo token used for logging in as demo user
+const getDemoToken = async (demoSecret) => {
+  const response = await axios.post('/api/demo-token', { secret: demoSecret })
+  return response.data.demoToken
+}
+
+// Logs in as demo user
+const demoLogin = (demoSecret) => {
+  return axios.post('/api/demo-login', { demoToken: demoSecret });
+}
+
+export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword, incrementLikeOnReview, demoLogin, getDemoToken}

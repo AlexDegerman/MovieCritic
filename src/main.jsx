@@ -5,16 +5,20 @@ import './index.css'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AlertProvider } from './providers/AlertProvider.jsx'
 import { LanguageProvider } from './providers/LanguageProvider.jsx'
+import { AuthProvider } from './providers/AuthProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     {/* Language context for localization */}
     <LanguageProvider>
-      {/* Alert system for user notifications */}
+      {/* Alert context for user notifications */}
       <AlertProvider>
-      {/* Routing system */}
+        {/* Routing system */}
         <Router>
-          <App/>
+          {/* Auth context for authentication */}
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </Router>
       </AlertProvider>
     </LanguageProvider>

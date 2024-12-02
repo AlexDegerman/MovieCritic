@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const bodyParser = require('body-parser')
 require('dotenv').config()
+const crypto = require('crypto');
+const rateLimit = require('express-rate-limit')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -23,24 +25,41 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
 })
-console.log(process.env.DB_HOST,process.env.DB_USER,process.env.DB_PASSWORD,process.env.DB_NAME )
+
+const DEMO_SECRET = process.env.DEMO_SECRET
+const generateDemoToken = () => {
+  return crypto.randomBytes(32).toString('hex')
+}
+const activeDemoTokens = new Set()
+
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5000, 
+  message: 'Too many requests from this IP, please try again later',
+  standardHeaders: true, 
+  legacyHeaders: false
+})
+
+app.use(limiter)
 
 // Middleware to protect routes
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
-  
+
   if (!token) return res.status(401).json({ error: 'Token missing'})
-  
+
   try {
     const decoded = jwt.verify(token, process.env.SECRET)
     req.user = decoded
+    if (req.user.isDemoUser) {
+      return res.status(403).json({ error: 'Sensitive feature disabled in Demo Mode' })
+    }
     next()
   } catch {
     return res.status(403).json({ error: 'Invalid token'})
   }
 }
-
 
 const checkOwnership = (tableName) => {
   return async (req, res, next) => {
@@ -93,6 +112,46 @@ const isProfileOwner = checkOwnership('jasen')
 const isReviewOwner = checkOwnership('arvostelut')
 
 // Routes
+// Demo Token Request
+app.post('/api/demo-token', (req, res) => {
+  if (!DEMO_SECRET) {
+    return res.status(403).json({ error: 'Demo mode not available' })
+  }
+
+  const { secret } = req.body
+  if (secret !== DEMO_SECRET) {
+    return res.status(403).json({ error: 'Invalid demo credentials' })
+  }
+
+  const demoToken = generateDemoToken()
+  activeDemoTokens.add(demoToken)
+
+  res.status(200).json({ demoToken })
+})
+
+// Login as Demo User
+app.post('/api/demo-login', async (req, res) => {
+  const { demoToken } = req.body
+
+  if (!activeDemoTokens.has(demoToken)) {
+    return res.status(403).json({ error: 'Invalid or expired demo token' })
+  }
+
+  try {
+    activeDemoTokens.delete(demoToken)
+
+    const [rows] = await pool.execute('SELECT * FROM jasen WHERE nimimerkki = ?', ['demoUser']);
+    if (rows.length === 0) return res.status(400).json({ error: 'Demo user not found' })
+
+    const member = rows[0]
+    const memberToken = { id: member.id, sahkopostiosoite: member.sahkopostiosoite, isDemoUser: true }
+    const token = jwt.sign(memberToken, process.env.SECRET, { expiresIn: '24h' })
+    res.status(200).json({ token })
+  } catch (error) {
+    res.status(500).json({ error: 'Error in demo login: ' + error.message })
+  }
+})
+
 // Member login
 app.post('/api/login', async (req, res) => {
   const { sahkopostiosoite, salasana } = req.body

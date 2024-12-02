@@ -5,6 +5,7 @@ import '../styles/PasswordChange.css'
 import MCService from '../services/MCService'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import { useAuth } from '../context/AuthContext'
 
 const PasswordChange = ({currentMember}) => {
   const [currentPassword, setCurrentPassword] = useState('')
@@ -12,12 +13,16 @@ const PasswordChange = ({currentMember}) => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
-  const { showSuccess, showError } = useAlertMessages()
+  const { showSuccess, showError, showInfo } = useAlertMessages()
   const { getText } = useLanguageUtils()
+  const { isDemoUser } = useAuth() 
 
-  const handlePasswordChange = (e) => {
-    e.preventDefault()
-
+  const changePassword = (event) => {
+    event.preventDefault()
+    if (isDemoUser) {
+      showInfo(getText("Salasanan vaihtaminen on poissa käytöstä demotilassa.", "Changing password is disabled in demo mode."))
+      return
+    }
     if (newPassword !== confirmPassword) {
       showError('New passwords do not match')
       return
@@ -53,7 +58,7 @@ const PasswordChange = ({currentMember}) => {
         <Lock/> {getText("Vaihda Salasana","Change Password")}
       </h2>
       
-      <form onSubmit={handlePasswordChange}>
+      <form onSubmit={changePassword}>
 
         <div className="password-change-inputs-container">
           <label>

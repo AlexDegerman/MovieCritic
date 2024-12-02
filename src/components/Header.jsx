@@ -8,7 +8,7 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 
 // This component displays a header with links to pages
-const Header = ({ currentMember, setCurrentMember, }) => {
+const Header = ({ currentMember, setCurrentMember, setTriggerDemoLogin }) => {
   const navigate = useNavigate()
   const { showSuccess } = useAlertMessages()
   const { getText } = useLanguageUtils()
@@ -19,6 +19,7 @@ const Header = ({ currentMember, setCurrentMember, }) => {
     showSuccess(getText("Uloskirjautuminen onnistui!", "Succesfully logged out!"), () => {
       setCurrentMember([])
       navigate('/')
+      setTriggerDemoLogin(prev => !prev)
     })
   }
 
