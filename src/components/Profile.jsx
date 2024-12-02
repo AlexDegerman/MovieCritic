@@ -226,7 +226,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
         <ProfileDetail label={getText('Sukupuoli', 'Gender')} value={member.sukupuoli} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
-        <MapPin className='profile-detail-icon'/> 
+        <MapPin className='profile-detail-icon'/>
         <ProfileDetail label={getText('Paikkakunta', 'Resident City')}value={member.paikkakunta} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
@@ -266,7 +266,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
               ))}
             </ul>
           ) : (
-            <p className="no-reviews">No reviews found.</p>
+            <p className="no-reviews">{getText("Arvosteluita ei löytynyt","No reviews found.")}</p>
           )}
         </div>
       )}

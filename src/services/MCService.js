@@ -1,11 +1,13 @@
 import axios from 'axios'
-const movieUrl = "http://localhost:5173/api/elokuva"
-const memberUrl = "http://localhost:5173/api/jasen"
-const reviewUrl = "http://localhost:5173/api/arvostelut"
-const authUrl = "http://localhost:5173/api/auth"
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
+
+// Define endpoints dynamically based on the base URL
+const movieUrl = `${baseUrl}/api/elokuva`;
+const memberUrl = `${baseUrl}/api/jasen`;
+const reviewUrl = `${baseUrl}/api/arvostelut`;
+const authUrl = `${baseUrl}/api/auth`;
 
 // This service handles backend requests
-// Get a list of movies with pagination, search, and genre
 // Get a list of movies with pagination, search, and genre
 const getMovies = (page, search = '', genre = '', seed) => {
   return axios.get('/api/elokuva', {
