@@ -24,11 +24,15 @@ const PasswordChange = ({currentMember}) => {
       return
     }
     if (newPassword !== confirmPassword) {
-      showError('New passwords do not match')
+      showError(getText("Uudet salasanat eivät täsmää", "New passwords do not match"))
       return
     }
     if (newPassword.length < 4) {
-      showError('Password should be at least 4 characters long')
+      showError(getText("Salasanan pituuden tulee olla vähintään 4 merkkiä", "Password should be at least 4 characters long"))
+      return
+    }
+    if (newPassword.length > 20) {
+      showError(getText("Salasana ei saa olla yli 20 merkkiä pitkä", "Password should not exceed 20 characters"))
       return
     }
     const token = localStorage.getItem('token')

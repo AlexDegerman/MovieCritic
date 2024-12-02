@@ -198,7 +198,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
             <input type="text" name="harrastukset" value={profileDetails.harrastukset} onChange={handleChange} className="member-details-form-input"/>
           </label>
           <label>
-          {getText('Suosikki lajityypi:', 'Favorite Genres')}
+          {getText('Suosikki lajityypit', 'Favorite Genres')}
             <input type="text" name="suosikkilajityypit" value={profileDetails.suosikkilajityypit} onChange={handleChange} className="member-details-form-input"/>
           </label>
           <label>
@@ -235,7 +235,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
       </div>
       <div className="profile-detail">
         <Tag className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Suosikki lajityypi:', 'Favorite Genres')} value={member.suosikkilajityypit} isOwner={isOwner}/>
+        <ProfileDetail label={getText('Suosikki lajityypit', 'Favorite Genres')} value={member.suosikkilajityypit} isOwner={isOwner}/>
       </div>
       <div className="profile-detail">
         <Film className='profile-detail-icon'/>

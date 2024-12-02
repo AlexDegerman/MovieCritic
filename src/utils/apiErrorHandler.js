@@ -1,6 +1,4 @@
-
 export const handleApiError = (error, defaultMessage = "An error occurred") => {
-
   if (error.response) {
     const statusMessages = {
       400: "Invalid request",
