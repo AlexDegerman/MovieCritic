@@ -13,7 +13,7 @@ const getMovies = (page, search = '', genre = '', seed) => {
   return axios.get('/api/elokuva', {
     params: {
       page,
-      limit: 51,
+      limit: 21,
       search,
       genre,
       seed

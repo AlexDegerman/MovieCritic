@@ -27,6 +27,7 @@ const App = () => {
   const [currentMember, setCurrentMember] = useState({})
   const [updateMovieList, setUpdateMovieList] = useState(false)
   const [movieRatings, setMovieRatings] = useState({})
+  const [loadedMovieRatings, setLoadedMovieRatings] = useState({})
   const [page, setPage] = useState(1)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -41,6 +42,7 @@ const App = () => {
   const debouncedSearch = useDebounce(search, 500)
   const debouncedGenre = useDebounce(genre, 500)
   const { isDemoUser, setIsDemoUser } = useAuth() 
+  const [hasMoreMovies, setHasMoreMovies] = useState(true)
 
   // Autologin as demo user to view full features of website without having to login
   useEffect(() => {
@@ -134,6 +136,7 @@ const App = () => {
 
       MCService.getMovies(page, search, genre, seed)
         .then(response => {
+          const isLastPage = page >= response.data.totalPages
           setMovies(prevMovies => {
             if (page === 1) {
               return response.data.movies
@@ -145,6 +148,7 @@ const App = () => {
             )
             return [...prevMovies, ...newMovies]
           })
+          setHasMoreMovies(!isLastPage)
           if (!seed) setSeed(response.data.seed)
         })
         .catch(error => {
@@ -175,31 +179,47 @@ const App = () => {
         window.removeEventListener('scroll', handleScroll)
       }
     }
-  }, [location.pathname, isLoadingMore]) // 
+  }, [location.pathname, isLoadingMore])
 
-  // Load intial ratings when movies load
+  // Load ratings for movies
   useEffect(() => {
-    setMovieRatings({})
-    movies.forEach(movie => {
-      MCService.getReviews(movie.fi_id)
-      .then(response => {
-        const reviews = response.data
-        const rating = reviews.length === 0 ? "Unrated" : (reviews.reduce((sum, review) => sum + review.tahdet, 0) / reviews.length)
+    const moviesToLoadRatings = movies.filter(movie => 
+      !loadedMovieRatings[movie.fi_id]
+    ).slice(0, 21)
 
-        setMovieRatings(prevRatings => ({
-          ...prevRatings,
-          [movie.fi_id]: rating
-        }))
-      })
-      .catch(error => {
-        showError(handleApiError(error, getText("Elokuvien arvosteluita ei saatu ladattua. Yritä uudelleen.", "Failed to load movie rating. Please try again.")))
-        setMovieRatings(prevRatings => ({
-          ...prevRatings,
-          [movie.fi_id]: "Unrated"
-        }))
-      })
-    })
-  }, [movies, showError])
+    const loadRatings = async () => {
+      for (const movie of moviesToLoadRatings) {
+        try {
+          const response = await MCService.getReviews(movie.fi_id)
+          const reviews = response.data
+          const rating = reviews.length === 0 
+            ? "Unrated" 
+            : (reviews.reduce((sum, review) => sum + review.tahdet, 0) / reviews.length).toFixed(1)
+
+          setMovieRatings(prevRatings => ({
+            ...prevRatings,
+            [movie.fi_id]: rating
+          }))
+
+          setLoadedMovieRatings(prev => ({
+            ...prev,
+            [movie.fi_id]: true
+          }))
+        } catch (error) {
+          showError(handleApiError(error, getText("Elokuvien arvosteluita ei saatu ladattua. Yritä uudelleen.", "Failed to load movie rating. Please try again.")))
+          
+          setMovieRatings(prevRatings => ({
+            ...prevRatings,
+            [movie.fi_id]: "Unrated"
+          }))
+        }
+      }
+    }
+
+    if (moviesToLoadRatings.length > 0) {
+      loadRatings()
+    }
+  }, [movies])
 
   // Load more movies when user scrolls to bottom of movie list
   const handleScroll = () => {
@@ -210,7 +230,8 @@ const App = () => {
     if (
       location.pathname === '/' && 
       windowHeight + scrollTop >= scrollHeight && 
-      !isLoadingMore
+      !isLoadingMore &&
+      hasMoreMovies
     ) {
       setPage(prevPage => prevPage + 1)
     }
@@ -236,7 +257,7 @@ const App = () => {
         <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/addmember" element={<MemberForm />} />
         <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies} />} />
-        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} />} />
+        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} hasMoreMovies={hasMoreMovies} />} />
         <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/about" element={<About/>}/>

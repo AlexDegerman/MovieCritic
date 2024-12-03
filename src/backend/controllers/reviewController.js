@@ -13,14 +13,15 @@ const getReviewsByMemberId = async (req, res) => {
 
 // Add a review
 const addReview = async (req, res) => {
-  const { elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko, elokuvanTitle, tmdb_id } = req.body
+  const { elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, elokuvanOtsikko, elokuvanTitle, tmdb_id } = req.body
   try {
     await pool.execute(
-      'INSERT INTO arvostelut (elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko, elokuvanTitle, tmdb_id ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-      [elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko, elokuvanTitle, tmdb_id]
+      'INSERT INTO arvostelut (elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, luotuaika, elokuvanOtsikko, elokuvanTitle, tmdb_id) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?)',
+      [elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, elokuvanOtsikko, elokuvanTitle, tmdb_id]
     )
     res.status(201).json({ message: 'Review added successfully' })
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: 'Error adding review: ' + error.message })
   }
 }

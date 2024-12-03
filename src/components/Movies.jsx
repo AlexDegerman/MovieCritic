@@ -1,20 +1,11 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Filter from './Filter'
-import { useEffect} from 'react'
 import '../styles/Movies.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
 // This component displays a list of movies
-const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading}) => {
+const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading, hasMoreMovies}) => {
   const {language, getText, getMovieField } = useLanguageUtils()
-  const location = useLocation()
-
-// Scroll to top when route changes
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      window.scrollTo(0, 0)
-    })
-  }, [location.key,movies])
 
   const getMovieDescription = (movie) => {
     const tagline = getMovieField(movie, 'iskulause', 'tagline')

@@ -118,7 +118,6 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
       ...review,
       elokuvaid: movie.fi_id,
       jasenid: currentMember.id,
-      luotuaika: new Date().toISOString(),
       elokuvanOtsikko: movie.otsikko,
       elokuvanTitle: movie.title,
       tmdb_id: movie.tmdb_id

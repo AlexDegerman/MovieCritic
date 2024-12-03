@@ -2,9 +2,8 @@ const pool = require('../config/db')
 
 // Get all rows from Elokuva and Movies with search support
 const getMovies = async (req, res) => {
-  const { page = 1, limit = 51, search = '', genre = '', seed = Date.now() } = req.query
+  const { page = 1, limit = 21, search = '', genre = '', seed = Date.now() } = req.query
   const offset = (page - 1) * limit
-
   try {
     let whereClause = '1=1'
     const params = []
@@ -25,7 +24,7 @@ const getMovies = async (req, res) => {
       params.push(`%${genre}%`, `%${genre}%`)
     }
 
-    const seedClause = `RAND(${seed})`
+    const seedClause = `RAND(${String(seed)})`
 
     const countQuery = `
       SELECT COUNT(DISTINCT COALESCE(e.id, m.id)) as total_count
@@ -69,9 +68,12 @@ const getMovies = async (req, res) => {
       ORDER BY ${seedClause}
       LIMIT ? OFFSET ?
     `
-    const queryParams = [...params, parseInt(limit), offset]
+    const queryParams = [
+      ...params,
+      String(parseInt(limit, 10)),
+      String(parseInt(offset, 10))
+    ]
     const [rows] = await pool.execute(mainQuery, queryParams)
-
     res.status(200).json({
       movies: rows,
       totalCount: totalCount,
@@ -79,6 +81,7 @@ const getMovies = async (req, res) => {
       totalPages: Math.ceil(totalCount / limit),
       seed: seed,
     })
+
   } catch (error) {
     res.status(500).json({ error: 'Error in query: ' + error.message })
   }
