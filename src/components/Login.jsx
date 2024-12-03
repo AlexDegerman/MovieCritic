@@ -20,14 +20,20 @@ const Login = ({ setUpdateMovieList }) => {
     try {
       const res = await MCService.Login(email, password)
       localStorage.setItem('token', res.data.token)
-      showSuccess(getText("Kirjautuminen onnistui!","Succesfully logged in!"), () => {
+      showSuccess(getText("Kirjautuminen onnistui!", "Successfully logged in!"), () => {
         navigate('/')
         setUpdateMovieList(prev => !prev)
       })
-    } catch {
-      showError(getText("Väärä sähköpostiosoite tai salasana!","Wrong email or password!"))
+    } catch (error) {
+      // Check if the error is a 429
+      if (error.response && error.response.status === 429) {
+        showError(getText("Liian monta kirjautumisyritystä. Yritä uudelleen myöhemmin.", "Too many login attempts. Please try again later."))
+      } else {
+        showError(getText("Väärä sähköpostiosoite tai salasana!", "Wrong email or password!"))
+      }
     }
   }
+  
 
   return (
     <div className="login-form">

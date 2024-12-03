@@ -40,16 +40,14 @@ const App = () => {
   const {getText} = useLanguageUtils()
   const debouncedSearch = useDebounce(search, 500)
   const debouncedGenre = useDebounce(genre, 500)
-  const DEMO_SECRET = import.meta.env.VITE_DEMO_SECRET
   const { isDemoUser, setIsDemoUser } = useAuth() 
 
   // Autologin as demo user to view full features of website without having to login
   useEffect(() => {
     const autoDemoLogin = async () => {
-      if (DEMO_SECRET) {
         showInfo(getText("Kirjaudutaan sisään demo-käyttäjänä", "Logging in as Demo User"))
         try {
-          const demoToken = await MCService.getDemoToken(DEMO_SECRET)
+          const demoToken = await MCService.getDemoToken()
           
           const response = await MCService.demoLogin(demoToken)
 
@@ -71,7 +69,6 @@ const App = () => {
           )
         }
       }
-    }
     const token = localStorage.getItem('token')
     if (!token && location.pathname !== '/login') {
       autoDemoLogin()

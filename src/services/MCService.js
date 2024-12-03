@@ -1,11 +1,11 @@
 import axios from 'axios'
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const baseUrl = import.meta.env.VITE_API_BASE_URL
 
 // Define endpoints dynamically based on the base URL
-const movieUrl = `${baseUrl}/api/elokuva`;
-const memberUrl = `${baseUrl}/api/jasen`;
-const reviewUrl = `${baseUrl}/api/arvostelut`;
-const authUrl = `${baseUrl}/api/auth`;
+const movieUrl = `${baseUrl}/api/elokuva`
+const memberUrl = `${baseUrl}/api/jasen`
+const reviewUrl = `${baseUrl}/api/arvostelut`
+const authUrl = `${baseUrl}/api/auth`
 
 // This service handles backend requests
 // Get a list of movies with pagination, search, and genre
@@ -133,8 +133,8 @@ const incrementLikeOnReview = (id) => {
 }
 
 // Get a demo token used for logging in as a demo user
-const getDemoToken = (demoSecret) => {
-  return axios.post(authUrl + "/demo-token", { secret: demoSecret })
+const getDemoToken = () => {
+  return axios.post(authUrl + "/demo-token")
 }
 
 // Logs in as a demo user

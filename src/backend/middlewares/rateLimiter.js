@@ -7,5 +7,12 @@ const limiter = rateLimit({
   standardHeaders: true, 
   legacyHeaders: false
 })
+const authLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10, 
+  message: 'Too many requests to this route, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
-module.exports = limiter
+module.exports = { limiter, authLimiter }

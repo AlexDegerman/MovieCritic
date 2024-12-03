@@ -1,8 +1,7 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const pool = require('../config/db')
-const DEMO_SECRET = process.env.DEMO_SECRET
-const activeDemoTokens = new Set()
+const activeDemoTokens = new Map()
 const crypto = require('crypto')
 
 const generateDemoToken = () => {
@@ -10,27 +9,17 @@ const generateDemoToken = () => {
 }
 
 // Demo Token Request
-const demoTokenRquest = (req, res) => {
-  if (!DEMO_SECRET) {
-    return res.status(403).json({ error: 'Demo mode not available' })
-  }
-
-  const { secret } = req.body
-  if (secret !== DEMO_SECRET) {
-    return res.status(403).json({ error: 'Invalid demo credentials' })
-  }
-
+const demoTokenRequest = (req, res) => {
   const demoToken = generateDemoToken()
-  activeDemoTokens.add(demoToken)
-
+  activeDemoTokens.set(demoToken, Date.now())
   res.status(200).json({ demoToken })
 }
+
 
 // Demo Login
 const demoLogin = async (req, res) => {
   const { demoToken } = req.body
   if (!activeDemoTokens.has(demoToken.data.demoToken)) {
-
     return res.status(403).json({ error: 'Invalid or expired demo token' })
   }
 
@@ -43,7 +32,7 @@ const demoLogin = async (req, res) => {
     const member = rows[0]
     const memberToken = { id: member.id, sahkopostiosoite: member.sahkopostiosoite, isDemoUser: true }
     const token = jwt.sign(memberToken, process.env.SECRET, { expiresIn: '24h' })
-    res.status(200).json({ token })
+    res.status(200).json({ success: true, token })
   } catch (error) {
     res.status(500).json({ error: 'Error in demo login: ' + error.message })
   }
@@ -70,7 +59,7 @@ const LoginMember = async (req, res) => {
 }
 
 module.exports = {
-  demoTokenRquest,
+  demoTokenRequest,
   demoLogin,
   LoginMember,
 }

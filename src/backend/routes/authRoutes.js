@@ -3,7 +3,7 @@ const router = express.Router()
 const authController = require('../controllers/authController')
 
 // Route for generating demo token
-router.post('/demo-token', authController.demoTokenRquest)
+router.post('/demo-token', authController.demoTokenRequest)
 
 // Route for demo login
 router.post('/demo-login', authController.demoLogin)

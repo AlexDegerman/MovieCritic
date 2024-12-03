@@ -213,38 +213,55 @@ const Profile = ({currentMember, setCurrentMember}) => {
         </form>
       )}
       {/* Profile Details */}
-      <div className="profile-detail">
-        <UserCircle className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Nimimerkki', 'Nickname')} value={member.nimimerkki} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <Calendar className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Liittymispäivä', 'Join Date')} value={member.liittymispaiva} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <User className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Sukupuoli', 'Gender')} value={member.sukupuoli} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <MapPin className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Paikkakunta', 'Resident City')}value={member.paikkakunta} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <Palette className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Harrastukset', 'Hobbies')} value={member.harrastukset} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <Tag className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Suosikki lajityypit', 'Favorite Genres')} value={member.suosikkilajityypit} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <Film className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Suosikki elokuvat', 'Favorite Movies')}value={member.suosikkifilmit} isOwner={isOwner}/>
-      </div>
-      <div className="profile-detail">
-        <Info className='profile-detail-icon'/>
-        <ProfileDetail label={getText('Oma kuvaus', 'Self Description')} value={member.omakuvaus} isOwner={isOwner}/>
-      </div>
+      {(member.nimimerkki || isOwner) && (
+        <div className="profile-detail">
+          <UserCircle className="profile-detail-icon" />
+          <ProfileDetail label={getText('Nimimerkki', 'Nickname')} value={member.nimimerkki} isOwner={isOwner} />
+        </div>
+          )}
+      {(member.liittymispaiva || isOwner) && (
+        <div className="profile-detail">
+          <Calendar className="profile-detail-icon" />
+          <ProfileDetail label={getText('Liittymispäivä', 'Join Date')} value={member.liittymispaiva} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.sukupuoli || isOwner) && (
+        <div className="profile-detail">
+          <User className="profile-detail-icon" />
+          <ProfileDetail label={getText('Sukupuoli', 'Gender')} value={member.sukupuoli} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.paikkakunta || isOwner) && (
+        <div className="profile-detail">
+          <MapPin className="profile-detail-icon" />
+          <ProfileDetail label={getText('Paikkakunta', 'Resident City')} value={member.paikkakunta} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.harrastukset || isOwner) && (
+        <div className="profile-detail">
+          <Palette className="profile-detail-icon" />
+          <ProfileDetail label={getText('Harrastukset', 'Hobbies')} value={member.harrastukset} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.suosikkilajityypit || isOwner) && (
+        <div className="profile-detail">
+          <Tag className="profile-detail-icon" />
+          <ProfileDetail label={getText('Suosikki lajityypit', 'Favorite Genres')} value={member.suosikkilajityypit} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.suosikkifilmit || isOwner) && (
+        <div className="profile-detail">
+          <Film className="profile-detail-icon" />
+          <ProfileDetail label={getText('Suosikki elokuvat', 'Favorite Movies')} value={member.suosikkifilmit} isOwner={isOwner} />
+        </div>
+      )}
+      {(member.omakuvaus || isOwner) && (
+        <div className="profile-detail">
+          <Info className="profile-detail-icon" />
+          <ProfileDetail label={getText('Oma kuvaus', 'Self Description')} value={member.omakuvaus} isOwner={isOwner} />
+        </div>
+      )}
+
 
       <button onClick={() => setDropdown(!dropdown)} className="profile-button">{getText( dropdown ? 'Piilota jäsenen arvostelut' : 'Näytä jäsenen arvostelut', dropdown ? "Hide Member's Reviews" : "Show Member's Reviews")}</button>
       {/* Dropdown Button for member's reviews */}
