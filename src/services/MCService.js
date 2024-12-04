@@ -10,7 +10,7 @@ const authUrl = `${baseUrl}/api/auth`
 // This service handles backend requests
 // Get a list of movies with pagination, search, and genre
 const getMovies = (page, search = '', genre = '', seed) => {
-  return axios.get('/api/elokuva', {
+  return axios.get(`${movieUrl}`, {
     params: {
       page,
       limit: 21,
