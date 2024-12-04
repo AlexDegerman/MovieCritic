@@ -9,6 +9,7 @@
 }
 
 .header-main {
+  background-color: #FFC107;
   height: 40px;
   padding: 10px 20px;
   display: flex;
