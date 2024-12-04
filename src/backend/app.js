@@ -14,7 +14,10 @@ const reviewRoutes = require('./routes/reviewRoutes')
 
 // Middleware
 app.use(cors({
-  origin: ['https://moviecriticfi.onrender.com'],
+  origin: ['https://moviecriticfi.onrender.com'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }))
 
 app.use(bodyParser.json()) 
