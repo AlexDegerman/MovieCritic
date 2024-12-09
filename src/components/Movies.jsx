@@ -3,10 +3,11 @@ import Filter from './Filter'
 import '../styles/Movies.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 
-// This component displays a list of movies
-const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading, hasMoreMovies}) => {
+// This component displays a list of movie cards
+const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading}) => {
   const {language, getText, getMovieField } = useLanguageUtils()
 
+  // Returns the first 50 characters of the movie description if tagline does not exist
   const getMovieDescription = (movie) => {
     const tagline = getMovieField(movie, 'iskulause', 'tagline')
     if (tagline) return tagline

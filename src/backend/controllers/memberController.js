@@ -15,7 +15,7 @@ const addMember = async (req, res) => {
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ error: 'Nickname already exists. Please choose a different one.' })
     }
-    res.status(500).json({ error: 'Error adding member: ' + error.message })
+    res.status(500).json({ error: 'Error adding member' })
   }
 }
 
@@ -27,7 +27,7 @@ const getMember = async (req, res) => {
     if (rows.length === 0) return res.status(404).json({ message: 'The member’s page is unavailable. It might have been deleted or the link is incorrect.' })
     res.status(200).json(rows[0])
   } catch (error) {
-    res.status(500).json({ error: 'Error in member search: ' + error.message })
+    res.status(500).json({ error: 'Error in member search' })
   }
 }
 
@@ -41,8 +41,8 @@ const updateMemberProfile = async (req, res) => {
       [nimimerkki, sukupuoli, paikkakunta, harrastukset, suosikkilajityypit, suosikkifilmit, omakuvaus, memberId]
     )
     res.status(200).json({ message: 'Profile details updated successfully!' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error updating profile details: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error updating profile details' })
   }
 }
 
@@ -51,8 +51,8 @@ const getAllMembers = async (req, res) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM jasen')
     res.status(200).json(rows)
-  } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error in query' })
   }
 }
 
@@ -62,8 +62,8 @@ const deleteMemberAccount = async (req, res) => {
   try {
     await pool.execute('DELETE FROM jasen WHERE id = ?', [memberId])
     res.status(200).json({ message: 'Account deleted successfully!' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error deleting profile: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error deleting profile' })
   }
 }
 
@@ -87,8 +87,8 @@ const changePassword = async (req, res) => {
     await pool.execute('UPDATE jasen SET salasana = ? WHERE id = ?', [hashedNewPassword, memberId])
 
     res.status(200).json({ message: 'Password changed successfully' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error changing password: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error changing password' })
   }
 }
 
@@ -98,5 +98,5 @@ module.exports = {
   updateMemberProfile,
   getAllMembers,
   deleteMemberAccount,
-  changePassword,
+  changePassword
 }

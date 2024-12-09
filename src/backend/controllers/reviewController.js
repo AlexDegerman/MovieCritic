@@ -7,7 +7,7 @@ const getReviewsByMemberId = async (req, res) => {
     const [rows] = await pool.execute('SELECT * FROM arvostelut WHERE jasenid = ?', [memberid])
     res.status(200).json(rows)
   } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
+    res.status(500).json({ error: 'Error in query' })
   }
 }
 
@@ -20,9 +20,8 @@ const addReview = async (req, res) => {
       [elokuvaid, jasenid, otsikko, sisalto, tahdet, nimimerkki, elokuvanOtsikko, elokuvanTitle, tmdb_id]
     )
     res.status(201).json({ message: 'Review added successfully' })
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'Error adding review: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error adding review' })
   }
 }
 
@@ -31,8 +30,8 @@ const deleteReview = async (req, res) => {
   try {
     await pool.execute('DELETE FROM arvostelut WHERE id = ?', [req.params.id])
     res.status(200).json({ message: 'Review deleted successfully!' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error deleting review: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error deleting review' })
   }
 }
 
@@ -51,8 +50,8 @@ const likeReview = async (req, res) => {
     }
 
     res.status(200).json({ message: 'Like added successfully' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error updating like count: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error updating like count' })
   }
 }
 
@@ -72,8 +71,8 @@ const getReviewsByMovieId = async (req, res) => {
       WHERE arvostelut.elokuvaid = ?
     `, [elokuvaid])
     res.status(200).json(rows)
-  } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error in query' })
   }
 }
 

@@ -14,6 +14,7 @@ const Header = ({ currentMember, setCurrentMember, setTriggerDemoLogin }) => {
   const { getText } = useLanguageUtils()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  // Logs out user when clicking logout button
   const Logout = () => {
     localStorage.removeItem('token')
     showSuccess(getText("Uloskirjautuminen onnistui!", "Succesfully logged out!"), () => {

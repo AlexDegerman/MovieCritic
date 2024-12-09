@@ -1,32 +1,39 @@
-  body {
-    background-color: #000000;
-    color: #E0E0E0; 
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-image: url("/bg.png");
-    background-size: cover; 
-    background-repeat: no-repeat; 
-    background-attachment: fixed; 
-    background-position: center center; 
-  }
+body {
+  background-color: #000000;
+  color: #E0E0E0; 
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-image: url("/bg.png");
+  background-size: cover; 
+  background-repeat: no-repeat; 
+  background-attachment: fixed; 
+  background-position: center center; 
+}
 
-  .container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-  .main-content {
-    flex: 1;
-  }
-  .demo-mode-banner {
-    background-color: #333;   
-    color: #ff0000;    
-    text-align: center;
-    font-weight: bold;
-    position: fixed;
-    top: 65px;
-    margin-left: 20px;
-    z-index: 1001;
-  }
+.main-content {
+  flex: 1;
+}
+.demo-mode-banner {
+  background-color: #333;   
+  color: #ff0000;    
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+  top: 65px;
+  margin-left: 20px;
+  z-index: 1001;
+}
+
+input:-webkit-autofill {
+  background-color: #333 !important;
+  border: 1px solid #FFC107 !important;
+  -webkit-text-fill-color: white !important;
+  box-shadow: 0 0 0px 1000px #333 inset !important;
+}

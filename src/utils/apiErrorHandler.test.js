@@ -1,6 +1,7 @@
 import { handleApiError } from './apiErrorHandler'
 import { describe, test, expect, beforeEach } from 'vitest'
 
+// Test apiErrorHandler.js with npm test in terminal
 describe('handleApiError', () => {
   beforeEach(() => {
     localStorage.clear()

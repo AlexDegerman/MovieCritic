@@ -7,16 +7,19 @@ import { handleApiError } from '../utils/apiErrorHandler'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useAuth } from '../context/AuthContext'
 
+// Displays a form for changing member's password
 const PasswordChange = ({currentMember}) => {
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { showSuccess, showError, showInfo } = useAlertMessages()
   const { getText } = useLanguageUtils()
   const { isDemoUser } = useAuth() 
 
+  // Change password button handler
   const changePassword = (event) => {
     event.preventDefault()
     if (isDemoUser) {
@@ -59,13 +62,14 @@ const PasswordChange = ({currentMember}) => {
   return (
     <div className="password-change-container">
       <h2>
-        <Lock/> {getText("Vaihda Salasana","Change Password")}
+        <Lock/> {getText("Vaihda Salasana", "Change Password")}
       </h2>
       
       <form onSubmit={changePassword}>
 
         <div className="password-change-inputs-container">
-          <label>
+          {/* Current Password Input */}
+        <label htmlFor="currentPassword">
           {getText("Nykyinen salasana","Current Password")}
           </label>
           <div>
@@ -85,9 +89,9 @@ const PasswordChange = ({currentMember}) => {
               {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-
+          {/* New Password Input */}
           <label htmlFor="newPassword">
-          {getText("Uusi salasana","New Password")}
+          {getText("Uusi salasana", "New Password")}
           </label>
           <div>
             <input 
@@ -106,25 +110,35 @@ const PasswordChange = ({currentMember}) => {
               {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
-
+          {/* Confirm New Password Input */}
           <label htmlFor="confirmPassword">
-          {getText("Vahvista uusi salasana","Confirm New Password")}
+          {getText("Vahvista uusi salasana", "Confirm New Password")}
           </label>
-          <input 
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="password-change-input"
-            required
-          />
+          <div>
+            <input 
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="password-change-input"
+              required
+            />
+            <button 
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="toggle-visibility"
+            >
+              {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
         </div>
+        {/* Change Password Button */}
         <div className="password-change-button-container">
         <button 
           type="submit" 
           className="password-change-button"
         >
-          {getText("Vaihda salasana","Change Password")}
+          {getText("Vaihda salasana", "Change Password")}
         </button>
         </div>
       </form>

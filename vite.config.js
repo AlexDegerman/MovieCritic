@@ -7,10 +7,5 @@ export default defineConfig({
   test: {
     globals: true,
     setupFiles: 'src/test/setup.js',
-  },
-  server: {
-    proxy: {
-      '/api': 'https://moviecritic-103b.onrender.com'
-    }
   }
 })

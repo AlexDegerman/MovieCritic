@@ -1,6 +1,7 @@
 import { useLanguage } from "../context/LanguageContext"
 import '../styles/LanguageSelector.css'
 
+// User picks a language for the website from the language dropdown
 const LanguageSelector = () => {
   const {language, setLanguage } = useLanguage()
 

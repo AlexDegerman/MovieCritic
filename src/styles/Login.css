@@ -51,20 +51,8 @@
   box-sizing: border-box;
 }
 
-
 .login-input:active,
 .login-input:focus {
   outline: none;
   border-color: #FFC107;
-}
-
-
-.login-input:-webkit-autofill {
-  background-color: #333 !important;
-  color: white !important;
-  border: 1px solid #FFC107 !important;
-  -webkit-text-fill-color: white !important;
-  box-shadow: 0 0 0px 1000px #333 inset !important;
-  padding: 10px !important;
-  height: 40px !important;
 }

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AlertContext } from '../context/AlertContext'
 import { Alert } from '../components/Alert'
 
-// This provides global alert state management and renders the alert dialog
+// Provides global alert state management and renders the alert dialog
 export const AlertProvider = ({ children }) => {
   const [alertInfo, setAlertInfo] = useState({
     isOpen: false,

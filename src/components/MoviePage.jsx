@@ -22,6 +22,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
   const { isDemoUser } = useAuth() 
 
+  // Scroll to top when visiting a movie's page
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -52,6 +53,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
     })
   }
 
+  // Delete movie button handler
   const deleteMovie = (id) => {
     if (isDemoUser) {
       showInfo(getText("Elokuvien poistaminen on poissa käytöstä demotilassa.", "Deleting movies is disabled in demo mode."))

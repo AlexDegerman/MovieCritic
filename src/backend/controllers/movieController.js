@@ -82,8 +82,8 @@ const getMovies = async (req, res) => {
       seed: seed,
     })
 
-  } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error in query' })
   }
 }
 
@@ -127,8 +127,8 @@ const getMovieById = async (req, res) => {
       return res.status(404).json({ error: 'Movie not found' })
     }
     res.status(200).json(rows[0])
-  } catch (error) {
-    res.status(500).json({ error: 'Error in query: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error in query' })
   }
 }
 
@@ -147,7 +147,7 @@ const addMovie = async (req, res) => {
         paanayttelijat, 
         kieli,
         kuvaus,
-        kuva,
+        kuva
       } = req.body
 
       await pool.execute(
@@ -174,7 +174,7 @@ const addMovie = async (req, res) => {
           paanayttelijat,
           kieli,
           kuvaus,
-          kuva,
+          kuva
         ]
       )
     } else if (selectedLanguage === 'en') {
@@ -188,7 +188,7 @@ const addMovie = async (req, res) => {
         main_actors,
         original_language,
         overview,
-        poster_path,
+        poster_path
       } = req.body
 
       await pool.execute(
@@ -215,7 +215,7 @@ const addMovie = async (req, res) => {
           main_actors,
           original_language,
           overview,
-          poster_path,
+          poster_path
         ]
       )
     }
@@ -225,11 +225,11 @@ const addMovie = async (req, res) => {
         ? 'Elokuva lisätty onnistuneesti' 
         : 'Movie added successfully',
     })
-  } catch (error) {
+  } catch {
     res.status(500).json({
       error: selectedLanguage === 'fi'
-        ? 'Virhe elokuvan lisäämisessä: ' + error.message
-        : 'Error adding movie: ' + error.message,
+        ? 'Virhe elokuvan lisäämisessä'
+        : 'Error adding movie' 
     })
   }
 }
@@ -239,8 +239,8 @@ const deleteMovie = async (req, res) => {
   try {
     await pool.execute('DELETE FROM elokuva WHERE id = ?', [req.params.id])
     res.status(200).json({ message: 'Movie deleted successfully!' })
-  } catch (error) {
-    res.status(500).json({ error: 'Error deleting movie: ' + error.message })
+  } catch {
+    res.status(500).json({ error: 'Error deleting movie' })
   }
 }
 

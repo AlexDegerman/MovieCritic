@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react'
 import MCService from '../services/MCService'
 import { Link, useParams } from 'react-router-dom'
@@ -46,7 +47,6 @@ const Profile = ({currentMember, setCurrentMember}) => {
         is404 ? () => navigate('/') : undefined)
       })
     }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, profileUpdated])
 
   // Get specific member's reviews
@@ -63,7 +63,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
           showError(handleApiError(error, getText("Jäsenen arvostelujen lataaminen epäonnistui. Yritä uudelleen.", "Failed to load member's reviews. Please try again.") ))
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   },[id])
 
   // Populate profile details for editing existing details
@@ -129,6 +129,7 @@ const Profile = ({currentMember, setCurrentMember}) => {
     }
   }
 
+  // Delete profile button handler
   const deleteProfile = () => {
     if (isDemoUser) {
       showInfo(getText("Herkkätoiminnot ovat poissa käytöstä demotilassa.", "Sensitive features are disabled in demo mode"))

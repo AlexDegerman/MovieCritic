@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode'
 import { AuthContext } from '../context/AuthContext'
 import { useLocation } from 'react-router-dom'
 
-
+// Provides global authentication state
 export const AuthProvider = ({ children }) => {
   const [isDemoUser, setIsDemoUser] = useState(false)
   const location = useLocation()

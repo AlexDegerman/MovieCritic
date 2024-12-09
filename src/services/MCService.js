@@ -66,7 +66,6 @@ const updateProfileDetails = (id, details, token) => {
   return axios.put(`${memberUrl}/${id}`, details, {
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
     }
   })
 }
@@ -93,9 +92,8 @@ const deleteMember = (id, token) => {
 const changePassword = (id, passwordData, token) => {
   return axios.put(`${memberUrl}/${id}/change-password`, passwordData, {
     headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+      Authorization: `Bearer ${token}`
+    }
   })
 }
 
@@ -138,10 +136,8 @@ const getDemoToken = () => {
 }
 
 // Logs in as a demo user
-const demoLogin = (demoSecret) => {
-  return axios.post(authUrl + "/demo-login", { demoToken: demoSecret })
+const demoLogin = (demoToken) => {
+  return axios.post(authUrl + "/demo-login", demoToken)
 }
-
-
 
 export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword, incrementLikeOnReview, demoLogin, getDemoToken}

@@ -42,7 +42,6 @@ const App = () => {
   const debouncedSearch = useDebounce(search, 500)
   const debouncedGenre = useDebounce(genre, 500)
   const { isDemoUser, setIsDemoUser } = useAuth() 
-  const [hasMoreMovies, setHasMoreMovies] = useState(true)
 
   // Autologin as demo user to view full features of website without having to login
   useEffect(() => {
@@ -136,7 +135,7 @@ const App = () => {
 
       MCService.getMovies(page, search, genre, seed)
         .then(response => {
-          const isLastPage = page >= response.data.totalPages
+
           setMovies(prevMovies => {
             if (page === 1) {
               return response.data.movies
@@ -148,7 +147,7 @@ const App = () => {
             )
             return [...prevMovies, ...newMovies]
           })
-          setHasMoreMovies(!isLastPage)
+
           if (!seed) setSeed(response.data.seed)
         })
         .catch(error => {
@@ -230,8 +229,7 @@ const App = () => {
     if (
       location.pathname === '/' && 
       windowHeight + scrollTop >= scrollHeight && 
-      !isLoadingMore &&
-      hasMoreMovies
+      !isLoadingMore
     ) {
       setPage(prevPage => prevPage + 1)
     }
@@ -257,7 +255,7 @@ const App = () => {
         <Route path="/addmovie" element={<MovieForm updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/addmember" element={<MemberForm />} />
         <Route path="/profile/:id" element={<Profile currentMember={currentMember} setCurrentMember={setCurrentMember} movies={movies} />} />
-        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore} hasMoreMovies={hasMoreMovies} />} />
+        <Route path="/" element={<Movies movies={movies} movieRatings={movieRatings} search={search} setSearch={setSearch} genre={genre} setGenre={setGenre} isInitialLoading={isInitialLoading} isLoadingMore={isLoadingMore}  />} />
         <Route path="/movie/:index" element={<MoviePage movies={movies} currentMember={currentMember} setMovies={setMovies} updateMovieRating={updateMovieRating} />} />
         <Route path="/login" element={<Login updateMovieList={updateMovieList} setUpdateMovieList={setUpdateMovieList} />} />
         <Route path="/about" element={<About/>}/>

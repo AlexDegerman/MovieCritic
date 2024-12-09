@@ -9,6 +9,8 @@ import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/ReviewSection.css'
 import { useAuth } from '../context/AuthContext'
 
+
+// This component displays a list of reviews
 const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
   const [reviews, setReviews] = useState([])
   const [updateReviews, setUpdateReviews] = useState(false)
@@ -83,6 +85,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
 
   }, [showReviewForm])
 
+  // Returns average of review ratings or "Unrated" if no reviews are present
   const calculateAverage = (reviews) => {
     if (reviews.length === 0) return getText("Ei arvosteltu", "Unrated")
     const total = reviews.reduce((sum, review) => sum + review.tahdet, 0)
@@ -104,6 +107,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
     }))
   }
 
+  // Add review button handler
   const addReview = async (event) => {
     event.preventDefault()
     if (isDemoUser) {
@@ -148,6 +152,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
     }
   }
 
+  // Delete movie button handler
   const deleteReview = (id) => {
     if (isDemoUser) {
       showInfo(getText("Arvostelujen poistaminen on poissa käytöstä demotilassa.", "Deleting reviews is disabled in demo mode."))
@@ -178,6 +183,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
     }
   }
 
+  // Like button handler
   const handleLike = async (id) => {
     const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
     if (likedReviews.includes(id)) {

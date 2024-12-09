@@ -1,6 +1,8 @@
 import { useContext } from "react"
 import { LanguageContext } from "../context/LanguageContext"
 
+// Custom hook for managing language-specific text and data formatting
+// Provides functions for retrieving and formatting text, fields, and values based on the current language
 export const useLanguageUtils = () => {
   const { language, setLanguage } = useContext(LanguageContext)
 

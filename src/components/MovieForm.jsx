@@ -41,7 +41,7 @@ const MovieForm = ({ setUpdateMovieList }) => {
 
   const handleChange = (event) => {
     const { name, value } = event.target
-    
+  
     if (name === "lajityypit" || name === "genres") {
       const selectedOptions = Array.from(event.target.selectedOptions, option => option.value)
       setMovie((prevMovie) => ({
@@ -71,18 +71,15 @@ const MovieForm = ({ setUpdateMovieList }) => {
         kieli: 'original_language',
         kuvaus: 'overview'
       }
-
-      const reverseFieldMappings = Object.fromEntries(
-        Object.entries(fieldMappings).map(([key, value]) => [value, key])
-      )
-
+  
       setMovie((prevMovie) => ({
         ...prevMovie,
         [name]: value,
-        [fieldMappings[name] || reverseFieldMappings[name] || name]: value
+        [fieldMappings[name] || name]: value
       }))
     }
   }
+  
 
   //Adds a new movie to the database
   const addMovie = async (event) => {
