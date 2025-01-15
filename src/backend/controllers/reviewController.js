@@ -1,12 +1,14 @@
 const pool = require('../config/db') 
 
+// Controller for managing movie reviews, including adding, deleting, liking, and fetching reviews by member or movie
+
 // Get all reviews by a specific member
 const getReviewsByMemberId = async (req, res) => {
   const memberid = req.params.id
   try {
     const [rows] = await pool.execute('SELECT * FROM arvostelut WHERE jasenid = ?', [memberid])
     res.status(200).json(rows)
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error in query' })
   }
 }

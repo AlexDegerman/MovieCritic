@@ -1,5 +1,6 @@
 const pool = require('../config/db')
 
+// Middleware to verify resource ownership based on user ID before allowing modifications
 const checkOwnership = (tableName) => {
   return async (req, res, next) => {
     try {

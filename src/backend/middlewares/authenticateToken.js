@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 
+// Middleware to authenticate JWT token and restrict demo users from sensitive features
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]

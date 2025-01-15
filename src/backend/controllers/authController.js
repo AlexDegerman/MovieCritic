@@ -4,6 +4,7 @@ const pool = require('../config/db')
 const activeDemoTokens = new Map()
 const crypto = require('crypto')
 
+// Controller handling demo token generation, demo login, and member login functionality
 const generateDemoToken = () => {
   return crypto.randomBytes(32).toString('hex')
 }

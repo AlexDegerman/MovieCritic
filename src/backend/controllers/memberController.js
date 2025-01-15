@@ -1,6 +1,8 @@
 const bcrypt = require('bcrypt')
 const pool = require('../config/db')
 
+// Controller for managing member accounts, including adding, updating, deleting, and changing passwords
+
 // Add Member
 const addMember = async (req, res) => {
   const { sahkopostiosoite, salasana, nimimerkki, liittymispaiva } = req.body
@@ -26,7 +28,7 @@ const getMember = async (req, res) => {
     const [rows] = await pool.execute('SELECT * FROM jasen WHERE id = ?', [memberId])
     if (rows.length === 0) return res.status(404).json({ message: 'The member’s page is unavailable. It might have been deleted or the link is incorrect.' })
     res.status(200).json(rows[0])
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error in member search' })
   }
 }

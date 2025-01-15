@@ -1,5 +1,7 @@
 const pool = require('../config/db') 
 
+// Controller for managing movie data, including fetching, adding, and deleting movies with search functionality
+
 // Get all rows from Elokuva and Movies with search support
 const getMovies = async (req, res) => {
   const { page = 1, limit = 21, search = '', genre = '', seed = Date.now() } = req.query
