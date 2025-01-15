@@ -49,17 +49,6 @@ const MovieForm = ({ setUpdateMovieList }) => {
         lajityypit: selectedOptions,
         genres: selectedOptions,
       }))
-    } else if (name === "kuva" || name === "poster_path") {
-      const isValidImageLink = value.match(/\.(jpeg|jpg|png)$/i) && value.match(/^https?:\/\/.+$/)
-      if (isValidImageLink) {
-        setMovie((prevMovie) => ({
-          ...prevMovie,
-          kuva: value,
-          poster_path: value
-        }))
-      } else {
-        showInfo(getText("Anna kelvollinen kuvalinkki, jonka pääte on .jpeg, .jpg tai .png.", "Please provide a valid image URL ending in .jpeg, .jpg, or .png."))
-      }
     } else {
       const fieldMappings = {
         otsikko: 'title',
@@ -77,6 +66,28 @@ const MovieForm = ({ setUpdateMovieList }) => {
         [name]: value,
         [fieldMappings[name] || name]: value
       }))
+    }
+  }
+  
+  // Validate image field
+  const handleBlur = (event) => {
+    const { name, value } = event.target
+  
+    if (name === "kuva" || name === "poster_path") {
+      const isValidImageLink = value.match(/\.(jpeg|jpg|png)$/i) && value.match(/^https?:\/\/.+$/)
+      
+      if (isValidImageLink) {
+        setMovie((prevMovie) => ({
+          ...prevMovie,
+          kuva: value,
+          poster_path: value
+        }))
+      } else {
+        showInfo(getText(
+          "Anna kelvollinen kuvalinkki, jonka pääte on .jpeg, .jpg tai .png.", 
+          "Please provide a valid image URL ending in .jpeg, .jpg, or .png."
+        ))
+      }
     }
   }
   
@@ -256,7 +267,8 @@ const MovieForm = ({ setUpdateMovieList }) => {
             type="text" 
             name={language === 'fi' ? 'kuva' : 'poster_path'} 
             value={language === 'fi' ? movie.kuva : movie.poster_path} 
-            onChange={handleChange} 
+            onChange={handleChange}
+            onBlur={handleBlur}
             required 
             className="movie-input"
           />

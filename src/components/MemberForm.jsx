@@ -16,6 +16,18 @@ const MemberForm = () => {
   const {getText} = useLanguageUtils()
   const { isDemoUser } = useAuth() 
 
+  // Validate email field
+  const handleBlur = (event) => {
+    const { name, value } = event.target
+    if (name === "email" && value !== '') {
+      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+        showInfo(getText("Anna kelvollinen sähköpostiosoite (esimerkiksi: example@example.com).", "Provide a valid email address (for example: example@example.com)."))
+        setEmail("")  
+        console.log(email)
+      }
+    }
+  }
+
   // Adds a new member to the database
   const addMember = async (event) => {
     event.preventDefault()
@@ -54,12 +66,13 @@ const MemberForm = () => {
     showError(getText("Puuttuva kirjautuminen. Kirjaudu sisään.", "Missing login. Please login."))
     }
   }
+
   return (
     <div className="member-form">
       <form onSubmit={addMember} className="member-form-container" autoComplete='off'>
         <h1 className="member-form-title">{getText('Lisää Jäsen', 'Add Member')}</h1>
         <label className="member-input-label">{getText('Sähköpostiosoite', 'Email')}</label>
-        <input type="email" placeholder={getText('Sähköpostiosoite', 'Email')} value={email} onChange={(e => setEmail(e.target.value))} required className="member-form-input"/>
+        <input type="email" name="email" placeholder={getText('Sähköpostiosoite', 'Email')} value={email} onChange={(e => setEmail(e.target.value))} onBlur={handleBlur} required className="member-form-input"/>
         <label className="member-input-label">{getText('Salasana', 'Password')}</label>
         <div className="password-input-wrapper">
           <input 
