@@ -40,7 +40,6 @@ const App = () => {
   const navigate = useNavigate()
   const {getText} = useLanguageUtils()
   const debouncedSearch = useDebounce(search, 500)
-  const debouncedGenre = useDebounce(genre, 500)
   const { isDemoUser, setIsDemoUser } = useAuth() 
 
   // Autologin as demo user to view full features of website without having to login
@@ -161,14 +160,14 @@ const App = () => {
     
     loadMovies()
     }
-  }, [updateMovieList, page, debouncedSearch, debouncedGenre, location.pathname])
+  }, [updateMovieList, page, debouncedSearch, genre, location.pathname])
 
   // Reset page when search or genre changes
   useEffect(() => {
     if (page !== 1) {
       setPage(1)
     }
-  }, [debouncedSearch, debouncedGenre])
+  }, [debouncedSearch, genre])
 
   // Add scroll event listener to detect when the user reaches the bottom of the page
   useEffect(() => {
