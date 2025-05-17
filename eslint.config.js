@@ -37,20 +37,22 @@ export default [
     },
   },
   {
-    files: ['backend/*.js'],
+    files: ['src/backend/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'script',
       globals: {
         require: 'readonly',
         module: 'readonly',
+        exports: 'readonly',
         process: 'readonly',
         __dirname: 'readonly',
+        __filename: 'readonly'
       },
     },
     env: {
       node: true,
       es6: true,
     },
-  },
+  }
 ]
