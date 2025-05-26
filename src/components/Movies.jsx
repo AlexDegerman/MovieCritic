@@ -1,28 +1,95 @@
-import { Link } from 'react-router-dom'
 import Filter from './Filter'
+import MovieCard from './MovieCard'
 import '../styles/Movies.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import { useEffect, useRef, useCallback } from 'react'
+import useMovieList from '../hooks/movies/useMovieList'
+import useMovieFilters from '../hooks/movies/useMovieFilters'
 
-// This component displays a list of movie cards
-const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoadingMore, isInitialLoading}) => {
-  const {language, getText, getMovieField } = useLanguageUtils()
+const Movies = () => {
+  const { 
+    movies, 
+    movieRatings,
+    isLoading: isInitialLoading, 
+    isLoadingMore,
+    hasMoreMovies,
+    loadMovies,
+    loadMovieRatings,
+    handleScrollForMoreMovies,
+    checkIfMoreContentNeeded,
+  } = useMovieList()
 
-  // Returns the first 50 characters of the movie description if tagline does not exist
-  const getMovieDescription = (movie) => {
-    const tagline = getMovieField(movie, 'iskulause', 'tagline')
-    if (tagline) return tagline
-  
-    const fiDescription = movie.kuvaus
-    const enDescription = movie.overview
-    const description = language === 'fi' ? (fiDescription || enDescription) : (enDescription || fiDescription)
-    
-    return description ? `${description.slice(0, 50)}...` : ''
-  }
+  const { page } = useMovieFilters()
+  const { getText } = useLanguageUtils()
+
+  const initialLoadRef = useRef(false)
+  const scrollTimeoutRef = useRef(null)
+
+  // Manual debounce for scroll handler (from top code)
+  const debouncedScrollHandler = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      handleScrollForMoreMovies()
+    }, 150)
+  }, [handleScrollForMoreMovies])
+
+  // Load movies on initial render only once
+  useEffect(() => {
+    if (!initialLoadRef.current) {
+      initialLoadRef.current = true
+      loadMovies(1)
+    }
+  }, [loadMovies])
+
+  // Load more movies on page change
+  useEffect(() => {
+    if (page > 1) {
+      loadMovies(page)
+    }
+  }, [page, loadMovies])
+
+  // Load movie ratings after movies load and initial loading finishes
+  useEffect(() => {
+    if (movies.length > 0 && !isInitialLoading) {
+      loadMovieRatings()
+    }
+  }, [movies, isInitialLoading, loadMovieRatings])
+
+  // Setup scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      debouncedScrollHandler()
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    if (movies.length > 0) {
+      const timer = setTimeout(checkIfMoreContentNeeded, 500)
+
+      return () => {
+        clearTimeout(timer)
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current)
+        }
+        window.removeEventListener('scroll', handleScroll)
+      }
+    }
+
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [debouncedScrollHandler, checkIfMoreContentNeeded, movies.length])
 
   return (
     <div className="main-content">
       {/* Filter bar */}
-      <Filter search={search} setSearch={setSearch} genre={genre} setGenre={setGenre}/>
+      <Filter />
+      
       {/* Conditional renders */}
       {isInitialLoading ? (
         <div className="loading-movies-container">
@@ -39,61 +106,26 @@ const Movies = ({movies, movieRatings, search, setSearch, genre, setGenre, isLoa
           {/* Movie Cards */}
           <ul className="movie-list">
             {movies.map((movie) => (
-              <li key={movie.fi_id || movie.id} className="movie-card">
-                <Link to={`/movie/${movie.fi_id}`} className="movie-title" onClick={() => setSearch('')}>
-                  {getMovieField(movie, 'otsikko', 'title')}
-                  <img
-                    src={getMovieField(movie, 'kuvan_polku', 'poster_path')}
-                    alt={`${getMovieField(movie, 'otsikko', 'title')} image`}
-                    className="movies-image"
-                  />
-                </Link>
-                <ul className="movie-details">
-                  <li>
-                    <span className="movie-detail-label">
-                      {getText('Laji tyypit', 'Genres')}
-                    </span>
-                    <span className="movie-detail-value">
-                      {getMovieField(movie, 'lajityypit', 'genres')}
-                    </span>
-                  </li>
-                  <li>
-                    <span className="movie-detail-label">
-                      {getText('Julkaisu vuosi', 'Release Year')}
-                    </span>
-                    <span className="movie-detail-value">
-                      {movie.valmistumisvuosi}
-                    </span>
-                  </li>
-                  <li>
-                    <span className="movie-detail-label">
-                      {getText('Keski arvo', 'Average Rating')}
-                    </span>
-                    <span className="movie-detail-value">
-                      {movieRatings[movie.fi_id]
-                        ? (movieRatings[movie.fi_id] === "Unrated"
-                          ? getText('Ei arvosteltu', 'Unrated')
-                          : `${movieRatings[movie.fi_id]} / 5`)
-                        : getText('Ei arvosteltu', 'Unrated')}
-                    </span>
-                  </li>
-                  <li>
-                    <span className="movie-detail-label">
-                      {getText('Iskulause', 'Tagline')}
-                    </span>
-                    <span className="movie-detail-value">
-                      {getMovieDescription(movie)}
-                    </span>
-                  </li>
-                </ul>
-              </li>
+              <MovieCard
+                key={movie.fi_id || movie.id}
+                movie={movie}
+                movieRating={movieRatings[movie.fi_id]}
+              />
             ))}
           </ul>
-          {/* Loading More Box */}
+          
+          {/* Loading More and End of results */}
           {isLoadingMore && (
             <div className="loading-more-container active">
               <p className="loading-more">
                 {getText('Ladataan lisää elokuvia...', 'Loading more movies...')}
+              </p>
+            </div>
+          )}
+          {!hasMoreMovies && movies.length > 0 && (
+            <div className="end-of-results-container active">
+              <p className="end-of-results">
+                {getText('Olet saavuttanut lopun.', `You've reached the end.`)}
               </p>
             </div>
           )}

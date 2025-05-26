@@ -23,7 +23,6 @@ const MemberForm = () => {
       if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
         showInfo(getText("Anna kelvollinen sähköpostiosoite (esimerkiksi: example@example.com).", "Provide a valid email address (for example: example@example.com)."))
         setEmail("")  
-        console.log(email)
       }
     }
   }

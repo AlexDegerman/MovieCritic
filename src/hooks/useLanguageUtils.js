@@ -49,6 +49,18 @@ export const useLanguageUtils = () => {
     }
   }
 
-  return {language, setLanguage, getText, getField, getOppositeField, getMovieField, formatters}
+  // Returns the first 50 characters of the movie description if tagline does not exist
+  const getMovieDescription = (movie) => {
+    const tagline = getMovieField(movie, 'iskulause', 'tagline')
+    if (tagline) return tagline
+  
+    const fiDescription = movie.kuvaus
+    const enDescription = movie.overview
+    const description = language === 'fi' ? (fiDescription || enDescription) : (enDescription || fiDescription)
+    
+    return description ? `${description.slice(0, 50)}...` : ''
+  }
+
+  return {language, setLanguage, getText, getField, getOppositeField, getMovieField, formatters, getMovieDescription}
 }
 

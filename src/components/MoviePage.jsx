@@ -1,101 +1,88 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams, useNavigate} from 'react-router-dom'
-import MCService from '../services/MCService'
 import { ArrowLeft, Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, UserCircle, Video, Trash2 } from 'lucide-react'
 import ReviewSection from './ReviewSection'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/MoviePage.css'
 import { useAuth } from '../context/AuthContext'
+import useMovieDetails from '../hooks/movies/useMovieDetails'
+import useMovieReviews from '../hooks/reviews/useMovieReviews'
 
-const MoviePage = ({ currentMember, setMovies }) => {
+const MoviePage = ({ currentMember }) => {
   const navigate = useNavigate()
   const { index } = useParams()
-  const [movie, setMovie] = useState({})
   const { getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
-  const [movieRating, setMovieRating] = useState({
-    averageRating: getText("Ei arvosteltu", "Unrated"),
-    reviewCount: 0
-  })
-  const [loading, setLoading] = useState(true)
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
-  const { isDemoUser } = useAuth() 
-
-  // Scroll to top when visiting a movie's page
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+  const { isDemoUser } = useAuth()
+  const { 
+    movie, 
+    movieRatings, 
+    isLoading: loading, 
+    loadMovie, 
+    deleteMovie 
+  } = useMovieDetails()
+  const { reviews } = useMovieReviews()
 
   // Fetch current movie
   useEffect(() => {
-    const fetchMovie = async () => {
-      try {
-        if (index !== undefined) {
-          const response = await MCService.getMovie(index) 
-          setMovie(response.data)
-          setLoading(false)
+    if (index !== undefined) {
+      loadMovie(index).then(result => {
+        if (!result.success) {
+          showError(getText("Elokuvan lataaminen epäonnistui", "Failed to load movie"))
         }
-      } catch {
-        showError(getText("Elokuvan lataaminen epäonnistui", "Failed to load movie"))
-        setLoading(false)
-      }
+      })
     }
-
-    fetchMovie()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index])
 
-  // Update movie rating from ReviewSection
-  const updateMovieRating = (averageRating, reviewCount) => {
-    setMovieRating({
-      averageRating: averageRating,
-      reviewCount: reviewCount
-    })
-  }
-
   // Delete movie button handler
-  const deleteMovie = (id) => {
+  const handleDeleteMovie = (id) => {
     if (isDemoUser) {
       showInfo(getText("Elokuvien poistaminen on poissa käytöstä demotilassa.", "Deleting movies is disabled in demo mode."))
       return
     }
-    const token = localStorage.getItem('token')
-    if (token) {
-      showWarning(
-        getText(
-          "Oletko varma, että haluat poistaa elokuvan? Kaikki siihen liittyvät arvostelut poistetaan myös.", 
-          "Are you sure you want to delete the movie? All reviews on it will be removed as well."
-        ),
-        {
-          onConfirm: async () => {
-            try {
-              setMovies(prevMovies => prevMovies.filter(movie => movie.id !== id))
-              await MCService.deleteMovie(id, token)
-              showSuccess(getText("Elokuva on poistettu onnistuneesti!", "Successfully deleted the movie!"))
-              navigate('/')
-            } catch {
-              showError(getText("Virhe elokuvan poistamisessa.", "Error deleting movie."))
-            }
-          },
-          onCancel: () => {
-            setTimeout(() => {
-              showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
-            }, 100)
+    
+    showWarning(
+      getText(
+        "Oletko varma, että haluat poistaa elokuvan? Kaikki siihen liittyvät arvostelut poistetaan myös.", 
+        "Are you sure you want to delete the movie? All reviews on it will be removed as well."
+      ),
+      {
+        onConfirm: async () => {
+          const result = await deleteMovie(id)
+          if (result.success) {
+            showSuccess(getText("Elokuva on poistettu onnistuneesti!", "Successfully deleted the movie!"))
+            navigate('/')
+          } else {
+            showError(result.error)
           }
+        },
+        onCancel: () => {
+          setTimeout(() => {
+            showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
+          }, 100)
         }
-      )
-    } else {
-      showError(getText("Kirjaudu sisään poistaaksesi elokuvan", "Please log in to delete the movie"))
-    }
+      }
+    )
   }
 
   // Temporary returns while movie loads or movie is not found
   if (loading) {
-    return <div>Loading movie details...</div>
+    return <div className="loading-container">Loading movie details...</div>
   }
+  
   if (!movie || Object.keys(movie).length === 0) {
-    return <div>Movie not found</div>
+    return <div className="error-container">
+      <h2>Movie not found</h2>
+      <button className="back-button" onClick={() => navigate('/')}>
+        <ArrowLeft/> Return to Movies
+      </button>
+    </div>
   }
+
+  const averageRating = movieRatings[movie.fi_id] || getText("Ei arvosteltu", "Unrated")
+  const reviewCount = reviews.length
 
   return (
     <section className="movie-page-container">
@@ -115,6 +102,10 @@ const MoviePage = ({ currentMember, setMovies }) => {
           src={getMovieField(movie, 'kuvan_polku', 'poster_path')} 
           alt={`${getMovieField(movie, 'otsikko', 'title')} image`} 
           className="movie-image" 
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = '/default-movie-poster.jpg'; // Replace with your default poster path
+          }}
         />
       </div>
 
@@ -128,8 +119,8 @@ const MoviePage = ({ currentMember, setMovies }) => {
             </label>
           </div>
           <p className="movie-detail">
-            {movieRating.averageRating}
-            {movieRating.reviewCount > 0 && ` (${formatters.reviews(movieRating.reviewCount)})`}
+            {averageRating}
+            {reviewCount > 0 && ` (${formatters.reviews(reviewCount)})`}
           </p>
         </div>
 
@@ -248,7 +239,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
         <div className="delete-movie-btn-container">
           <Trash2 size={20} color="#7e7c7c"/>
           <button 
-            onClick={() => deleteMovie(index)} 
+            onClick={() => handleDeleteMovie(index)} 
             className="delete-movie-btn"
           >
             {getText('Poista Elokuva', 'Delete Movie')}
@@ -257,11 +248,7 @@ const MoviePage = ({ currentMember, setMovies }) => {
       )}
 
       {/* Reviews Section */}
-      <ReviewSection 
-        movie={movie} 
-        currentMember={currentMember} 
-        updateMovieRating={updateMovieRating} 
-      />
+      <ReviewSection currentMember={currentMember} />
     </section>
   )
 }

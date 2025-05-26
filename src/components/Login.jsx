@@ -7,7 +7,7 @@ import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { Eye, EyeOff } from 'lucide-react'
 
 // This component displays a login page
-const Login = ({ setUpdateMovieList }) => {
+const Login = () => {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -22,7 +22,6 @@ const Login = ({ setUpdateMovieList }) => {
       localStorage.setItem('token', res.data.token)
       showSuccess(getText("Kirjautuminen onnistui!", "Successfully logged in!"), () => {
         navigate('/')
-        setUpdateMovieList(prev => !prev)
       })
     } catch (error) {
       // Check if the error is a 429

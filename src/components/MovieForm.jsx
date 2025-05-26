@@ -1,20 +1,21 @@
 import { useState } from 'react'
-import MCService from '../services/MCService'
 import { useNavigate } from 'react-router-dom'
-import { MOVIE_GENRES } from '../constants/movieGenres'
-import { MOVIE_GENRES_FIN } from '../constants/movieGenresFin.js'
 import { useAlertMessages } from '../hooks/useAlertMessages'
-import '../styles/MovieForm.css'
 import { useLanguageUtils } from '../hooks/useLanguageUtils.js'
 import { useAuth } from '../context/AuthContext'
+import '../styles/MovieForm.css'
+import useMovieList from '../hooks/movies/useMovieList.js'
+import { useGenres } from '../hooks/useGenres.js'
 
 // This component displays a form to add movies to the database
-const MovieForm = ({ setUpdateMovieList }) => {
+const MovieForm = () => {
   const navigate = useNavigate()
-  const {showSuccess, showError, showInfo} = useAlertMessages()
-  const {language, getText} = useLanguageUtils()
-  const genres = language === 'fi' ? MOVIE_GENRES_FIN : MOVIE_GENRES
+  const { addMovie } = useMovieList()
+  const { showSuccess, showError, showInfo } = useAlertMessages()
+  const { language, getText } = useLanguageUtils()
+  const genres = useGenres()
   const { isDemoUser } = useAuth() 
+  
   const [movie, setMovie] = useState({
     otsikko: "",
     lajityypit: [],
@@ -90,15 +91,19 @@ const MovieForm = ({ setUpdateMovieList }) => {
       }
     }
   }
-  
 
   //Adds a new movie to the database
-  const addMovie = async (event) => {
+  const handleAddMovie = async (event) => {
     event.preventDefault()
+    
     if (isDemoUser) {
-      showInfo(getText("Elokuvien lisääminen on poissa käytöstä demotilassa.", "Adding movies is disabled in demo mode."))
+      showInfo(getText(
+        "Elokuvien lisääminen on poissa käytöstä demotilassa.", 
+        "Adding movies is disabled in demo mode."
+      ))
       return
     }
+    
     const movieData = {
       selectedLanguage: movie.selectedLanguage,
       ...(movie.selectedLanguage === 'fi' ? {
@@ -125,25 +130,25 @@ const MovieForm = ({ setUpdateMovieList }) => {
         poster_path: movie.poster_path,
       })
     }
-    const token = localStorage.getItem('token')
-    if (token) {
-      try {
-        await MCService.postMovie(movieData, token)
-        showSuccess(getText("Elokuva lisätty onnistuneesti!", "Successfully added the movie!"), () => {
-          setUpdateMovieList(prev => !prev)
-          navigate('/')
-        })
-      } catch {
-        showError(getText("Elokuvan lisääminen epäonnistui. Yritä uudelleen.", "Failed to add movie. Please try again."))
-      }
+    
+    const result = await addMovie(movieData)
+    
+    if (result.success) {
+      showSuccess(
+        getText("Elokuva lisätty onnistuneesti!", "Successfully added the movie!"), 
+        () => navigate('/')
+      )
     } else {
-      showError(getText("Puuttuva kirjautuminen.", "Missing login"))
+      showError(
+        result.error || 
+        getText("Elokuvan lisääminen epäonnistui. Yritä uudelleen.", "Failed to add movie. Please try again.")
+      )
     }
   }
 
   return (
     <div className="movie-form">
-      <form onSubmit={addMovie} className="movie-form-container">
+      <form onSubmit={handleAddMovie} className="movie-form-container">
         <h1 className="movie-title">{getText('Lisää Elokuva', 'Add Movie')}</h1>
         {/* Movie Form Inputs */}
         <label className="movie-input-label">

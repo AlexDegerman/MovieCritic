@@ -102,12 +102,12 @@
   pointer-events: none;
 }
 
-.loading-more-container.active {
+.loading-more-container.active, .end-of-results-container.active {
   pointer-events: auto;
   opacity: 1;
 }
 
-.loading-more {
+.loading-more, .end-of-results {
   background-color: #FFC107;
   color: black;
   border-radius: 8px;

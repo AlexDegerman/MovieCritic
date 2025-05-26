@@ -1,64 +1,50 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ThumbsUp, Trash2 } from 'lucide-react'
-import MCService from '../services/MCService'
 import { useAlertMessages } from '../hooks/useAlertMessages'
-import { handleApiError } from '../utils/apiErrorHandler'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/ReviewSection.css'
 import { useAuth } from '../context/AuthContext'
-
+import useMovieDetails from '../hooks/movies/useMovieDetails'
+import useMovieReviews from '../hooks/reviews/useMovieReviews'
 
 // This component displays a list of reviews
-const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
-  const [reviews, setReviews] = useState([])
-  const [updateReviews, setUpdateReviews] = useState(false)
-  const [loading, setLoading] = useState(true)
+const ReviewSection = ({ currentMember }) => {
   const [showReviewForm, setShowReviewForm] = useState(false)
   const reviewFormRef = useRef(null)
+  const { movie } = useMovieDetails()
+  const { 
+    reviews, 
+    isLoading: loading,
+    loadReviews, 
+    addReview, 
+    deleteReview, 
+    likeReview 
+  } = useMovieReviews()
+
   const [review, setReview] = useState({
     otsikko: "",
     sisalto: "",
     tahdet: "",
     nimimerkki: currentMember.nimimerkki,
-    elokuvanOtsikko: "",
   })
 
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
-  const { language, getText} = useLanguageUtils()
+  const { language, getText } = useLanguageUtils()
   const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
   const { isDemoUser } = useAuth()
 
   // Populate review list
   useEffect(() => {
-    if (movie && movie.fi_id) {
-      setLoading(true)
-      MCService
-        .getReviews(movie.fi_id)
-        .then(response => {
-          const sortedReviews = response.data.sort((a, b) =>
-            b.tykkaykset - a.tykkaykset
-          )
-          setReviews(sortedReviews)
-          setLoading(false)
-        })
-        .catch((error) => {
-          showError(handleApiError(error, getText("Virhe arvostelujen lataamisessa. Yritä uudelleen.", "Error loading reviews. Please try again.")))
-          setLoading(false)
-        })
-    } else {
-      setLoading(false)
-    }
-  }, [updateReviews, movie, showError])
-
-  // Recalculate average rating when reviews change
-  useEffect(() => {
     if (movie?.fi_id) {
-      const average = calculateAverage(reviews)
-      updateMovieRating(average, reviews.length)
+      loadReviews(movie.fi_id).then(result => {
+        if (!result.success) {
+          showError(result.error)
+        }
+      })
     }
-  }, [reviews])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [movie])
 
   // Set nimimerkki to current member's
   useEffect(() => {
@@ -70,7 +56,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
     }
   }, [currentMember])
 
-   // Set scroll to review form
+  // Set scroll to review form
   useEffect(() => {
     if (showReviewForm && reviewFormRef.current) {
       const offset = 70
@@ -82,15 +68,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
         behavior: 'smooth'
       })
     }
-
   }, [showReviewForm])
-
-  // Returns average of review ratings or "Unrated" if no reviews are present
-  const calculateAverage = (reviews) => {
-    if (reviews.length === 0) return getText("Ei arvosteltu", "Unrated")
-    const total = reviews.reduce((sum, review) => sum + review.tahdet, 0)
-    return (total / reviews.length).toFixed(1)
-  }
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -108,7 +86,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
   }
 
   // Add review button handler
-  const addReview = async (event) => {
+  const handleAddReview = async (event) => {
     event.preventDefault()
     if (isDemoUser) {
       showInfo(getText("Arvostelujen lisääminen on poissa käytöstä demotilassa.", "Adding reviews is disabled in demo mode."))
@@ -118,6 +96,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
       showError(getText("Kirjaudu sisään voidaksesi jättää arvostelun.", "Please log in to submit a review"))
       return
     }
+    
     const newReview = {
       ...review,
       elokuvaid: movie.fi_id,
@@ -126,88 +105,65 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
       elokuvanTitle: movie.title,
       tmdb_id: movie.tmdb_id
     }
-    const token = localStorage.getItem('token')
-    if (token) {
-      try {
-        const savedReview = await MCService.postReview(newReview, token)
-        setReviews(prev => [{
-          ...savedReview,
-          luotuaika: savedReview.luotuaika || newReview.luotuaika
-        }, ...prev])
-        setReview({
-          otsikko: "",
-          sisalto: "",
-          tahdet: "",
-          nimimerkki: currentMember.nimimerkki,
-        })
-        setShowReviewForm(false)
-        showSuccess(getText("Arvostelu lisätty onnistuneesti!", "Successfully added the review!"))
-        setUpdateReviews(!updateReviews)
-        
-      } catch {
-        showError(getText("Arvostelun lisääminen epäonnistui. Yritä uudelleen.", "Failed to add review. Please try again"))
-      }
+    
+    const result = await addReview(newReview)
+    
+    if (result.success) {
+      setReview({
+        otsikko: "",
+        sisalto: "",
+        tahdet: "",
+        nimimerkki: currentMember.nimimerkki,
+      })
+      setShowReviewForm(false)
+      showSuccess(getText("Arvostelu lisätty onnistuneesti!", "Successfully added the review!"))
     } else {
-      showError(getText("Puuttuva kirjautuminen. Kirjaudu sisään.", "Missing login. Please login."))
+      showError(result.error || getText("Arvostelun lisääminen epäonnistui. Yritä uudelleen.", "Failed to add review. Please try again"))
     }
   }
 
-  // Delete movie button handler
-  const deleteReview = (id) => {
+  // Delete review button handler
+  const handleDeleteReview = (id) => {
     if (isDemoUser) {
       showInfo(getText("Arvostelujen poistaminen on poissa käytöstä demotilassa.", "Deleting reviews is disabled in demo mode."))
       return
     }
-    const token = localStorage.getItem('token')
-    if (token) {
-      showWarning(
-        getText("Oletko varma, että haluat poistaa arvostelusi?", "Are you sure you want to delete your review?"), 
-        {
-          onConfirm: async () => {
-            try {
-              await MCService.deleteReview(id, token)
-              setReviews(prev => prev.filter(review => review.id !== id))
-              showSuccess(getText("Arvostelusi on poistettu onnistuneesti!", "Successfully deleted your review!"))
-              setUpdateReviews(!updateReviews)
-            } catch {
-              showError(getText("Virhe arvostelun poistamisessa.", "Error deleting review."))
-            }
-          },
-          onCancel: () => {
-            setTimeout(() => {
-              showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
-            }, 100)
+    
+    showWarning(
+      getText("Oletko varma, että haluat poistaa arvostelusi?", "Are you sure you want to delete your review?"), 
+      {
+        onConfirm: async () => {
+          const result = await deleteReview(id)
+          if (result.success) {
+            showSuccess(getText("Arvostelusi on poistettu onnistuneesti!", "Successfully deleted your review!"))
+          } else {
+            showError(result.error || getText("Virhe arvostelun poistamisessa.", "Error deleting review."))
           }
+        },
+        onCancel: () => {
+          setTimeout(() => {
+            showInfo(getText("Poisto peruutettu.", "Cancelled deletion."))
+          }, 100)
         }
-      )
-    }
+      }
+    )
   }
 
   // Like button handler
   const handleLike = async (id) => {
-    const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
-    if (likedReviews.includes(id)) {
-      showInfo(getText("Olet jo tykännyt tästä arvostelusta","You have already liked this review."))
-      return
-    }
-    try {
-      await MCService.incrementLikeOnReview(id)
-      setReviews((prevReviews) =>
-        prevReviews.map((review) =>
-          review.id === id
-            ? { ...review, tykkaykset: review.tykkaykset + 1 }
-            : review
-        )
-      )
-      likedReviews.push(id)
-      localStorage.setItem('likedReviews', JSON.stringify(likedReviews))
-    } catch {
-      showError(getText("Virhe arvostelun tykkäyksen lisäämisessä","Error liking the review"))
+    const result = await likeReview(id)
+    
+    if (!result.success) {
+      showError(result.error || getText("Virhe arvostelun tykkäyksen lisäämisessä", "Error liking the review"))
     }
   }
 
   if (loading) {
     return <div>{getText("Ladataan arvosteluja...", "Loading reviews...")}</div>
+  }
+
+  if (!movie) {
+    return null
   }
 
   return (
@@ -228,7 +184,7 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
         <div className="review-form-container">
         <div className="review-form">
           <p className="review-form-header">{getText('Kirjoita arvostelu', 'Write a Review')}</p>
-          <form onSubmit={addReview}>
+          <form onSubmit={handleAddReview}>
             <div className="review-form-input-container">
               <label className="review-form-label">{getText('Otsikko', 'Title')}</label>
               <input 
@@ -301,11 +257,11 @@ const ReviewSection = ({ movie, currentMember, updateMovieRating }) => {
             >
               <ThumbsUp size={20} /> {review.tykkaykset}
             </button>
-            {review.nimimerkki === currentMember.nimimerkki && (
+            {currentMember && review.nimimerkki === currentMember.nimimerkki && (
               <div className="delete-review-btn-container">
                 <Trash2 size={20} color="#7e7c7c"/>
                 <button 
-                  onClick={() => deleteReview(review.id)} 
+                  onClick={() => handleDeleteReview(review.id)} 
                   className="delete-review-btn"
                 >
                   {getText('Poista Arvostelu', 'Delete Review')}
