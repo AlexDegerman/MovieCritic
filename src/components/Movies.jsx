@@ -5,20 +5,20 @@ import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useEffect, useRef, useCallback } from 'react'
 import useMovieList from '../hooks/movies/useMovieList'
 import useMovieFilters from '../hooks/movies/useMovieFilters'
+import useMovieReviews from '../hooks/reviews/useMovieReviews'
 
 const Movies = () => {
   const { 
     movies, 
-    movieRatings,
     isLoading: isInitialLoading, 
     isLoadingMore,
     hasMoreMovies,
     loadMovies,
-    loadMovieRatings,
     handleScrollForMoreMovies,
     checkIfMoreContentNeeded,
   } = useMovieList()
 
+  const {  movieRatings, loadMovieRatings } = useMovieReviews()
   const { page } = useMovieFilters()
   const { getText } = useLanguageUtils()
 
@@ -53,7 +53,7 @@ const Movies = () => {
   // Load movie ratings after movies load and initial loading finishes
   useEffect(() => {
     if (movies.length > 0 && !isInitialLoading) {
-      loadMovieRatings()
+      loadMovieRatings(movies)
     }
   }, [movies, isInitialLoading, loadMovieRatings])
 

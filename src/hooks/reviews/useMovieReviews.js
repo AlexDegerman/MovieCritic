@@ -1,21 +1,25 @@
-import useMovieStore from '../../stores/movieStore'
+import useReviewStore from '../../stores/reviewStore'
 
-// Hook for accessing and managing movie reviews
+// Hook for accessing and managing movie reviews and ratings
 export const useMovieReviews = () => {
-  const reviews = useMovieStore(s => s.reviews)
-  const isLoading = useMovieStore(s => s.isLoading)
-  const loadReviews = useMovieStore(s => s.loadReviews)
-  const addReview = useMovieStore(s => s.addReview)
-  const deleteReview = useMovieStore(s => s.deleteReview)
-  const likeReview = useMovieStore(s => s.likeReview)
-  
+  const reviews = useReviewStore(s => s.reviews)
+  const movieRatings = useReviewStore(s => s.movieRatings)
+  const loadReviews = useReviewStore(s => s.loadReviews)
+  const loadMovieRatings = useReviewStore(s => s.loadMovieRatings)
+  const addReview = useReviewStore(s => s.addReview)
+  const deleteReview = useReviewStore(s => s.deleteReview)
+  const likeReview = useReviewStore(s => s.likeReview)
+  const getMovieRating = useReviewStore(s => s.getMovieRating)
+
   return {
     reviews,
-    isLoading,
+    movieRatings,
     loadReviews,
+    loadMovieRatings,
     addReview,
     deleteReview,
-    likeReview
+    likeReview,
+    getMovieRating
   }
 }
 

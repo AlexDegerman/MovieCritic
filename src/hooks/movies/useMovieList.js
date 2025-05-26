@@ -3,7 +3,6 @@ import useMovieStore from '../../stores/movieStore'
 // Hook for accessing movies and related store actions
 export const useMovieList = () => {
   const movies = useMovieStore(s => s.movies)
-  const movieRatings = useMovieStore(s => s.movieRatings)
   const isLoading = useMovieStore(s => s.isLoading) 
   const isLoadingMore = useMovieStore(s => s.isLoadingMore)
   const hasMoreMovies = useMovieStore(s => s.hasMoreMovies)
@@ -16,7 +15,6 @@ export const useMovieList = () => {
   
   return {
     movies,
-    movieRatings,
     isLoading,
     isLoadingMore,
     hasMoreMovies,

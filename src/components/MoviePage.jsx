@@ -17,12 +17,11 @@ const MoviePage = ({ currentMember }) => {
   const { isDemoUser } = useAuth()
   const { 
     movie, 
-    movieRatings, 
     isLoading: loading, 
     loadMovie, 
     deleteMovie 
   } = useMovieDetails()
-  const { reviews } = useMovieReviews()
+  const { reviews, movieRatings } = useMovieReviews()
 
   // Fetch current movie
   useEffect(() => {
