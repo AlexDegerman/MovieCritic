@@ -4,9 +4,9 @@ import { ThumbsUp, Trash2 } from 'lucide-react'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/ReviewSection.css'
-import { useAuth } from '../context/AuthContext'
 import useMovieDetails from '../hooks/movies/useMovieDetails'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'
+import useAuthStore from '../stores/authStore'
 
 // This component displays a list of reviews
 const ReviewSection = ({ currentMember }) => {
@@ -32,7 +32,7 @@ const ReviewSection = ({ currentMember }) => {
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
   const { language, getText } = useLanguageUtils()
   const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
-  const { isDemoUser } = useAuth()
+  const isDemoUser = useAuthStore(state => state.isDemoUser)
 
   // Populate review list
   useEffect(() => {

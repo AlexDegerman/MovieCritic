@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import MCService from '../services/MCService'
 import { handleApiError } from '../utils/apiErrorHandler'
 import { safeApiCall } from '../utils/safeApiCall'
+import { checkAuth } from '../utils/tokenUtils'
 
 const useReviewStore = create((set, get) => ({
   reviews: [],
@@ -76,11 +77,11 @@ const useReviewStore = create((set, get) => ({
   
   // Add a review
   addReview: async (reviewData) => {
-    const token = localStorage.getItem('token')
-    if (!token) return { success: false, error: "Missing login. Please login." }
+    const authCheck = checkAuth()
+    if (!authCheck.success) return authCheck
     
     const result = await safeApiCall(
-      () => MCService.postReview(reviewData, token),
+      () => MCService.postReview(reviewData, authCheck.token),
       "Failed to add review"
     )
     
@@ -97,11 +98,11 @@ const useReviewStore = create((set, get) => ({
   
   // Delete a review
   deleteReview: async (reviewId, movieId = null) => {
-    const token = localStorage.getItem('token')
-    if (!token) return { success: false, error: "Please login to delete a review" }
+    const authCheck = checkAuth()
+    if (!authCheck.success) return authCheck
     
     const result = await safeApiCall(
-      () => MCService.deleteReview(reviewId, token),
+      () => MCService.deleteReview(reviewId, authCheck.token),
       "Error deleting review"
     )
     

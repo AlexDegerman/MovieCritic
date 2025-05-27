@@ -5,16 +5,17 @@ import ReviewSection from './ReviewSection'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/MoviePage.css'
-import { useAuth } from '../context/AuthContext'
 import useMovieDetails from '../hooks/movies/useMovieDetails'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'
+import useAuthStore from '../stores/authStore'
 
-const MoviePage = ({ currentMember }) => {
+const MoviePage = () => {
   const navigate = useNavigate()
   const { index } = useParams()
   const { getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
-  const { isDemoUser } = useAuth()
+  const { currentMember, isDemoUser } = useAuthStore()
+
   const { 
     movie, 
     isLoading: loading, 
@@ -234,7 +235,7 @@ const MoviePage = ({ currentMember }) => {
 
       
       {/* Delete Movie Button (only for logged-in members) */}
-      {currentMember && (
+      {currentMember && currentMember.id && (
         <div className="delete-movie-btn-container">
           <Trash2 size={20} color="#7e7c7c"/>
           <button 
@@ -247,7 +248,7 @@ const MoviePage = ({ currentMember }) => {
       )}
 
       {/* Reviews Section */}
-      <ReviewSection currentMember={currentMember} />
+      <ReviewSection currentMember={currentMember}/>
     </section>
   )
 }

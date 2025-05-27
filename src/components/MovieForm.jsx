@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import { useLanguageUtils } from '../hooks/useLanguageUtils.js'
-import { useAuth } from '../context/AuthContext'
 import '../styles/MovieForm.css'
 import useMovieList from '../hooks/movies/useMovieList.js'
 import { useGenres } from '../hooks/useGenres.js'
+import useAuthStore from '../stores/authStore.js'
 
 // This component displays a form to add movies to the database
 const MovieForm = () => {
@@ -14,7 +14,7 @@ const MovieForm = () => {
   const { showSuccess, showError, showInfo } = useAlertMessages()
   const { language, getText } = useLanguageUtils()
   const genres = useGenres()
-  const { isDemoUser } = useAuth() 
+  const isDemoUser = useAuthStore(state => state.isDemoUser)
   
   const [movie, setMovie] = useState({
     otsikko: "",

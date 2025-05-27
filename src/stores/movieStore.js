@@ -3,6 +3,7 @@ import MCService from '../services/MCService'
 import { handleApiError } from '../utils/apiErrorHandler'
 import useReviewStore from './reviewStore'
 import { safeApiCall } from '../utils/safeApiCall'
+import { checkAuth} from '../utils/tokenUtils'
 
 const useMovieStore = create((set, get) => ({
   movies: [],
@@ -122,11 +123,11 @@ const useMovieStore = create((set, get) => ({
   
   // Add a new movie
   addMovie: async (movieData) => {
-    const token = localStorage.getItem('token')
-    if (!token) return { success: false, error: "Missing login" }
+    const authCheck = checkAuth()
+    if (!authCheck.success) return authCheck
     
     const result = await safeApiCall(
-      () => MCService.postMovie(movieData, token),
+      () => MCService.postMovie(movieData, authCheck.token),
       "Failed to add movie"
     )
     
@@ -141,11 +142,11 @@ const useMovieStore = create((set, get) => ({
   
   // Delete a movie
   deleteMovie: async (movieId) => {
-    const token = localStorage.getItem('token')
-    if (!token) return { success: false, error: "Please log in to delete the movie" }
+    const authCheck = checkAuth()
+    if (!authCheck.success) return authCheck
     
     const result = await safeApiCall(
-      () => MCService.deleteMovie(movieId, token),
+      () => MCService.deleteMovie(movieId, authCheck.token),
       "Error deleting movie"
     )
     

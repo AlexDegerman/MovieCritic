@@ -11,7 +11,7 @@ const limiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
-  max: 20, 
+  max: 5000, 
   message: 'Too many requests to this route, please try again later.',
   standardHeaders: true,
   legacyHeaders: false

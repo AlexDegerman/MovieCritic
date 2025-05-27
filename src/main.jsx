@@ -4,7 +4,6 @@ import App from './App.jsx'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { AlertProvider } from './providers/AlertProvider.jsx'
 import { LanguageProvider } from './providers/LanguageProvider.jsx'
-import { AuthProvider } from './providers/AuthProvider.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,10 +13,7 @@ createRoot(document.getElementById('root')).render(
       <AlertProvider>
         {/* Routing system */}
         <Router>
-          {/* Auth context for authentication */}
-          <AuthProvider>
             <App />
-          </AuthProvider>
         </Router>
       </AlertProvider>
     </LanguageProvider>

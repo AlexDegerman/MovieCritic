@@ -6,21 +6,23 @@ import LanguageSelector from './LanguageSelector'
 import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useState } from 'react'
 import { Menu } from 'lucide-react'
+import useAuthStore from '../stores/authStore'
 
 // This component displays a header with links to pages
-const Header = ({ currentMember, setCurrentMember, setTriggerDemoLogin }) => {
+const Header = () => {
   const navigate = useNavigate()
-  const { showSuccess } = useAlertMessages()
+  const { showSuccess, showInfo } = useAlertMessages()
   const { getText } = useLanguageUtils()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  
+  // Get auth state and actions from the store
+  const { currentMember, logout } = useAuthStore()
 
   // Logs out user when clicking logout button
-  const Logout = () => {
-    localStorage.removeItem('token')
-    showSuccess(getText("Uloskirjautuminen onnistui!", "Succesfully logged out!"), () => {
-      setCurrentMember([])
+  const handleLogout = () => {
+    logout(showSuccess, showInfo, getText, navigate)
+    showSuccess(getText("Uloskirjautuminen onnistui!", "Successfully logged out!"), () => {
       navigate('/')
-      setTriggerDemoLogin(prev => !prev)
     })
   }
 
@@ -42,7 +44,7 @@ const Header = ({ currentMember, setCurrentMember, setTriggerDemoLogin }) => {
                 <NavLink to="/addmovie" className="link">{getText('Lisää Elokuva', 'Add Movie')}</NavLink>
                 <NavLink to="/addmember" className="link">{getText('Lisää Jäsen', 'Add Member')}</NavLink>
                 <NavLink to={`/profile/${currentMember.id}`} className="link">{getText('Profiili', 'Profile')}</NavLink>
-                <button onClick={Logout} className="logout">{getText('Kirjaudu ulos', 'Log Out')}</button>
+                <button onClick={handleLogout} className="logout">{getText('Kirjaudu ulos', 'Log Out')}</button>
               </>
             )}
           </nav>
@@ -75,7 +77,7 @@ const Header = ({ currentMember, setCurrentMember, setTriggerDemoLogin }) => {
               <NavLink to={`/profile/${currentMember.id}`} className="mobile-link" onClick={() => setIsMenuOpen(false)}>
                 {getText('Profiili', 'Profile')}
               </NavLink>
-              <button onClick={() => { Logout(); setIsMenuOpen(false)}} className="mobile-logout">
+              <button onClick={() => { handleLogout(); setIsMenuOpen(false)}} className="mobile-logout">
                 {getText('Kirjaudu ulos', 'Log Out')}
               </button>
             </>
