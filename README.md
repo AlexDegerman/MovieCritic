@@ -1,4 +1,4 @@
-MovieCritic, a movie review website for Business College Helsinki made with React, Express and MySQL.
+MovieCritic, a movie review website for Business College Helsinki made with React, Express, Zustand and MySQL.
 
 It features an infinite scroll list of movies with pages for movies.
 
