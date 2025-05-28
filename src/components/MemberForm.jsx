@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages'
 import '../styles/MemberForm.css'
 import { Eye, EyeOff } from 'lucide-react'
 import useAuth from '../hooks/auth/useAuth'

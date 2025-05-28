@@ -1,4 +1,5 @@
-import { useLanguage } from "../context/LanguageContext"
+
+import useLanguage from '../hooks/language/useLanguage'
 import '../styles/LanguageSelector.css'
 
 // User picks a language for the website from the language dropdown

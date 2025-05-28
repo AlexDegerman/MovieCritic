@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ThumbsUp, Trash2 } from 'lucide-react'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages'
 import '../styles/ReviewSection.css'
 import useMovieDetails from '../hooks/movies/useMovieDetails'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'

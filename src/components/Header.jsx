@@ -1,6 +1,6 @@
 import { NavLink, Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages'
 import '../styles/Header.css'
 import LanguageSelector from './LanguageSelector'
 import { useState } from 'react'

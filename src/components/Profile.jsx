@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import ProfileDetail from './ProfileDetail'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages'
 import '../styles/Profile.css'
 import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, ThumbsUp, Trash2, User, UserCircle } from 'lucide-react'
 import useAuth from '../hooks/auth/useAuth'

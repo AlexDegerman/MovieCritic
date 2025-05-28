@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages.js'
 import '../styles/MovieForm.css'
 import useMovieList from '../hooks/movies/useMovieList.js'
 import { useGenres } from '../hooks/useGenres.js'

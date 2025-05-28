@@ -1,33 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react'
-import { useAlert } from '..//context/AlertContext'
-import useLanguage from './language/useLanguage'
+import { useAlertStore } from '../../stores/alertStore'
+import useLanguage from '../language/useLanguage'
 
-// Custom hook providing pre-defined alert patterns
 export const useAlertMessages = () => {
-  const { showAlert } = useAlert()
-  const {getText} = useLanguage()
+  const showAlert = useAlertStore(state => state.showAlert)
+  const { getText } = useLanguage()
 
   const showSuccess = useCallback((message, onClose) => {
     showAlert(getText('Onnistui', 'Success'), message, { type: 'success', onClose })
-  }, [showAlert])
+  }, [showAlert, getText])
 
   const showError = useCallback((message, onClose) => {
     showAlert(getText('Virhe', 'Error'), message, { type: 'error', onClose })
-  }, [showAlert])
+  }, [showAlert, getText])
 
   const showInfo = useCallback((message, onClose) => {
     showAlert('Info', message, { type: 'info', onClose })
-  }, [showAlert])
+  }, [showAlert, getText])
 
   const showWarning = useCallback((message, { onConfirm, onCancel } = {}) => {
-    showAlert(getText('Varoitus', 'Warning'), message,{
+    showAlert(getText('Varoitus', 'Warning'), message, {
       type: 'warning',
       onClose: onConfirm,
       onCancel,
       showCancelButton: true
     })
-  }, [showAlert])
+  }, [showAlert, getText])
 
   const showDoubleWarning = useCallback((firstMessage, secondMessage, { onFinalConfirm, onCancel } = {}) => {
     const handleFirstConfirm = () => {
@@ -61,7 +60,7 @@ export const useAlertMessages = () => {
       onClose: handleFirstConfirm,
       onCancel: handleFirstCancel
     })
-  }, [showAlert])
+  }, [showAlert, getText])
 
   return { showSuccess, showError, showInfo, showWarning, showDoubleWarning }
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Lock, Eye, EyeOff } from 'lucide-react'
-import { useAlertMessages } from '../hooks/useAlertMessages'
+import { useAlertMessages } from '../hooks/alert/useAlertMessages'
 import '../styles/PasswordChange.css'
 import useAuth from '../hooks/auth/useAuth'
 import useLanguage from '../hooks/language/useLanguage'

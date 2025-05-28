@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAlertMessages } from '../useAlertMessages.js'
+import { useAlertMessages } from '../alert/useAlertMessages.js'
 import useAuthStore from '../../stores/authStore'
 import useLanguage from '../language/useLanguage.js'
 

@@ -13,6 +13,7 @@ import About from './components/About.jsx'
 import PasswordChange from './components/PasswordChange.jsx'
 import useAuth from './hooks/auth/useAuth.js'
 import useLanguage from './hooks/language/useLanguage.js'
+import { Alert } from './components/Alert.jsx'
 
 const App = () => {
   const navigate = useNavigate()
@@ -35,7 +36,7 @@ const App = () => {
     <div className="container">
       <Header 
       />
-
+      <Alert/>
       <main className="main-content">
         {isDemoUser && (
           <div className="demo-mode-banner" onClick={() => navigate('/login')}>
