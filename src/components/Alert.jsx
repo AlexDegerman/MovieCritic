@@ -1,9 +1,9 @@
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import useLanguage from '../hooks/language/useLanguage'
 import '../styles/Alert.css'
 
 // This component displays a popup with a message that user closes with OK button
 export const Alert = ({ isOpen, type, title, message, onClose, onCancel, showCancelButton}) => {
-  const {getText} = useLanguageUtils()
+  const {getText} = useLanguage()
 
   if (!isOpen) return null
 

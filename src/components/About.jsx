@@ -1,9 +1,9 @@
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import useLanguage from '../hooks/language/useLanguage'
 import '../styles/About.css'
 
 // About page
 const About = () => {
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
 
   return (
     <article className="about-page-container">

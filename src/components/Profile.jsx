@@ -5,20 +5,20 @@ import ProfileDetail from './ProfileDetail'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Profile.css'
 import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, ThumbsUp, Trash2, User, UserCircle } from 'lucide-react'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
-import useProfileStore from '../stores/profileStore'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useProfile from '../hooks/profile/useProfile'
+import useLanguage from '../hooks/language/useLanguage'
 
 const Profile = () => {
   const navigate = useNavigate()
   const { id } = useParams()
   const { showSuccess, showError, showDoubleWarning, showInfo } = useAlertMessages()
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
   const {
     isDemoUser,
     isOwner,
     logout
-  } = useAuthStore()
+  } = useAuth()
   const {
     currentProfile,
     profileReviews,
@@ -36,7 +36,7 @@ const Profile = () => {
     clearProfile,
     hasProfileField,
     getProfileField
-  } = useProfileStore()
+  } = useProfile()
 
   const isProfileOwner = isOwner(currentProfile.id)
 

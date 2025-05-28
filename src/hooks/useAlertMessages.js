@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from 'react'
 import { useAlert } from '..//context/AlertContext'
-import { useLanguageUtils } from './useLanguageUtils'
+import useLanguage from './language/useLanguage'
 
 // Custom hook providing pre-defined alert patterns
 export const useAlertMessages = () => {
   const { showAlert } = useAlert()
-  const {getText} = useLanguageUtils()
+  const {getText} = useLanguage()
 
   const showSuccess = useCallback((message, onClose) => {
     showAlert(getText('Onnistui', 'Success'), message, { type: 'success', onClose })

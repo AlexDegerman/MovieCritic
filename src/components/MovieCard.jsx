@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import useMovieFilters from '../hooks/movies/useMovieFilters'
+import useLanguage from '../hooks/language/useLanguage'
 
 const MovieCard = ({ movie, movieRating }) => {
-  const { getText, getMovieField, getMovieDescription } = useLanguageUtils()
+  const { getText, getMovieField, getMovieDescription } = useLanguage()
   const { setSearch } = useMovieFilters()
 
   const getRatingDisplay = () => {

@@ -3,18 +3,18 @@ import { useParams, useNavigate} from 'react-router-dom'
 import { ArrowLeft, Calendar, Clock, Info, Languages, MessageCircle, Pen, Star, Tag, UserCircle, Video, Trash2 } from 'lucide-react'
 import ReviewSection from './ReviewSection'
 import { useAlertMessages } from '../hooks/useAlertMessages'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/MoviePage.css'
 import useMovieDetails from '../hooks/movies/useMovieDetails'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 const MoviePage = () => {
   const navigate = useNavigate()
   const { index } = useParams()
-  const { getText, getMovieField, getOppositeField, formatters } = useLanguageUtils()
+  const { getText, getMovieField, getOppositeField, formatters } = useLanguage()
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
-  const { currentMember, isDemoUser } = useAuthStore()
+  const { currentMember, isDemoUser } = useAuth()
 
   const { 
     movie, 

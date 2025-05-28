@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { Lock, Eye, EyeOff } from 'lucide-react'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/PasswordChange.css'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 // Displays a form for changing member's password
 const PasswordChange = () => {
@@ -14,8 +14,8 @@ const PasswordChange = () => {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { showSuccess, showError } = useAlertMessages()
-  const { getText } = useLanguageUtils()
-  const { changePassword } = useAuthStore()
+  const { getText } = useLanguage()
+  const { changePassword } = useAuth()
 
   const handleChangePassword = async (event) => {
     event.preventDefault()

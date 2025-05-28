@@ -1,11 +1,11 @@
 import Filter from './Filter'
 import MovieCard from './MovieCard'
 import '../styles/Movies.css'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useEffect, useRef, useCallback } from 'react'
 import useMovieList from '../hooks/movies/useMovieList'
 import useMovieFilters from '../hooks/movies/useMovieFilters'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'
+import useLanguage from '../hooks/language/useLanguage'
 
 const Movies = () => {
   const { 
@@ -20,7 +20,7 @@ const Movies = () => {
 
   const {  movieRatings, loadMovieRatings } = useMovieReviews()
   const { page } = useMovieFilters()
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
 
   const initialLoadRef = useRef(false)
   const scrollTimeoutRef = useRef(null)

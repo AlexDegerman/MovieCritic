@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/MemberForm.css'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { Eye, EyeOff } from 'lucide-react'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a form to add members to the database
 const MemberForm = () => {
@@ -12,8 +12,8 @@ const MemberForm = () => {
   const [nickname, setNickname] = useState("")
   const {showSuccess, showError, showInfo } = useAlertMessages()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const {getText} = useLanguageUtils()
-  const { addMember, isDemoUser } = useAuthStore()
+  const {getText} = useLanguage()
+  const { addMember, isDemoUser } = useAuth()
 
   // Validate email field
   const handleBlur = (event) => {

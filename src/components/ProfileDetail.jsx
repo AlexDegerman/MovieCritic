@@ -1,8 +1,8 @@
-import { useLanguageUtils } from "../hooks/useLanguageUtils"
+import useLanguage from "../hooks/language/useLanguage"
 
 //This component displays profile details in profile component
 const ProfileDetail = ({ label, value, isOwner }) => {
-  const {getText} = useLanguageUtils()
+  const {getText} = useLanguage()
 
   // Hide detail if detail is unfilled and the user is not the owner of the profile
   if (!value && !isOwner) { 

@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Login.css'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { Eye, EyeOff } from 'lucide-react'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a login page
 const Login = () => {
@@ -12,9 +12,9 @@ const Login = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const { showSuccess, showError } = useAlertMessages()
-  const { getText } = useLanguageUtils(false)
+  const { getText } = useLanguage()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
-  const { loginWithCredentials } = useAuthStore()
+  const { loginWithCredentials } = useAuth()
   
   const handleLogin = async (event) => {
     event.preventDefault()

@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
 import '../styles/Footer.css'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a footer with links to socials and about page
 const Footer = () => {
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
 
   return (
     <footer className="footer">

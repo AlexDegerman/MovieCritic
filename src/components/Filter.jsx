@@ -1,14 +1,14 @@
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useDebounce } from '../hooks/useDebounce'
 import { useEffect, useCallback } from 'react'
 import '../styles/Filter.css'
 import useMovieList from '../hooks/movies/useMovieList'
 import useMovieFilters from '../hooks/movies/useMovieFilters'
 import { useGenres } from '../hooks/useGenres'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a search bar and a genre selector
 const Filter = () => {
-  const { language, getText } = useLanguageUtils()
+  const { language, getText } = useLanguage()
   const genres = useGenres()
   const { search, genre, setSearch, setGenre, setPage } = useMovieFilters()
   const { loadMovies } = useMovieList()

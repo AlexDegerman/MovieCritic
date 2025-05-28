@@ -2,8 +2,7 @@ import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { Route, Routes, useNavigate } from 'react-router-dom'
-import { useLanguageUtils } from './hooks/useLanguageUtils.js'
-import { useAuthInit } from './hooks/useAuthInit.js'
+import { useAuthInit } from './hooks/auth/useAuthInit.js'
 import MovieForm from './components/MovieForm.jsx'
 import MemberForm from './components/MemberForm.jsx'
 import Profile from './components/Profile.jsx'
@@ -12,15 +11,16 @@ import MoviePage from './components/MoviePage.jsx'
 import Login from './components/Login.jsx'
 import About from './components/About.jsx'
 import PasswordChange from './components/PasswordChange.jsx'
-import useAuthStore from './stores/authStore.js'
+import useAuth from './hooks/auth/useAuth.js'
+import useLanguage from './hooks/language/useLanguage.js'
 
 const App = () => {
   const navigate = useNavigate()
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
   
   const { isInitialized } = useAuthInit()
   
-  const { isDemoUser } = useAuthStore()
+  const { isDemoUser } = useAuth()
 
   // Show loading screen while authentication state is being initialized
   if (!isInitialized) {

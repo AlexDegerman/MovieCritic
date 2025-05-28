@@ -3,20 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import { useAlertMessages } from '../hooks/useAlertMessages'
 import '../styles/Header.css'
 import LanguageSelector from './LanguageSelector'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import { useState } from 'react'
 import { Menu } from 'lucide-react'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a header with links to pages
 const Header = () => {
   const navigate = useNavigate()
   const { showSuccess, showInfo } = useAlertMessages()
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   
   // Get auth state and actions from the store
-  const { currentMember, logout } = useAuthStore()
+  const { currentMember, logout } = useAuth()
 
   // Logs out user when clicking logout button
   const handleLogout = () => {

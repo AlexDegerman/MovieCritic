@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { ThumbsUp, Trash2 } from 'lucide-react'
 import { useAlertMessages } from '../hooks/useAlertMessages'
-import { useLanguageUtils } from '../hooks/useLanguageUtils'
 import '../styles/ReviewSection.css'
 import useMovieDetails from '../hooks/movies/useMovieDetails'
 import useMovieReviews from '../hooks/reviews/useMovieReviews'
-import useAuthStore from '../stores/authStore'
+import useAuth from '../hooks/auth/useAuth'
+import useLanguage from '../hooks/language/useLanguage'
 
 // This component displays a list of reviews
 const ReviewSection = ({ currentMember }) => {
@@ -21,18 +21,16 @@ const ReviewSection = ({ currentMember }) => {
     deleteReview, 
     likeReview 
   } = useMovieReviews()
-
   const [review, setReview] = useState({
     otsikko: "",
     sisalto: "",
     tahdet: "",
     nimimerkki: currentMember.nimimerkki,
   })
-
   const { showSuccess, showError, showWarning, showInfo } = useAlertMessages()
-  const { language, getText } = useLanguageUtils()
+  const { language, getText } = useLanguage()
   const likedReviews = JSON.parse(localStorage.getItem('likedReviews')) || []
-  const isDemoUser = useAuthStore(state => state.isDemoUser)
+  const { isDemoUser } = useAuth()
 
   // Populate review list
   useEffect(() => {

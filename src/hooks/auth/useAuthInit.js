@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAlertMessages } from './useAlertMessages.js'
-import { useLanguageUtils } from './useLanguageUtils.js'
-import useAuthStore from '../stores/authStore.js'
+import { useAlertMessages } from '../useAlertMessages.js'
+import useAuthStore from '../../stores/authStore'
+import useLanguage from '../language/useLanguage.js'
 
 export const useAuthInit = () => {
   const navigate = useNavigate()
   const { showInfo, showError } = useAlertMessages()
-  const { getText } = useLanguageUtils()
+  const { getText } = useLanguage()
   
   const {
     isInitialized,
