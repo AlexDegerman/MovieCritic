@@ -9,6 +9,6 @@ router.post('/demo-token', authController.demoTokenRequest)
 router.post('/demo-login', authController.demoLogin)
 
 // Route for member login
-router.post('/login', authController.LoginMember)
+router.post('/login', authController.loginMember)
 
 module.exports = router
