@@ -3,6 +3,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const dotenv = require('dotenv')
+const globalRequestLogger = require('./middlewares/globalRequestLogger')
 const { limiter, authLimiter } = require('./middlewares/rateLimiter')
 dotenv.config()
 
@@ -10,7 +11,6 @@ const authRoutes = require('./routes/authRoutes')
 const memberRoutes = require('./routes/memberRoutes')
 const movieRoutes = require('./routes/movieRoutes')
 const reviewRoutes = require('./routes/reviewRoutes')
-
 
 // Middleware
 app.use(cors({
@@ -22,6 +22,8 @@ app.use(cors({
 app.use(bodyParser.json()) 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(limiter)
+app.use(globalRequestLogger)
+
 
 // Routes
 app.use('/api/auth', authLimiter, authRoutes)

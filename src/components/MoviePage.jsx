@@ -22,7 +22,7 @@ const MoviePage = () => {
     loadMovie, 
     deleteMovie 
   } = useMovieDetails()
-  const { reviews, movieRatings } = useMovieReviews()
+  const { reviews } = useMovieReviews()
 
   // Fetch current movie
   useEffect(() => {
@@ -81,7 +81,7 @@ const MoviePage = () => {
     </div>
   }
 
-  const averageRating = movieRatings[movie.fi_id] || getText("Ei arvosteltu", "Unrated")
+  const averageRating = movie.avg_rating || getText("Ei arvosteltu", "Unrated")
   const reviewCount = reviews.length
 
   return (
@@ -102,10 +102,6 @@ const MoviePage = () => {
           src={getMovieField(movie, 'kuvan_polku', 'poster_path')} 
           alt={`${getMovieField(movie, 'otsikko', 'title')} image`} 
           className="movie-image" 
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/default-movie-poster.jpg'; // Replace with your default poster path
-          }}
         />
       </div>
 

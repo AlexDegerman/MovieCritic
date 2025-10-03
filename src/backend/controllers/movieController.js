@@ -43,18 +43,35 @@ const getMovies = async (req, res) => {
     })
 
     const movies = await db.elokuva.findAll({
-      include: [{
-        model: db.movie,
-        as: 'movie',
-        required: false
-      }],
+      include: [
+        {
+          model: db.movie,
+          as: 'movie',
+          required: false
+        },
+        {
+          model: db.arvostelut,
+          as: 'arvostelut',
+          required: false,
+          attributes: []
+        }
+      ],
+      attributes: [
+        'id', 'tmdb_id', 'otsikko', 'lajityypit', 'valmistumisvuosi',
+        'pituus', 'ohjaaja', 'kasikirjoittajat', 'paanayttelijat',
+        'alkuperainen_kieli', 'kuvaus', 'kuvan_polku', 'iskulause',
+        [db.sequelize.fn('ROUND', db.sequelize.fn('AVG', db.sequelize.col('arvostelut.tahdet')), 1), 'avg_rating']
+      ],
       where: whereClause,
+      group: ['elokuva.id'],
       order: db.Sequelize.literal(`RAND(${seed})`),
       limit: parseInt(limit),
       offset: parseInt(offset),
       raw: true,
+      subQuery: false,
       nest: true
     })
+
 
     const transformedMovies = movies.map(movie => ({
       fi_id: movie.id,
@@ -81,7 +98,8 @@ const getMovies = async (req, res) => {
       original_language: movie.movie?.original_language || null,
       overview: movie.movie?.overview || null,
       poster_path: movie.movie?.poster_path || null,
-      tagline: movie.movie?.tagline || null
+      tagline: movie.movie?.tagline || null,
+      avg_rating: movie.avg_rating || "Unrated"
     }))
 
     res.status(200).json({
@@ -105,11 +123,27 @@ const getMovieById = async (req, res) => {
   try {
     const movie = await db.elokuva.findOne({
       where: { id: movieId },
-      include: [{
-        model: db.movie,
-        as: 'movie',
-        required: false
-      }],
+      include: [
+        {
+          model: db.movie,
+          as: 'movie',
+          required: false
+        },
+        {
+          model: db.arvostelut,
+          as: 'arvostelut',
+          required: false,
+          attributes: []
+        }
+      ],
+      attributes: [
+        'id', 'tmdb_id', 'otsikko', 'lajityypit', 'valmistumisvuosi',
+        'pituus', 'ohjaaja', 'kasikirjoittajat', 'paanayttelijat',
+        'alkuperainen_kieli', 'kuvaus', 'kuvan_polku', 'iskulause',
+        [db.sequelize.fn('ROUND', db.sequelize.fn('AVG', db.sequelize.col('arvostelut.tahdet')), 1), 'avg_rating']
+      ],
+      group: ['elokuva.id'],
+      subQuery: false,
       raw: true,
       nest: true
     })
@@ -143,7 +177,8 @@ const getMovieById = async (req, res) => {
       original_language: movie.movie?.original_language || null,
       overview: movie.movie?.overview || null,
       poster_path: movie.movie?.poster_path || null,
-      tagline: movie.movie?.tagline || null
+      tagline: movie.movie?.tagline || null,
+      avg_rating: movie.avg_rating || "Unrated"  // Add this!
     }
 
     res.status(200).json(transformedMovie)

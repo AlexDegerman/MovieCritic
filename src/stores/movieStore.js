@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 import MCService from '../services/MCService'
 import { handleApiError } from '../utils/apiErrorHandler'
-import useReviewStore from './reviewStore'
 import { safeApiCall } from '../utils/safeApiCall'
 import { checkAuth} from '../utils/tokenUtils'
 
@@ -71,11 +70,6 @@ const useMovieStore = create((set, get) => ({
       })
     
       setTimeout(() => get().checkIfMoreContentNeeded(), 100)
-      
-      // Load ratings for new movies
-      if (newMovies.length > 0) {
-        useReviewStore.getState().loadMovieRatings(newMovies)
-      }
     
       return { success: true, data: newMovies }
     } catch (error) {

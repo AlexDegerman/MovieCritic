@@ -11,11 +11,11 @@ function initModels(sequelize) {
   var movie = _movie(sequelize, DataTypes)
 
   arvostelut.belongsTo(elokuva, { as: "elokuva", foreignKey: "elokuvaid"})
-  elokuva.hasMany(arvostelut, { as: "arvosteluts", foreignKey: "elokuvaid"})
+  elokuva.hasMany(arvostelut, { as: "arvostelut", foreignKey: "elokuvaid"})
   arvostelut.belongsTo(jasen, { as: "jasen", foreignKey: "jasenid"})
-  jasen.hasMany(arvostelut, { as: "arvosteluts", foreignKey: "jasenid"})
+  jasen.hasMany(arvostelut, { as: "arvostelut", foreignKey: "jasenid"})
   arvostelut.belongsTo(movie, { as: "tmdb", foreignKey: "tmdb_id"})
-  movie.hasMany(arvostelut, { as: "arvosteluts", foreignKey: "tmdb_id"})
+  movie.hasMany(arvostelut, { as: "arvostelut", foreignKey: "tmdb_id"})
   elokuva.belongsTo(movie, { as: "movie", foreignKey: "tmdb_id", targetKey: "tmdb_id"})
   movie.hasMany(elokuva, { as: "elokuvas", foreignKey: "tmdb_id", sourceKey: "tmdb_id"})
 

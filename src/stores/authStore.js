@@ -54,7 +54,7 @@ const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Tries to initialize auth; falls back to demo login if needed
+  // Tries to initialize auth, falls back to demo login if needed
   autoInitialize: async (showInfo, showError, getText) => {
     const isValid = await get().initializeAuth()
     

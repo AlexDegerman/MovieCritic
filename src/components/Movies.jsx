@@ -4,7 +4,6 @@ import '../styles/Movies.css'
 import { useEffect, useRef, useCallback } from 'react'
 import useMovieList from '../hooks/movies/useMovieList'
 import useMovieFilters from '../hooks/movies/useMovieFilters'
-import useMovieReviews from '../hooks/reviews/useMovieReviews'
 import useLanguage from '../hooks/language/useLanguage'
 
 const Movies = () => {
@@ -18,7 +17,6 @@ const Movies = () => {
     checkIfMoreContentNeeded,
   } = useMovieList()
 
-  const {  movieRatings, loadMovieRatings } = useMovieReviews()
   const { page } = useMovieFilters()
   const { getText } = useLanguage()
 
@@ -49,13 +47,6 @@ const Movies = () => {
       loadMovies(page)
     }
   }, [page, loadMovies])
-
-  // Load movie ratings after movies load and initial loading finishes
-  useEffect(() => {
-    if (movies.length > 0 && !isInitialLoading) {
-      loadMovieRatings(movies)
-    }
-  }, [movies, isInitialLoading, loadMovieRatings])
 
   // Setup scroll listener
   useEffect(() => {
@@ -109,7 +100,7 @@ const Movies = () => {
               <MovieCard
                 key={movie.fi_id || movie.id}
                 movie={movie}
-                movieRating={movieRatings[movie.fi_id]}
+                movieRating={movie.avg_rating}
               />
             ))}
           </ul>
