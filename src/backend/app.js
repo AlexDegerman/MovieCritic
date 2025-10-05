@@ -5,7 +5,13 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const globalRequestLogger = require('./middlewares/globalRequestLogger')
 const { limiter, authLimiter } = require('./middlewares/rateLimiter')
-dotenv.config()
+const fs = require('fs');
+
+if (fs.existsSync('.env.local')) {
+  dotenv.config({ path: '.env.local' })
+} else {
+  dotenv.config()
+}
 
 const authRoutes = require('./routes/authRoutes')
 const memberRoutes = require('./routes/memberRoutes')
