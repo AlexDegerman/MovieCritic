@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Menu } from 'lucide-react'
 import useAuth from '../hooks/auth/useAuth'
 import useLanguage from '../hooks/language/useLanguage'
+import useRecaptcha from '../hooks/useRecaptcha'
 
 // This component displays a header with links to pages
 const Header = () => {
@@ -14,13 +15,13 @@ const Header = () => {
   const { showSuccess, showInfo } = useAlertMessages()
   const { getText } = useLanguage()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  
+  const { executeRecaptcha } = useRecaptcha()
   // Get auth state and actions from the store
   const { currentMember, logout } = useAuth()
 
   // Logs out user when clicking logout button
   const handleLogout = () => {
-    logout(showSuccess, showInfo, getText, navigate)
+    logout(showSuccess, showInfo, getText, navigate, executeRecaptcha)
     showSuccess(getText("Uloskirjautuminen onnistui!", "Successfully logged out!"), () => {
       navigate('/')
     })

@@ -5,6 +5,7 @@ import '../styles/Login.css'
 import { Eye, EyeOff } from 'lucide-react'
 import useAuth from '../hooks/auth/useAuth'
 import useLanguage from '../hooks/language/useLanguage'
+import useRecaptcha from '../hooks/useRecaptcha'
 
 // This component displays a login page
 const Login = () => {
@@ -15,11 +16,12 @@ const Login = () => {
   const { getText } = useLanguage()
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const { loginWithCredentials } = useAuth()
+  const { executeRecaptcha } = useRecaptcha()
   
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      await loginWithCredentials(email, password)
+      await loginWithCredentials(email, password, executeRecaptcha)
       showSuccess(getText("Kirjautuminen onnistui!", "Successfully logged in!"), () => {
         navigate('/')
       })

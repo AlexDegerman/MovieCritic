@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 const baseUrl = import.meta.env.VITE_API_BASE_URL
 
 // Define endpoints dynamically based on the base URL
@@ -8,6 +9,7 @@ const reviewUrl = `${baseUrl}/api/arvostelut`
 const authUrl = `${baseUrl}/api/auth`
 
 // This service handles backend requests
+
 // Get a list of movies with pagination, search, and genre
 const getMovies = (page, search = '', genre = '', seed) => {
   return axios.get(`${movieUrl}`, {
@@ -45,10 +47,11 @@ const deleteMovie = (id, token) => {
 }
 
 // Login to the website
-const Login = (email, password) => {
+const Login = (email, password, recaptchaToken) => {
   return axios.post(authUrl + '/login', {
     sahkopostiosoite: email,
-    salasana: password
+    salasana: password,
+    recaptchaToken
   })
 }
 
@@ -136,8 +139,31 @@ const getDemoToken = () => {
 }
 
 // Logs in as a demo user
-const demoLogin = (demoToken) => {
-  return axios.post(authUrl + "/demo-login", demoToken)
+const demoLogin = (demoToken, recaptchaToken) => {
+  return axios.post(authUrl + "/demo-login", {
+    data: {
+      ...demoToken.data,
+      recaptchaToken
+    }
+  })
 }
 
-export default {getMovies, getMovie, postMovie, Login, postMember, getProfile, updateProfileDetails, postReview, getReviews, getReviewsfromMember, deleteMember, deleteReview, deleteMovie, changePassword, incrementLikeOnReview, demoLogin, getDemoToken}
+export default {
+  getMovies,
+  getMovie,
+  postMovie,
+  Login,
+  postMember,
+  getProfile,
+  updateProfileDetails,
+  postReview,
+  getReviews,
+  getReviewsfromMember,
+  deleteMember,
+  deleteReview,
+  deleteMovie,
+  changePassword,
+  incrementLikeOnReview,
+  demoLogin,
+  getDemoToken
+}

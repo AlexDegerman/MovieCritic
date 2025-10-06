@@ -55,12 +55,12 @@ const useAuthStore = create((set, get) => ({
   },
 
   // Tries to initialize auth, falls back to demo login if needed
-  autoInitialize: async (showInfo, showError, getText) => {
+  autoInitialize: async (showInfo, showError, getText, executeRecaptcha) => {
     const isValid = await get().initializeAuth()
     
     if (!isValid) {
       try {
-        await get().demoLogin(showInfo, getText)
+        await get().demoLogin(showInfo, getText, executeRecaptcha)
         return true
       } catch (error) {
         const { handleApiError } = await import('../utils/apiErrorHandler.js')
@@ -112,17 +112,19 @@ const useAuthStore = create((set, get) => ({
   },
 
   // Logs in a user with email and password
-  loginWithCredentials: async (email, password) => {
-    const response = await MCService.Login(email, password)
+  loginWithCredentials: async (email, password, executeRecaptcha) => {
+    const recaptchaToken = await executeRecaptcha('login')
+    const response = await MCService.Login(email, password, recaptchaToken)
     await get().login(response.data.token)
     return response
   },
 
   // Logs in as a demo user
-  demoLogin: async (showInfo, getText) => {
+  demoLogin: async (showInfo, getText, executeRecaptcha) => {
     showInfo(getText("Kirjaudutaan sisään demo-käyttäjänä", "Logging in as Demo User"))
     const demoToken = await MCService.getDemoToken()
-    const response = await MCService.demoLogin(demoToken)
+    const recaptchaToken = await executeRecaptcha('demo_login')
+    const response = await MCService.demoLogin(demoToken, recaptchaToken)
     
     if (response.data.token) {
       await get().login(response.data.token)
@@ -132,14 +134,14 @@ const useAuthStore = create((set, get) => ({
   },
 
   // Logs out the user and attempts automatic demo login
-  logout: async (showSuccess, showInfo, getText, navigate) => {
+  logout: async (showSuccess, showInfo, getText, navigate, executeRecaptcha) => {
     get().clearAuth()
     
     showSuccess(getText("Uloskirjautuminen onnistui!", "Successfully logged out!"))
     
     setTimeout(async () => {
       try {
-        await get().demoLogin(showInfo, getText)
+        await get().demoLogin(showInfo, getText, executeRecaptcha)
         navigate?.('/')
       } catch (error) {
         console.error('Auto demo login failed:', error)

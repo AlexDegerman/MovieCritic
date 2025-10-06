@@ -8,6 +8,7 @@ import { Calendar, Film, Info, Lock, MapPin, Palette, Tag, ThumbsUp, Trash2, Use
 import useAuth from '../hooks/auth/useAuth'
 import useProfile from '../hooks/profile/useProfile'
 import useLanguage from '../hooks/language/useLanguage'
+import useRecaptcha from '../hooks/useRecaptcha'
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -37,7 +38,7 @@ const Profile = () => {
     hasProfileField,
     getProfileField
   } = useProfile()
-
+  const { executeRecaptcha } = useRecaptcha()
   const isProfileOwner = isOwner(currentProfile.id)
 
   // Load profile when component mounts or ID changes
@@ -67,12 +68,12 @@ const Profile = () => {
   await saveProfile(showSuccess, showError, getText)
 }
 
-const handleDeleteProfile = () => {
-  if (isDemoUser) {
-    showInfo(getText("Tilin poistaminen on poissa käytöstä demotilassa.", "Account deletion is disabled in demo mode."))
-    return
-  }
-
+  const handleDeleteProfile = () => {
+    if (isDemoUser) {
+      showInfo(getText("Tilin poistaminen on poissa käytöstä demotilassa.", "Account deletion is disabled in demo mode."))
+      return
+    }
+    
     showDoubleWarning(
       getText(
         "Oletko varma, että haluat poistaa tilisi? Et voi kirjautua uudelleen, eikä tätä voi peruuttaa.",
@@ -86,8 +87,7 @@ const handleDeleteProfile = () => {
         onFinalConfirm: async () => {
           const success = await deleteProfile(showSuccess, showError, getText, navigate)
           if (success) {
-            // Also logout from auth store
-            await logout(showSuccess, showInfo, getText, navigate)
+            await logout(showSuccess, showInfo, getText, navigate, executeRecaptcha)
           }
         },
         onCancel: () => {
