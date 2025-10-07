@@ -9,6 +9,12 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'mysql',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: true
+      }
+    },
     logging: false,
     pool: {
       max: 10,
@@ -20,9 +26,7 @@ const sequelize = new Sequelize(
 )
 
 const initModels = require('./init-models')
-
 const db = initModels(sequelize)
-
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
