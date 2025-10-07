@@ -38,20 +38,49 @@ const Login = () => {
   return (
     <div className="login-form">
       <form onSubmit={handleLogin} className="login-container">
-        <h1 className="login-title">{(getText("Kirjaudu Sisään","Login"))}</h1>
-        <input type="email" className="login-input" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <h1 className="login-title">{getText("Kirjaudu Sisään", "Login")}</h1>
+
+        <input
+          type="email"
+          className="login-input"
+          placeholder={getText("Sähköpostiosoite", "Email")}
+          value={email}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.length <= 100) setEmail(val);
+          }}
+          required
+          maxLength={100}
+          title={getText("Sähköpostiosoite, enintään 100 merkkiä", "Email, maximum 100 characters")}
+        />
+
         <div className="password-input-wrapper">
-        <input type={showCurrentPassword ? 'text' : 'password'}  className="login-input" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <button
+          <input
+            type={showCurrentPassword ? "text" : "password"}
+            className="login-input"
+            placeholder={getText("Salasana", "Password")}
+            value={password}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val.length <= 100) setPassword(val);
+            }}
+            required
+            maxLength={100}
+            title={getText("Salasana, enintään 100 merkkiä", "Password, maximum 100 characters")}
+          />
+          <button
             type="button"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             className="password-toggle-visibility"
           >
-          {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+            {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
+
         <div className="login-button-container">
-          <button type="submit"  className="login-button">{(getText("Kirjaudu Sisään","Login"))}</button>
+          <button type="submit" className="login-button">
+            {getText("Kirjaudu Sisään", "Login")}
+          </button>
         </div>
       </form>
     </div>

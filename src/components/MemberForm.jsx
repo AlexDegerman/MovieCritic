@@ -59,29 +59,65 @@ const MemberForm = () => {
       <form onSubmit={handleAddMember} className="member-form-container" autoComplete='off'>
         <h1 className="member-form-title">{getText('Lisää Jäsen', 'Add Member')}</h1>
         <label className="member-input-label">{getText('Sähköpostiosoite', 'Email')}</label>
-        <input type="email" name="email" placeholder={getText('Sähköpostiosoite', 'Email')} value={email} onChange={(e => setEmail(e.target.value))} onBlur={handleBlur} required className="member-form-input"/>
+        <input
+          type="email"
+          name="email"
+          placeholder={getText('Sähköpostiosoite', 'Email')}
+          value={email}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.length <= 100) setEmail(val);
+          }}
+          onBlur={handleBlur}
+          required
+          className="member-form-input"
+          maxLength={100}
+          title={getText('Sähköpostiosoite, enintään 100 merkkiä', 'Email, maximum 100 characters')}
+        />
+
         <label className="member-input-label">{getText('Salasana', 'Password')}</label>
         <div className="password-input-wrapper">
-          <input 
-            type={showCurrentPassword ? 'text' : 'password'} 
-            placeholder={getText('Salasana', 'Password')} 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
+          <input
+            type={showCurrentPassword ? 'text' : 'password'}
+            placeholder={getText('Salasana', 'Password')}
+            value={password}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val.length <= 100) setPassword(val);
+            }}
+            required
             className="member-form-input"
+            maxLength={100}
+            title={getText('Salasana, enintään 100 merkkiä', 'Password, maximum 100 characters')}
           />
           <button
             type="button"
             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             className="password-toggle-visibility"
           >
-          {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
+            {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
+
         <label className="member-input-label">{getText('Nimimerkki', 'Nickname')}</label>
-        <input type="nickname" placeholder={getText('Nimimerkki', 'Nickname')} value={nickname} onChange={(e => setNickname(e.target.value))} required className="member-form-input"/>
+        <input
+          type="text"
+          placeholder={getText('Nimimerkki', 'Nickname')}
+          value={nickname}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.length <= 20) setNickname(val);
+          }}
+          required
+          className="member-form-input"
+          maxLength={20}
+          title={getText('Nimimerkki, enintään 20 merkkiä', 'Nickname, maximum 20 characters')}
+        />
+
         <div className="member-form-button-container">
-          <button type="submit" className="member-form-button">{getText('Lisää Jäsen', 'Add Member')}</button>
+          <button type="submit" className="member-form-button">
+            {getText('Lisää Jäsen', 'Add Member')}
+          </button>
         </div>
       </form>
     </div>

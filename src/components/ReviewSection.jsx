@@ -180,51 +180,57 @@ const ReviewSection = ({ currentMember }) => {
       {/* Review Form */}
       {showReviewForm && (
         <div className="review-form-container">
-        <div className="review-form">
-          <p className="review-form-header">{getText('Kirjoita arvostelu', 'Write a Review')}</p>
-          <form onSubmit={handleAddReview}>
-            <div className="review-form-input-container">
-              <label className="review-form-label">{getText('Otsikko', 'Title')}</label>
-              <input 
-                className="review-form-input" 
-                type="text" 
-                name="otsikko" 
-                value={review.otsikko} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            <div className="review-form-input-container">
-              <label className="review-form-label">{getText('Arvostelun sisältö', 'Review content')}</label>
-              <textarea 
-                className="review-form-textarea" 
-                name="sisalto" 
-                value={review.sisalto} 
-                onChange={handleChange} 
-                required 
-              />
-            </div>
-            <div className="review-form-input-container">
-              <label className="review-form-label">{getText('Arvostelu (0-5)', 'Rating (0-5)')}</label>
-              <select 
-                className="review-form-select" 
-                name="tahdet" 
-                value={review.tahdet} 
-                onChange={handleRatingChange} 
-                required
-              >
-                <option hidden>{getText('Valitse Arvostelu', 'Select a Rating')}</option>
-                <option value="5" className="review-rating">★★★★★ (5)</option>
-                <option value="4" className="review-rating">★★★★☆ (4)</option>
-                <option value="3" className="review-rating">★★★☆☆ (3)</option>
-                <option value="2" className="review-rating">★★☆☆☆ (2)</option>
-                <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
-                <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
-              </select>
-            </div>
-            <button type="submit" className="review-form-button">{getText('Lähetä arvostelu', 'Submit Review')}</button>
-          </form>
-        </div>
+          <div className="review-form">
+            <p className="review-form-header">{getText('Kirjoita arvostelu', 'Write a Review')}</p>
+            <form onSubmit={handleAddReview}>
+              <div className="review-form-input-container">
+                <label className="review-form-label">{getText('Otsikko', 'Title')}</label>
+                <input 
+                  className="review-form-input" 
+                  type="text" 
+                  name="otsikko" 
+                  value={review.otsikko} 
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val.length <= 255) handleChange(e);
+                  }} 
+                  required 
+                  maxLength={255}
+                  title={getText('Otsikko, enintään 255 merkkiä', 'Title, maximum 255 characters')}
+                />
+              </div>
+              <div className="review-form-input-container">
+                <label className="review-form-label">{getText('Arvostelun sisältö', 'Review content')}</label>
+                <textarea 
+                  className="review-form-textarea" 
+                  name="sisalto" 
+                  value={review.sisalto} 
+                  onChange={handleChange} 
+                  required 
+                  // TEXT → no frontend limit
+                />
+              </div>
+              <div className="review-form-input-container">
+                <label className="review-form-label">{getText('Arvostelu (0-5)', 'Rating (0-5)')}</label>
+                <select 
+                  className="review-form-select" 
+                  name="tahdet" 
+                  value={review.tahdet} 
+                  onChange={handleRatingChange} 
+                  required
+                >
+                  <option hidden>{getText('Valitse Arvostelu', 'Select a Rating')}</option>
+                  <option value="5" className="review-rating">★★★★★ (5)</option>
+                  <option value="4" className="review-rating">★★★★☆ (4)</option>
+                  <option value="3" className="review-rating">★★★☆☆ (3)</option>
+                  <option value="2" className="review-rating">★★☆☆☆ (2)</option>
+                  <option value="1" className="review-rating">★☆☆☆☆ (1)</option>
+                  <option value="0" className="review-rating">☆☆☆☆☆ (0)</option>
+                </select>
+              </div>
+              <button type="submit" className="review-form-button">{getText('Lähetä arvostelu', 'Submit Review')}</button>
+            </form>
+          </div>
         </div>
       )}
 
