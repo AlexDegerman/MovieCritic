@@ -218,7 +218,8 @@ const addMovie = async (req, res) => {
         alkuperainen_kieli: kieli,
         kuvaus,
         kuvan_polku: kuva,
-        iskulause: null
+        iskulause: null,
+        tmdb_id: null
       })
     } else if (selectedLanguage === 'en') {
       const {
@@ -234,18 +235,19 @@ const addMovie = async (req, res) => {
         poster_path
       } = req.body
 
-      await db.movie.create({
-        title,
-        genres,
-        release_date,
-        runtime,
-        director,
-        writers,
-        main_actors,
-        original_language,
-        overview,
-        poster_path,
-        tagline: null
+      await db.elokuva.create({
+        otsikko: title,
+        lajityypit: genres,
+        valmistumisvuosi: release_date,
+        pituus: runtime,
+        ohjaaja: director,
+        kasikirjoittajat: writers,
+        paanayttelijat: main_actors,
+        alkuperainen_kieli: original_language,
+        kuvaus: overview,
+        kuvan_polku: poster_path,
+        iskulause: null,
+        tmdb_id: null
       })
     }
 
