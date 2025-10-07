@@ -30,4 +30,9 @@ const db = initModels(sequelize)
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
+// Keep the DB awake 
+setInterval(async () => {
+    await sequelize.query("SELECT 1")
+}, 5 * 60 * 1000)
+
 module.exports = db
