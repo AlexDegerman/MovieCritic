@@ -3,7 +3,8 @@
 ## Overview
 MovieCritic is a full-stack movie discovery and review app featuring an infinite-scroll movie wall, allowing users to explore a wide variety of films. It combines a performant React + Vite frontend with a robust Node.js / Express backend and a MySQL database managed via Sequelize ORM.
 
-<img src="./public/moviecritic-homepage.png" alt="MovieCritic Homepage" width="400">
+![Infinite Scroll Demo](./public/infinitescroll.gif)  
+[Full 1080p 60fps demo](https://youtu.be/67wY0n5HYX0)
 
 ## 🌐 Live Demo
 **[View Live Site](https://moviecriticfi.onrender.com)** ⭐ Try it out without any setup!
