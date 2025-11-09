@@ -44,7 +44,7 @@ MovieCritic is a full-stack movie discovery and review app featuring an infinite
 
 **Frontend:** React • JavaScript • CSS • Vite • Zustand  
 **Backend:** Node.js • Express • REST API • JWT  
-**Database:** MySQL • Sequelize ORM • Azure SQL  
+**Database:** MySQL • Sequelize ORM
 **Security:** Google reCAPTCHA v3 • bcrypt • JWT  
 **Icons:** Lucide React  
 **DevOps:** Docker • GitHub Actions • Render  
@@ -62,12 +62,12 @@ MovieCritic is a full-stack movie discovery and review app featuring an infinite
 ## 🎯 Development Highlights
 
 - **Full-stack architecture** with separate client/server structure
-- **RESTful API design** for scalable backend services
-- **Responsive UI** optimized for all device sizes
+- **RESTful API design** enabling scalable and maintainable backend services
+- **Responsive UI** optimized for all device sizes and performance
 - **Secure authentication flow** with JWT tokens and demo token system
-- **Database optimization** with Sequelize ORM and proper indexing
-- **Production deployment** with frontend and backend hosted on Render, MySQL database on Azure SQL
+- **Database optimization** with Sequelize ORM, migrations, and proper indexing
+- **Production deployment** with frontend and backend hosted on Render, MySQL database on Aiven
 - **Docker containerization** available for local development
-- **Cloud database migration** from Railway to Azure SQL for improved scalability
+- **Strategic cloud database migration** (Railway → Azure SQL → Aiven) for cost-effectiveness, scalability, and security
 - **CI/CD automation** via GitHub Actions for consistent build and deployment workflows
 - **Demo mode implementation** with time-limited tokens and automatic cleanup for safe public access
