@@ -1,5 +1,7 @@
 const { Sequelize } = require('sequelize')
 require('dotenv').config()
+const fs = require('fs')
+const path = require('path')
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -11,6 +13,7 @@ const sequelize = new Sequelize(
     dialect: 'mysql',
     dialectOptions: {
       ssl: {
+        ca: fs.readFileSync(path.join(__dirname, '../config/ca-certificate.pem')),
         require: true,
         rejectUnauthorized: true
       }
