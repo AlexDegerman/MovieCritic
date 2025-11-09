@@ -44,7 +44,7 @@ MovieCritic is a full-stack movie discovery and review app featuring an infinite
 
 **Frontend:** React • JavaScript • CSS • Vite • Zustand  
 **Backend:** Node.js • Express • REST API • JWT  
-**Database:** MySQL • Sequelize ORM
+**Database:** MySQL • Sequelize ORM • Aiven
 **Security:** Google reCAPTCHA v3 • bcrypt • JWT  
 **Icons:** Lucide React  
 **DevOps:** Docker • GitHub Actions • Render  
