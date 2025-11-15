@@ -1,7 +1,14 @@
 # 🎬 MovieCritic – Full-Stack Movie Discovery App
 
+> **Thesis Project (Opinnäytetyö)** – Built over 3 months (Sep-Dec 2024) as my final project for Helsinki Business College. Complete development lifecycle from planning documentation through implementation to production deployment, with continued improvements and optimizations.
+
 ## Overview
-MovieCritic is a full-stack movie discovery and review app featuring an infinite-scroll movie wall, allowing users to explore a wide variety of films. It combines a performant React + Vite frontend with a robust Node.js / Express backend and a MySQL database managed via Sequelize ORM.
+
+MovieCritic is a full-stack movie discovery and review platform featuring an infinite-scroll movie wall with 12,000+ movies from TMDb API. Built to demonstrate end-to-end web development skills including planning, development, testing, security implementation, and production deployment.
+
+**Project Duration:** 3 months primary development (Sep-Dec 2024), ongoing improvements  
+**Role:** Solo developer (full-stack)  
+**Context:** Alternative to internship, approved thesis project
 
 ![Infinite Scroll Demo](./public/infinitescroll.gif)  
 [Full 1080p 60fps demo](https://youtu.be/67wY0n5HYX0)
