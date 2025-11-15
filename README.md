@@ -1,6 +1,6 @@
 # 🎬 MovieCritic – Full-Stack Movie Discovery App
 
-> **Thesis Project (Opinnäytetyö)** – Built over 3 months (Sep-Dec 2024) as my final project for Helsinki Business College. Complete development lifecycle from planning documentation through implementation to production deployment, with continued improvements and optimizations.
+> **Final Project (Lopputyö)** – Built over 3 months (Sep-Dec 2024) as my final project for Helsinki Business College. Complete development lifecycle from planning documentation through implementation to production deployment, with continued improvements and optimizations.
 
 ## Overview
 
@@ -8,7 +8,7 @@ MovieCritic is a full-stack movie discovery and review platform featuring an inf
 
 **Project Duration:** 3 months primary development (Sep-Dec 2024), ongoing improvements  
 **Role:** Solo developer (full-stack)  
-**Context:** Alternative to internship, approved thesis project
+**Context:** Completed as alternative to internship for graduation
 
 ![Infinite Scroll Demo](./public/infinitescroll.gif)  
 [Full 1080p 60fps demo](https://youtu.be/67wY0n5HYX0)
