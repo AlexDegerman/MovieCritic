@@ -13,10 +13,10 @@ jobs:
         run: |
           sleep $((RANDOM % 60))
 
+          curl -A "Mozilla/5.0 Chrome/130" -s "https://moviecritic-103b.onrender.com/health" > /dev/null
+
           curl -A "Mozilla/5.0 Chrome/130" -s "https://moviecritic-103b.onrender.com/" > /dev/null
           sleep 30
 
           curl -A "Mozilla/5.0 Chrome/130" -s "https://moviecritic-103b.onrender.com/api/elokuva?page=1&limit=1" > /dev/null
           sleep 30
-
-          curl -A "Mozilla/5.0 Chrome/130" -s "https://moviecritic-103b.onrender.com/health" > /dev/null

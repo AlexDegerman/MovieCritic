@@ -13,6 +13,11 @@ if (fs.existsSync('.env.local')) {
   dotenv.config()
 }
 
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'OK' })
+})
+
 const authRoutes = require('./routes/authRoutes')
 const memberRoutes = require('./routes/memberRoutes')
 const movieRoutes = require('./routes/movieRoutes')
@@ -36,11 +41,6 @@ app.use('/api/auth', authLimiter, authRoutes)
 app.use('/api/jasen', memberRoutes) 
 app.use('/api/elokuva', movieRoutes)
 app.use('/api/arvostelut', reviewRoutes)
-
-// Health check route
-app.get('/health', (req, res) => {
-  res.status(200).json({ message: 'OK' })
-})
 
 // Start the server
 app.listen(3000, () => {
