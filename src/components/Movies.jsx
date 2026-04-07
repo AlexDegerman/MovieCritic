@@ -80,17 +80,27 @@ const Movies = () => {
     <div className="main-content">
       {/* Filter bar */}
       <Filter />
-      
+
       {/* Conditional renders */}
       {isInitialLoading ? (
         <div className="loading-movies-container">
           <div>
-            <p className="loading-movies">{getText("Elokuvia ladataan...", "Loading movies...")}</p>
+            <p className="loading-movies">
+              {getText(
+                'Elokuvia ladataan... (Ensimmäinen lataus voi kestää jopa 60s)',
+                'Loading movies... (Initial load may take up to 60s)'
+              )}
+            </p>
           </div>
         </div>
       ) : movies.length === 0 ? (
         <div className="no-match-container">
-          <p className="no-match">{getText('Ei löytynyt elokuvia tällä haulla', 'No movies match this search')}</p>
+          <p className="no-match">
+            {getText(
+              'Ei löytynyt elokuvia tällä haulla',
+              'No movies match this search'
+            )}
+          </p>
         </div>
       ) : (
         <>
@@ -104,12 +114,15 @@ const Movies = () => {
               />
             ))}
           </ul>
-          
+
           {/* Loading More and End of results */}
           {isLoadingMore && (
             <div className="loading-more-container active">
               <p className="loading-more">
-                {getText('Ladataan lisää elokuvia...', 'Loading more movies...')}
+                {getText(
+                  'Ladataan lisää elokuvia...',
+                  'Loading more movies...'
+                )}
               </p>
             </div>
           )}
